@@ -13,6 +13,35 @@
 
 package frc.robot;
 
+import static frc.robot.subsystems.drive.DriveConstants.backLeftDriveAbsoluteEncoderOffsetDeg;
+import static frc.robot.subsystems.drive.DriveConstants.backLeftDriveAbsoluteEncoderPort;
+import static frc.robot.subsystems.drive.DriveConstants.backLeftDriveEncoderInverted;
+import static frc.robot.subsystems.drive.DriveConstants.backLeftDriveMotorInverted;
+import static frc.robot.subsystems.drive.DriveConstants.backLeftEncoderPositiveDirection;
+import static frc.robot.subsystems.drive.DriveConstants.backLeftTurnEncoderInverted;
+import static frc.robot.subsystems.drive.DriveConstants.backLeftTurnMotorInverted;
+import static frc.robot.subsystems.drive.DriveConstants.backRightDriveAbsoluteEncoderOffsetDeg;
+import static frc.robot.subsystems.drive.DriveConstants.backRightDriveAbsoluteEncoderPort;
+import static frc.robot.subsystems.drive.DriveConstants.backRightDriveEncoderInverted;
+import static frc.robot.subsystems.drive.DriveConstants.backRightDriveMotorInverted;
+import static frc.robot.subsystems.drive.DriveConstants.backRightEncoderPositiveDirection;
+import static frc.robot.subsystems.drive.DriveConstants.backRightTurnEncoderInverted;
+import static frc.robot.subsystems.drive.DriveConstants.backRightTurnMotorInverted;
+import static frc.robot.subsystems.drive.DriveConstants.frontLeftDriveAbsoluteEncoderOffsetDeg;
+import static frc.robot.subsystems.drive.DriveConstants.frontLeftDriveAbsoluteEncoderPort;
+import static frc.robot.subsystems.drive.DriveConstants.frontLeftDriveEncoderInverted;
+import static frc.robot.subsystems.drive.DriveConstants.frontLeftDriveMotorInverted;
+import static frc.robot.subsystems.drive.DriveConstants.frontLeftEncoderPositiveDirection;
+import static frc.robot.subsystems.drive.DriveConstants.frontLeftTurnEncoderInverted;
+import static frc.robot.subsystems.drive.DriveConstants.frontLeftTurnMotorInverted;
+import static frc.robot.subsystems.drive.DriveConstants.frontRightDriveAbsoluteEncoderOffsetDeg;
+import static frc.robot.subsystems.drive.DriveConstants.frontRightDriveAbsoluteEncoderPort;
+import static frc.robot.subsystems.drive.DriveConstants.frontRightDriveEncoderInverted;
+import static frc.robot.subsystems.drive.DriveConstants.frontRightDriveMotorInverted;
+import static frc.robot.subsystems.drive.DriveConstants.frontRightEncoderPositiveDirection;
+import static frc.robot.subsystems.drive.DriveConstants.frontRightTurnEncoderInverted;
+import static frc.robot.subsystems.drive.DriveConstants.frontRightTurnMotorInverted;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,7 +54,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
-import frc.robot.subsystems.drive.GyroIOPigeon2;
+import frc.robot.subsystems.drive.GyroIONavX;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
@@ -54,11 +83,43 @@ public class RobotContainer {
         // Real robot, instantiate hardware IO implementations
         drive =
             new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOSpark(0),
-                new ModuleIOSpark(1),
-                new ModuleIOSpark(2),
-                new ModuleIOSpark(3));
+                new GyroIONavX(),
+                new ModuleIOSpark(
+                    0,
+                    frontLeftDriveMotorInverted,
+                    frontLeftDriveEncoderInverted,
+                    frontLeftTurnMotorInverted,
+                    frontLeftTurnEncoderInverted,
+                    frontLeftDriveAbsoluteEncoderPort,
+                    frontLeftDriveAbsoluteEncoderOffsetDeg,
+                    frontLeftEncoderPositiveDirection), // FRONT LEFT
+                new ModuleIOSpark(
+                    1,
+                    frontRightDriveMotorInverted,
+                    frontRightDriveEncoderInverted,
+                    frontRightTurnMotorInverted,
+                    frontRightTurnEncoderInverted,
+                    frontRightDriveAbsoluteEncoderPort,
+                    frontRightDriveAbsoluteEncoderOffsetDeg,
+                    frontRightEncoderPositiveDirection), // FRONT RIGHT
+                new ModuleIOSpark(
+                    2,
+                    backLeftDriveMotorInverted,
+                    backLeftDriveEncoderInverted,
+                    backLeftTurnMotorInverted,
+                    backLeftTurnEncoderInverted,
+                    backLeftDriveAbsoluteEncoderPort,
+                    backLeftDriveAbsoluteEncoderOffsetDeg,
+                    backLeftEncoderPositiveDirection), // BACK LEFT
+                new ModuleIOSpark(
+                    3,
+                    backRightDriveMotorInverted,
+                    backRightDriveEncoderInverted,
+                    backRightTurnMotorInverted,
+                    backRightTurnEncoderInverted,
+                    backRightDriveAbsoluteEncoderPort,
+                    backRightDriveAbsoluteEncoderOffsetDeg,
+                    backRightEncoderPositiveDirection)); // BACK RIGHT
         break;
 
       case SIM:
