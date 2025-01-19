@@ -34,6 +34,8 @@ public class CenterOnAprilTagCommand extends Command {
   //  IntegerEntry filterTapsNetworkEntry;
   int filterTaps = 3;
 
+  private final double speed = 2.0;
+
   private final PIDController rotationPid;
   private final PIDController YmovementPid;
   private final PIDController XmovementPid;
@@ -62,6 +64,10 @@ public class CenterOnAprilTagCommand extends Command {
   private double desiredXOffset = 0;
   private double desiredRotationOffset = 0;
 
+  private DoublePublisher rotationErrorPub;
+  private DoublePublisher xPositionErrorPub;
+  private DoublePublisher yPositionErrorPub;
+
   public CenterOnAprilTagCommand(Drive _swerveSubsystem, Limelight _limelightSub) {
     limelightSubsystem = _limelightSub;
     swerveSubsystem = _swerveSubsystem;
@@ -76,6 +82,15 @@ public class CenterOnAprilTagCommand extends Command {
     //      anglePub = NetworkTableInstance.getDefault().getDoubleTopic("LimelightAngle").publish();
     desiredSpeedPub =
         NetworkTableInstance.getDefault().getDoubleTopic("LimelightDesiredSpeed").publish();
+
+    rotationErrorPub =
+        NetworkTableInstance.getDefault().getDoubleTopic("LimelightRotationError").publish();
+    xPositionErrorPub = NetworkTableInstance.getDefault().getDoubleTopic("xPosError").publish();
+    yPositionErrorPub = NetworkTableInstance.getDefault().getDoubleTopic("yPosError").publish();
+
+    rotationErrorPub.set(0.0);
+    xPositionErrorPub.set(0.0);
+    yPositionErrorPub.set(0.0);
 
     // kpRotationNetworkEntry  =
     // NetworkTableInstance.getDefault().getDoubleTopic("kpR").getEntry(0.0);
@@ -198,9 +213,13 @@ public class CenterOnAprilTagCommand extends Command {
 
     targetXOffset = desiredXOffset - targetXOffset;
 
+    xPositionErrorPub.set(targetXOffset);
+
     double targetYOffset = targetPosData[2];
     //  Make it go to desiredZOffset meters away
     targetYOffset = desiredZOffset + targetYOffset;
+
+    yPositionErrorPub.set(targetYOffset);
 
     // Crashboard.toDashboard("Tx: ", targetPosData[0], "Limelight");
     // Crashboard.toDashboard("Ty: ", targetPosData[1], "Limelight");
@@ -215,10 +234,10 @@ public class CenterOnAprilTagCommand extends Command {
     // ySpeed = Math.min(2, ySpeed) * angleMultiplier;
     // xSpeed = Math.min(2, xSpeed) * angleMultiplier;
 
-    ySpeed = Math.min(0.8, ySpeed);
-    xSpeed = Math.min(0.8, xSpeed);
-    ySpeed = Math.max(-0.8, ySpeed);
-    xSpeed = Math.max(-0.8, xSpeed);
+    ySpeed = Math.min(speed, ySpeed);
+    xSpeed = Math.min(speed, xSpeed);
+    ySpeed = Math.max(-speed, ySpeed);
+    xSpeed = Math.max(-speed, xSpeed);
 
     return new double[] {xSpeed, ySpeed};
     //   return new double[]{0, 0};
@@ -229,6 +248,8 @@ public class CenterOnAprilTagCommand extends Command {
     double angleDifference = targetPosData[4];
 
     angleDifference = desiredRotationOffset - angleDifference;
+
+    rotationErrorPub.set(angleDifference);
 
     double speedRadiansPerSecond = -rot2Pid.calculate(angleDifference, 0);
     //    speedRadiansPerSecond *= 0.9;
