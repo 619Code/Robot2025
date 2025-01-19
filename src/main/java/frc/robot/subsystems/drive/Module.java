@@ -65,6 +65,7 @@ public class Module {
   public void runSetpoint(SwerveModuleState state) {
     // Optimize velocity setpoint
     state.optimize(getAngle());
+    //  ourOptimize(state, getAngle());
     state.cosineScale(inputs.turnPosition);
 
     // Apply setpoints
@@ -127,5 +128,9 @@ public class Module {
   /** Returns the module velocity in rad/sec. */
   public double getFFCharacterizationVelocity() {
     return inputs.driveVelocityRadPerSec;
+  }
+
+  public void setTurnMotorPID(double kp, double kd) {
+    io.setTurnMotorPID(kp, kd);
   }
 }

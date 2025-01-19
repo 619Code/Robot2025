@@ -23,6 +23,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
@@ -72,8 +74,20 @@ public class DriveCommands {
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier) {
+
+    DoubleEntry kpTurnMotorEntry =
+        NetworkTableInstance.getDefault().getDoubleTopic("kpT").getEntry(0.0);
+    DoubleEntry kdTurnMotorEntry =
+        NetworkTableInstance.getDefault().getDoubleTopic("kdT").getEntry(0.0);
+
+    kpTurnMotorEntry.set(0.0);
+    kdTurnMotorEntry.set(0.0);
+
     return Commands.run(
         () -> {
+          drive.SetModuleTurnMotorPD(
+              kpTurnMotorEntry.getAsDouble(), kdTurnMotorEntry.getAsDouble());
+
           // Get linear velocity
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());

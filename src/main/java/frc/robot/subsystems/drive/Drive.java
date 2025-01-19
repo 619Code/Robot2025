@@ -320,4 +320,11 @@ public class Drive extends SubsystemBase {
   public double getMaxAngularSpeedRadPerSec() {
     return maxSpeedMetersPerSec / driveBaseRadius;
   }
+
+  public void SetModuleTurnMotorPD(double kp, double kd) {
+    modules[0].setTurnMotorPID(kp, kd);
+    modules[1].setTurnMotorPID(kp, kd);
+    modules[2].setTurnMotorPID(kp, kd);
+    modules[3].setTurnMotorPID(kp, kd);
+  }
 }

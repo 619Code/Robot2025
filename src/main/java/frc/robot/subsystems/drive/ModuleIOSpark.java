@@ -127,13 +127,14 @@ public class ModuleIOSpark implements ModuleIO {
     driveEncoder = driveSpark.getEncoder();
     driveController = driveSpark.getClosedLoopController();
     turnController = new PIDController(turnKp, 0.0, turnKd);
+    turnController.enableContinuousInput(0, 2.0 * Math.PI);
 
     //  Initialize absolute turn encoder
     absoluteTurnEncoder = new CANcoder(absoluteEncoderCANId);
     CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration();
     canCoderConfiguration.MagnetSensor.MagnetOffset = absoluteEncoderOffset;
     canCoderConfiguration.MagnetSensor.SensorDirection = positiveDirection;
-    canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
+    canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
     // canCoderConfiguration.primaryEncoderPositionPeriodMs
     // absoluteEncoder.configAllSettings(canCoderConfiguration);
     absoluteTurnEncoder.getConfigurator().apply(canCoderConfiguration);
@@ -197,9 +198,7 @@ public class ModuleIOSpark implements ModuleIO {
     driveConfig
         .closedLoop
         .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-        .pidf(
-            driveKp, 0.0,
-            driveKd, 0.0);
+        .pidf(driveKp, 0.0, driveKd, 0.0);
     driveConfig
         .signals
         .primaryEncoderPositionAlwaysOn(true)
@@ -262,7 +261,7 @@ public class ModuleIOSpark implements ModuleIO {
   }
 
   double GetAbsoluteTurnEncoderPositionRad() {
-    return absoluteTurnEncoderPositionSignal.refresh().getValueAsDouble();
+    return absoluteTurnEncoderPositionSignal.refresh().getValueAsDouble() * 2 * Math.PI;
   }
 
   double GetAbsoluteTurnEncoderVelRotationsPerMinute() {
@@ -299,16 +298,10 @@ public class ModuleIOSpark implements ModuleIO {
     ifOk(turnSpark, turnSpark::getOutputCurrent, (value) -> inputs.turnCurrentAmps = value);
     inputs.turnConnected = turnConnectedDebounce.calculate(!sparkStickyFault);
 
-
-
-    
     // TODO: This breaks convention
     // We are updating the feedback and setting the motor output.
     // This is because this is the only function we can rely on being called periodically.
     turnSpark.set(turnController.calculate(GetAbsoluteTurnEncoderPositionRad()));
-
-
-
 
     // Update odometry inputs
     inputs.odometryTimestamps =
@@ -351,6 +344,12 @@ public class ModuleIOSpark implements ModuleIO {
         MathUtil.inputModulus(
             rotation.plus(zeroRotation).getRadians(), turnPIDMinInput, turnPIDMaxInput);
     // turnController.setReference(setpoint, ControlType.kPosition);
+
     turnController.setSetpoint(setpoint);
+  }
+
+  @Override
+  public void setTurnMotorPID(double kp, double kd) {
+    turnController.setPID(kp, 0.0, kd);
   }
 }
