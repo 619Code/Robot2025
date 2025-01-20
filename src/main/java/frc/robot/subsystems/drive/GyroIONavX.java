@@ -13,7 +13,9 @@
 
 package frc.robot.subsystems.drive;
 
-import static frc.robot.subsystems.drive.DriveConstants.*;
+//import static frc.robot.subsystems.drive.DriveConstants.*;
+
+import frc.robot.Constants;
 
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
@@ -23,7 +25,7 @@ import java.util.Queue;
 
 /** IO implementation for NavX. */
 public class GyroIONavX implements GyroIO {
-  private final AHRS navX = new AHRS(NavXComType.kMXP_SPI, (byte) odometryFrequency);
+  private final AHRS navX = new AHRS(NavXComType.kMXP_SPI, (byte) Constants.DriveConstants.odometryFrequency);
   private final Queue<Double> yawPositionQueue;
   private final Queue<Double> yawTimestampQueue;
 

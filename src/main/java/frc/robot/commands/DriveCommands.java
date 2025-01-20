@@ -31,13 +31,15 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.DriveConstants;
+//import frc.robot.subsystems.drive.DriveConstants;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import frc.robot.Constants;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -286,7 +288,7 @@ public class DriveCommands {
                         wheelDelta += Math.abs(positions[i] - state.positions[i]) / 4.0;
                       }
                       double wheelRadius =
-                          (state.gyroDelta * DriveConstants.driveBaseRadius) / wheelDelta;
+                          (state.gyroDelta * Constants.DriveConstants.driveBaseRadius) / wheelDelta;
 
                       NumberFormat formatter = new DecimalFormat("#0.000");
                       System.out.println(
