@@ -27,11 +27,11 @@ public class LoggedCommand extends Command {
     private void logMessage(String message) {
         Logger.recordOutput(commandLogKey, String.format("[%s] %s", commandName, message));
     }
-    
+
 
     @Override
     public void initialize() {
-        if (LoggedCommand.isLoggingEnabled) 
+        if (LoggedCommand.isLoggingEnabled)
         {
             logMessage("Starting initialization.");
             this.command.initialize();
@@ -43,17 +43,17 @@ public class LoggedCommand extends Command {
 
     @Override
     public void execute() {
-        if (LoggedCommand.isLoggingEnabled) 
+        if (LoggedCommand.isLoggingEnabled)
         {
             logMessage("Executing.");
-        } 
+        }
         this.command.execute();
 
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (LoggedCommand.isLoggingEnabled) 
+        if (LoggedCommand.isLoggingEnabled)
         {
             logMessage("Starting end. Interrupted = ." + interrupted);
             this.command.end(interrupted);
@@ -67,12 +67,12 @@ public class LoggedCommand extends Command {
     public boolean isFinished() {
         boolean isFinished = command.isFinished();
 
-        if (LoggedCommand.isLoggingEnabled) 
+        if (LoggedCommand.isLoggingEnabled)
         {
             logMessage("Has finished");
-        } 
+        }
 
         return isFinished;
     }
-    
+
 }
