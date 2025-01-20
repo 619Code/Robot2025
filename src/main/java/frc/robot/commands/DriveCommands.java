@@ -31,6 +31,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.drive.Drive;
+import frc.robot.util.LoggedCommand;
+
 //import frc.robot.subsystems.drive.DriveConstants;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -140,7 +142,7 @@ public class DriveCommands {
     angleController.enableContinuousInput(-Math.PI, Math.PI);
 
     // Construct command
-    return Commands.run(
+    return new LoggedCommand(Commands.run(
             () -> {
               // Get linear velocity
               Translation2d linearVelocity =
@@ -170,7 +172,8 @@ public class DriveCommands {
             drive)
 
         // Reset PID controller when command starts
-        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+        .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians())
+      ));
   }
 
   /**
@@ -183,7 +186,7 @@ public class DriveCommands {
     List<Double> voltageSamples = new LinkedList<>();
     Timer timer = new Timer();
 
-    return Commands.sequence(
+    return new LoggedCommand(Commands.sequence(
         // Reset data
         Commands.runOnce(
             () -> {
@@ -233,7 +236,8 @@ public class DriveCommands {
                   System.out.println("********** Drive FF Characterization Results **********");
                   System.out.println("\tkS: " + formatter.format(kS));
                   System.out.println("\tkV: " + formatter.format(kV));
-                }));
+                })
+    ));
   }
 
   /** Measures the robot's wheel radius by spinning in a circle. */
@@ -241,7 +245,7 @@ public class DriveCommands {
     SlewRateLimiter limiter = new SlewRateLimiter(WHEEL_RADIUS_RAMP_RATE);
     WheelRadiusCharacterizationState state = new WheelRadiusCharacterizationState();
 
-    return Commands.parallel(
+    return new LoggedCommand(Commands.parallel(
         // Drive control sequence
         Commands.sequence(
             // Reset acceleration limiter
@@ -303,7 +307,8 @@ public class DriveCommands {
                               + " meters, "
                               + formatter.format(Units.metersToInches(wheelRadius))
                               + " inches");
-                    })));
+                    }))                
+    ));
   }
 
   private static class WheelRadiusCharacterizationState {

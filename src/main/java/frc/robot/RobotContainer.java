@@ -60,6 +60,8 @@ import frc.robot.subsystems.drive.Limelight;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.util.LoggedCommand;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -203,14 +205,14 @@ public class RobotContainer {
     controller
         .b()
         .onTrue(
-            Commands.runOnce(
+            new LoggedCommand(Commands.runOnce(
                     () ->
                         drive.setPose(
                             new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
                     drive)
-                .ignoringDisable(true));
+                .ignoringDisable(true)));
 
-    controller.y().whileTrue((new CenterOnAprilTagCommand(drive, limelight)));
+    controller.y().whileTrue(new LoggedCommand(new CenterOnAprilTagCommand(drive, limelight)));
   }
 
   /**
