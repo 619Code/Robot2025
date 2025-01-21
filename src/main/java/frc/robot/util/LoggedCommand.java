@@ -1,7 +1,10 @@
 package frc.robot.util;
 
+
+
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class LoggedCommand extends Command {
@@ -9,23 +12,42 @@ public class LoggedCommand extends Command {
     private final Command command;
     private final String commandLogKey;
     private final String commandName;
+
     private static boolean isLoggingEnabled = false;
+    private static boolean cacheValues = false;
+    private static String allCommmandsLogKey = "LoggedCommands/all";
+
 
     public LoggedCommand(Command command) {
+        this(command.getName(), command);
+    }
+
+    public LoggedCommand(String commandName, Command command) {
         this.addRequirements(command.getRequirements());
 
         this.command = command;
-        this.commandLogKey = "Commands/" + command.getName();
-        this.commandName = command.getName();
+        this.commandLogKey = "LoggedCommands/" + commandName;
+        this.commandName = commandName;
     }
 
-    public void setLoggingEnabled(boolean enabled) {
+    public static void configureCommandLogging(boolean enabled, boolean cacheValues) {
         LoggedCommand.isLoggingEnabled = enabled;
+        LoggedCommand.cacheValues = cacheValues;
     }
 
 
     private void logMessage(String message) {
-        Logger.recordOutput(commandLogKey, String.format("[%s] %s", commandName, message));
+        String toLog;
+        if (LoggedCommand.cacheValues) {
+            // If the new value matches the previous, AK won't update the value.
+            // It acts like a latch.
+            toLog = String.format("[%s] %s", commandName, message);
+        } else {
+            toLog = String.format("%f [%s] %s", Timer.getTimestamp(), commandName, message);
+        }
+
+        Logger.recordOutput(LoggedCommand.allCommmandsLogKey, toLog);
+        Logger.recordOutput(commandLogKey, toLog);
     }
 
 
@@ -67,7 +89,7 @@ public class LoggedCommand extends Command {
     public boolean isFinished() {
         boolean isFinished = command.isFinished();
 
-        if (LoggedCommand.isLoggingEnabled)
+        if (LoggedCommand.isLoggingEnabled && isFinished)
         {
             logMessage("Has finished");
         }

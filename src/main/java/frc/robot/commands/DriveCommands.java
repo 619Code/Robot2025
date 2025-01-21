@@ -87,7 +87,7 @@ public class DriveCommands {
     kpTurnMotorEntry.set(0.0);
     kdTurnMotorEntry.set(0.0);
 
-    return Commands.run(
+    return new LoggedCommand("joyStickDrive", Commands.run(
         () -> {
           drive.SetModuleTurnMotorPD(
               kpTurnMotorEntry.getAsDouble(), kdTurnMotorEntry.getAsDouble());
@@ -118,7 +118,8 @@ public class DriveCommands {
                       ? drive.getRotation().plus(new Rotation2d(Math.PI))
                       : drive.getRotation()));
         },
-        drive);
+        drive)
+    );
   }
 
   /**
@@ -142,7 +143,7 @@ public class DriveCommands {
     angleController.enableContinuousInput(-Math.PI, Math.PI);
 
     // Construct command
-    return new LoggedCommand(Commands.run(
+    return new LoggedCommand("joyStickDriveAtAngle", Commands.run(
             () -> {
               // Get linear velocity
               Translation2d linearVelocity =
@@ -186,7 +187,7 @@ public class DriveCommands {
     List<Double> voltageSamples = new LinkedList<>();
     Timer timer = new Timer();
 
-    return new LoggedCommand(Commands.sequence(
+    return new LoggedCommand("ffCharacterization", Commands.sequence(
         // Reset data
         Commands.runOnce(
             () -> {
@@ -245,7 +246,7 @@ public class DriveCommands {
     SlewRateLimiter limiter = new SlewRateLimiter(WHEEL_RADIUS_RAMP_RATE);
     WheelRadiusCharacterizationState state = new WheelRadiusCharacterizationState();
 
-    return new LoggedCommand(Commands.parallel(
+    return new LoggedCommand("WheelRadiusCharacterization", Commands.parallel(
         // Drive control sequence
         Commands.sequence(
             // Reset acceleration limiter
