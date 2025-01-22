@@ -14,7 +14,7 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
-//import static frc.robot.subsystems.drive.DriveConstants.*;
+// import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -59,7 +59,8 @@ public class Drive extends SubsystemBase {
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
-  private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.DriveConstants.moduleTranslations);
+  private SwerveDriveKinematics kinematics =
+      new SwerveDriveKinematics(Constants.DriveConstants.moduleTranslations);
   private Rotation2d rawGyroRotation = new Rotation2d();
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
@@ -77,6 +78,7 @@ public class Drive extends SubsystemBase {
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
       ModuleIO brModuleIO) {
+
     this.gyroIO = gyroIO;
     modules[0] = new Module(flModuleIO, 0);
     modules[1] = new Module(frModuleIO, 1);
@@ -96,19 +98,31 @@ public class Drive extends SubsystemBase {
         this::getChassisSpeeds,
         this::runVelocity,
         new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
-            Constants.DriveConstants.ppConfig,
+            // new PIDConstants(
+            //     Constants.DriveConstants.driveKp, 0.0, Constants.DriveConstants.driveKd),
+            // new PIDConstants(
+            //     Constants.DriveConstants.turnKp, 0.0, Constants.DriveConstants.turnKd)),
+            new PIDConstants(10, 0.0, 0), new PIDConstants(10, 0.0, 0)),
+        Constants.DriveConstants.ppConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
+
     Pathfinding.setPathfinder(new LocalADStarAK());
+
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {
           Logger.recordOutput(
               "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
         });
+
     PathPlannerLogging.setLogTargetPoseCallback(
         (targetPose) -> {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+        });
+
+    PathPlannerLogging.setLogCurrentPoseCallback(
+        (pose) -> {
+          Logger.recordOutput("Odometry/TrajectoryCurrentPose", pose);
         });
 
     // Configure SysId
@@ -188,10 +202,12 @@ public class Drive extends SubsystemBase {
    * @param speeds Speeds in meters/sec
    */
   public void runVelocity(ChassisSpeeds speeds) {
+
     // Calculate module setpoints
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, Constants.DriveConstants.maxSpeedMetersPerSec);
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        setpointStates, Constants.DriveConstants.maxSpeedMetersPerSec);
 
     // Log unoptimized setpoints
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);

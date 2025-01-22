@@ -13,10 +13,8 @@
 
 package frc.robot.subsystems.drive;
 
-//import static frc.robot.subsystems.drive.DriveConstants.*;
+// import static frc.robot.subsystems.drive.DriveConstants.*;
 import static frc.robot.util.SparkUtil.*;
-
-import frc.robot.Constants;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
@@ -41,6 +39,7 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import frc.robot.Constants;
 import java.util.Queue;
 import java.util.function.DoubleSupplier;
 
@@ -128,7 +127,8 @@ public class ModuleIOSpark implements ModuleIO {
             MotorType.kBrushless);
     driveEncoder = driveSpark.getEncoder();
     driveController = driveSpark.getClosedLoopController();
-    turnController = new PIDController(Constants.DriveConstants.turnKp, 0.0, Constants.DriveConstants.turnKd);
+    turnController =
+        new PIDController(Constants.DriveConstants.turnKp, 0.0, Constants.DriveConstants.turnKd);
     turnController.enableContinuousInput(0, 2.0 * Math.PI);
 
     //  Initialize absolute turn encoder
@@ -235,12 +235,14 @@ public class ModuleIOSpark implements ModuleIO {
         .closedLoop
         .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
         .positionWrappingEnabled(true)
-        .positionWrappingInputRange(Constants.DriveConstants.turnPIDMinInput, Constants.DriveConstants.turnPIDMaxInput)
+        .positionWrappingInputRange(
+            Constants.DriveConstants.turnPIDMinInput, Constants.DriveConstants.turnPIDMaxInput)
         .pidf(Constants.DriveConstants.turnKp, 0.0, Constants.DriveConstants.turnKd, 0.0);
     turnConfig
         .signals
         .absoluteEncoderPositionAlwaysOn(true)
-        .absoluteEncoderPositionPeriodMs((int) (1000.0 / Constants.DriveConstants.odometryFrequency))
+        .absoluteEncoderPositionPeriodMs(
+            (int) (1000.0 / Constants.DriveConstants.odometryFrequency))
         .absoluteEncoderVelocityAlwaysOn(true)
         .absoluteEncoderVelocityPeriodMs(20)
         .appliedOutputPeriodMs(20)
@@ -331,7 +333,9 @@ public class ModuleIOSpark implements ModuleIO {
 
   @Override
   public void setDriveVelocity(double velocityRadPerSec) {
-    double ffVolts = Constants.DriveConstants.driveKs * Math.signum(velocityRadPerSec) + Constants.DriveConstants.driveKv * velocityRadPerSec;
+    double ffVolts =
+        Constants.DriveConstants.driveKs * Math.signum(velocityRadPerSec)
+            + Constants.DriveConstants.driveKv * velocityRadPerSec;
     driveController.setReference(
         velocityRadPerSec,
         ControlType.kVelocity,
@@ -344,7 +348,9 @@ public class ModuleIOSpark implements ModuleIO {
   public void setTurnPosition(Rotation2d rotation) {
     double setpoint =
         MathUtil.inputModulus(
-            rotation.plus(zeroRotation).getRadians(), Constants.DriveConstants.turnPIDMinInput, Constants.DriveConstants.turnPIDMaxInput);
+            rotation.plus(zeroRotation).getRadians(),
+            Constants.DriveConstants.turnPIDMinInput,
+            Constants.DriveConstants.turnPIDMaxInput);
     // turnController.setReference(setpoint, ControlType.kPosition);
 
     turnController.setSetpoint(setpoint);

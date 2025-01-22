@@ -43,8 +43,11 @@ package frc.robot;
 // import static frc.robot.subsystems.drive.DriveConstants.frontRightTurnMotorInverted;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -60,6 +63,7 @@ import frc.robot.subsystems.drive.Limelight;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -148,6 +152,24 @@ public class RobotContainer {
         break;
     }
 
+    try {
+      List<Pose2d> examplePath = PathPlannerPath.fromPathFile("Lit path").getPathPoses();
+
+      Pose2d[] posePath = new Pose2d[examplePath.size()];
+
+      examplePath.toArray(posePath);
+
+      StructArrayPublisher<Pose2d> pub =
+          NetworkTableInstance.getDefault()
+              .getStructArrayTopic("Lit path trajectory", Pose2d.struct)
+              .publish();
+
+      pub.set(posePath);
+
+    } catch (Exception e) {
+      System.out.println("Cry");
+    }
+
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
@@ -220,5 +242,18 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return autoChooser.get();
+    // try {
+    //   Command followTrajectoryCommand =
+    //       AutoBuilder.followPath(PathPlannerPath.fromPathFile("Example Path"))
+    //           .andThen(
+    //               Commands.run(
+    //                   () -> {
+    //                     System.out.println("FOLLOW PATH COMMAND IS FINISHED");
+    //                   }));
+    //   return followTrajectoryCommand;
+    // } catch (Exception e) {
+    //   System.out.println("AUTO FAILED");
+    //   return null;
+    // }
   }
 }
