@@ -12,6 +12,8 @@ public class LoggedCommand extends Command {
     private final Command command;
     private final String commandLogKey;
     private final String commandName;
+    private double lastTimestamp = 0;
+    private String lastEntry = null;
 
     private static boolean isLoggingEnabled = false;
     private static boolean cacheValues = false;
@@ -46,6 +48,16 @@ public class LoggedCommand extends Command {
             toLog = String.format("%f [%s] %s", Timer.getTimestamp(), commandName, message);
         }
 
+        double timestamp = Logger.getTimestamp();
+        if (Math.abs(timestamp - lastTimestamp) <= 0.02 && lastEntry != null) {
+            // We've already logged something in this time slice.
+            // We need to append to the string instead of replacing it.
+            toLog = String.format("%s\n%s", lastEntry, toLog);
+        }
+
+        lastTimestamp = timestamp;
+        lastEntry = toLog;
+
         Logger.recordOutput(LoggedCommand.allCommmandsLogKey, toLog);
         Logger.recordOutput(commandLogKey, toLog);
     }
@@ -77,7 +89,7 @@ public class LoggedCommand extends Command {
     public void end(boolean interrupted) {
         if (LoggedCommand.isLoggingEnabled)
         {
-            logMessage("Starting end. Interrupted = ." + interrupted);
+            logMessage("Starting end. Interrupted = " + interrupted);
             this.command.end(interrupted);
             logMessage("End finished.");
         } else {
