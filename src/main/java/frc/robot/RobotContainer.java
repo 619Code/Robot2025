@@ -43,7 +43,6 @@ package frc.robot;
 // import static frc.robot.subsystems.drive.DriveConstants.frontRightTurnMotorInverted;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -62,6 +61,7 @@ import frc.robot.subsystems.drive.Limelight;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.util.LoggedCommand;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -260,19 +260,24 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return autoChooser.get();
-    try {
-      Command followTrajectoryCommand =
-          AutoBuilder.followPath(PathPlannerPath.fromPathFile("Lit path"))
-              .andThen(
-                  Commands.run(
-                      () -> {
-                        System.out.println("FOLLOW PATH COMMAND IS FINISHED");
-                      }));
-      return followTrajectoryCommand;
-    } catch (Exception e) {
-      System.out.println("AUTO FAILED");
-      return null;
-    }
+    return new LoggedCommand(autoChooser.get());
+
+    // try {
+    //   //   Command followTrajectoryCommand =
+    //   //       AutoBuilder.followPath(PathPlannerPath.fromPathFile("Lit path"))
+    //   //           .andThen(
+    //   //               Commands.run(
+    //   //                   () -> {
+    //   //                     System.out.println("FOLLOW PATH COMMAND IS FINISHED");
+    //   //                   }));
+
+    //   Command followTrajectoryCommand =
+    //       AutoBuilder.followPath(PathPlannerPath.fromPathFile("Lit path"));
+
+    //   return new LoggedCommand(followTrajectoryCommand);
+    // } catch (Exception e) {
+    //   System.out.println("AUTO FAILED");
+    //   return null;
+    // }
   }
 }
