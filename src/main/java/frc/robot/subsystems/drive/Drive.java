@@ -107,6 +107,22 @@ public class Drive extends SubsystemBase {
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
 
+    //  Testing other configurations
+    // AutoBuilder.configure(
+    //     this::getPose,
+    //     this::setPose,
+    //     this::getChassisSpeeds,
+    //     this::runVelocity,
+    //     new PPHolonomicDriveController(
+    //         // new PIDConstants(
+    //         //     Constants.DriveConstants.driveKp, 0.0, Constants.DriveConstants.driveKd),
+    //         // new PIDConstants(
+    //         //     Constants.DriveConstants.turnKp, 0.0, Constants.DriveConstants.turnKd)),
+    //         new PIDConstants(10, 0.0, 0), new PIDConstants(10, 0.0, 0)),
+    //     Constants.DriveConstants.ppConfig,
+    //     () -> false, // I believe that false is blue
+    //     this);
+
     Pathfinding.setPathfinder(new LocalADStarAK());
 
     PathPlannerLogging.setLogActivePathCallback(
@@ -334,13 +350,15 @@ public class Drive extends SubsystemBase {
 
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
-    return Constants.DriveConstants.maxSpeedMetersPerSec / Constants.DriveConstants.driveBaseRadius;
+    return Constants.DriveConstants.maxSpeedMetersPerSec
+        / Constants.DriveConstants.driveBaseRadius
+        * Constants.DriveConstants.angularVelocityMultiplier;
   }
 
-  public void SetModuleTurnMotorPD(double kp, double kd) {
-    modules[0].setTurnMotorPID(kp, kd);
-    modules[1].setTurnMotorPID(kp, kd);
-    modules[2].setTurnMotorPID(kp, kd);
-    modules[3].setTurnMotorPID(kp, kd);
-  }
+  // public void SetModuleTurnMotorPD(double kp, double kd) {
+  //   modules[0].setTurnMotorPID(kp, kd);
+  //   modules[1].setTurnMotorPID(kp, kd);
+  //   modules[2].setTurnMotorPID(kp, kd);
+  //   modules[3].setTurnMotorPID(kp, kd);
+  // }
 }

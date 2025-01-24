@@ -46,15 +46,14 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.AutoCommands.CenterOnAprilTagCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -63,7 +62,6 @@ import frc.robot.subsystems.drive.Limelight;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
-import java.util.List;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 /**
@@ -78,7 +76,8 @@ public class RobotContainer {
   private final Limelight limelight = new Limelight();
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  //  private final CommandXboxController controller = new CommandXboxController(0);
+  private final Joystick flightStick = new Joystick(0);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -152,23 +151,26 @@ public class RobotContainer {
         break;
     }
 
-    try {
-      List<Pose2d> examplePath = PathPlannerPath.fromPathFile("Lit path").getPathPoses();
+    //  Publishing the never-flipped path (always relative to blue side)
+    /* {
+        try {
+        List<Pose2d> examplePath = PathPlannerPath.fromPathFile("Lit path").getPathPoses();
 
-      Pose2d[] posePath = new Pose2d[examplePath.size()];
+        Pose2d[] posePath = new Pose2d[examplePath.size()];
 
-      examplePath.toArray(posePath);
+        examplePath.toArray(posePath);
 
-      StructArrayPublisher<Pose2d> pub =
-          NetworkTableInstance.getDefault()
-              .getStructArrayTopic("Lit path trajectory", Pose2d.struct)
-              .publish();
+        StructArrayPublisher<Pose2d> pub =
+            NetworkTableInstance.getDefault()
+                .getStructArrayTopic("Lit path trajectory", Pose2d.struct)
+                .publish();
 
-      pub.set(posePath);
+        pub.set(posePath);
 
-    } catch (Exception e) {
-      System.out.println("Cry");
-    }
+        } catch (Exception e) {
+        System.out.println("Cry");
+        }
+    }*/
 
     // Set up auto routines
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -201,38 +203,55 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         () -> -controller.getLeftY(),
+    //         () -> -controller.getLeftX(),
+    //         () -> -controller.getRightX()));
+
+    //  Flight stick driving
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -flightStick.getRawAxis(1),
+            () -> -flightStick.getRawAxis(0),
+            () -> flightStick.getRawAxis(2)));
+
+    Trigger gyroResetButton = new JoystickButton(flightStick, 2);
+
+    gyroResetButton.onTrue(
+        Commands.runOnce(
+                () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                drive)
+            .ignoringDisable(true));
 
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
 
-    controller.y().whileTrue((new CenterOnAprilTagCommand(drive, limelight)));
+    // controller.y().whileTrue((new CenterOnAprilTagCommand(drive, limelight)));
   }
 
   /**
@@ -241,19 +260,19 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoChooser.get();
-    // try {
-    //   Command followTrajectoryCommand =
-    //       AutoBuilder.followPath(PathPlannerPath.fromPathFile("Example Path"))
-    //           .andThen(
-    //               Commands.run(
-    //                   () -> {
-    //                     System.out.println("FOLLOW PATH COMMAND IS FINISHED");
-    //                   }));
-    //   return followTrajectoryCommand;
-    // } catch (Exception e) {
-    //   System.out.println("AUTO FAILED");
-    //   return null;
-    // }
+    // return autoChooser.get();
+    try {
+      Command followTrajectoryCommand =
+          AutoBuilder.followPath(PathPlannerPath.fromPathFile("Lit path"))
+              .andThen(
+                  Commands.run(
+                      () -> {
+                        System.out.println("FOLLOW PATH COMMAND IS FINISHED");
+                      }));
+      return followTrajectoryCommand;
+    } catch (Exception e) {
+      System.out.println("AUTO FAILED");
+      return null;
+    }
   }
 }

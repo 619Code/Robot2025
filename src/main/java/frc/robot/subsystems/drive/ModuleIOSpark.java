@@ -356,8 +356,8 @@ public class ModuleIOSpark implements ModuleIO {
     turnController.setSetpoint(setpoint);
   }
 
-  @Override
-  public void setTurnMotorPID(double kp, double kd) {
-    turnController.setPID(kp, 0.0, kd);
-  }
+  //   @Override
+  //   public void setTurnMotorPID(double kp, double kd) {
+  //     turnController.setPID(kp, 0.0, kd);
+  //   }
 }

@@ -82,9 +82,6 @@ public class DriveCommands {
     // kpTurnMotorEntry.set(0.0);
     // kdTurnMotorEntry.set(0.0);
 
-    //  These are the values that we got from advantage scope
-    drive.SetModuleTurnMotorPD(0.4, 0.0);
-
     return Commands.run(
         () -> {
           // drive.SetModuleTurnMotorPD(
