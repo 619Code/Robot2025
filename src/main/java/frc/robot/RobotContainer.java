@@ -13,36 +13,7 @@
 
 package frc.robot;
 
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftDriveAbsoluteEncoderOffsetDeg;
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftDriveAbsoluteEncoderPort;
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftDriveEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftDriveMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftEncoderPositiveDirection;
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftTurnEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftTurnMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightDriveAbsoluteEncoderOffsetDeg;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightDriveAbsoluteEncoderPort;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightDriveEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightDriveMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightEncoderPositiveDirection;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightTurnEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightTurnMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftDriveAbsoluteEncoderOffsetDeg;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftDriveAbsoluteEncoderPort;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftDriveEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftDriveMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftEncoderPositiveDirection;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftTurnEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftTurnMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightDriveAbsoluteEncoderOffsetDeg;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightDriveAbsoluteEncoderPort;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightDriveEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightDriveMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightEncoderPositiveDirection;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightTurnEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightTurnMotorInverted;
-
-import com.pathplanner.lib.auto.AutoBuilder;
+//import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -80,7 +51,7 @@ public class RobotContainer {
   private final Joystick flightStick = new Joystick(0);
 
   // Dashboard inputs
-  private final LoggedDashboardChooser<Command> autoChooser;
+//  private final LoggedDashboardChooser<Command> autoChooser;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -173,23 +144,23 @@ public class RobotContainer {
     }*/
 
     // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+ //   autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up SysId routines
-    autoChooser.addOption(
-        "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-    autoChooser.addOption(
-        "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Forward)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Quasistatic Reverse)",
-        drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-    autoChooser.addOption(
-        "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Forward)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Quasistatic Reverse)",
+    //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+    // autoChooser.addOption(
+    //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -260,7 +231,12 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new LoggedCommand(autoChooser.get());
+
+    return null;
+
+
+
+ //   return new LoggedCommand(autoChooser.get());
 
     // try {
     //   //   Command followTrajectoryCommand =

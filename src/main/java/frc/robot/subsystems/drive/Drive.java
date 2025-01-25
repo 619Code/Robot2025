@@ -16,11 +16,11 @@ package frc.robot.subsystems.drive;
 import static edu.wpi.first.units.Units.*;
 // import static frc.robot.subsystems.drive.DriveConstants.*;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.pathfinding.Pathfinding;
-import com.pathplanner.lib.util.PathPlannerLogging;
+//import com.pathplanner.lib.auto.AutoBuilder;
+//import com.pathplanner.lib.config.PIDConstants;
+//import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+//import com.pathplanner.lib.pathfinding.Pathfinding;
+//import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
@@ -92,20 +92,20 @@ public class Drive extends SubsystemBase {
     SparkOdometryThread.getInstance().start();
 
     // Configure AutoBuilder for PathPlanner
-    AutoBuilder.configure(
-        this::getPose,
-        this::setPose,
-        this::getChassisSpeeds,
-        this::runVelocity,
-        new PPHolonomicDriveController(
-            // new PIDConstants(
-            //     Constants.DriveConstants.driveKp, 0.0, Constants.DriveConstants.driveKd),
-            // new PIDConstants(
-            //     Constants.DriveConstants.turnKp, 0.0, Constants.DriveConstants.turnKd)),
-            new PIDConstants(10, 0.0, 0), new PIDConstants(10, 0.0, 0)),
-        Constants.DriveConstants.ppConfig,
-        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-        this);
+    // AutoBuilder.configure(
+    //     this::getPose,
+    //     this::setPose,
+    //     this::getChassisSpeeds,
+    //     this::runVelocity,
+    //     new PPHolonomicDriveController(
+    //         // new PIDConstants(
+    //         //     Constants.DriveConstants.driveKp, 0.0, Constants.DriveConstants.driveKd),
+    //         // new PIDConstants(
+    //         //     Constants.DriveConstants.turnKp, 0.0, Constants.DriveConstants.turnKd)),
+    //         new PIDConstants(10, 0.0, 0), new PIDConstants(10, 0.0, 0)),
+    //     Constants.DriveConstants.ppConfig,
+    //     () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+    //     this);
 
     //  Testing other configurations
     // AutoBuilder.configure(
@@ -123,23 +123,23 @@ public class Drive extends SubsystemBase {
     //     () -> false, // I believe that false is blue
     //     this);
 
-    Pathfinding.setPathfinder(new LocalADStarAK());
+    // Pathfinding.setPathfinder(new LocalADStarAK());
 
-    PathPlannerLogging.setLogActivePathCallback(
-        (activePath) -> {
-          Logger.recordOutput(
-              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
-        });
+    // PathPlannerLogging.setLogActivePathCallback(
+    //     (activePath) -> {
+    //       Logger.recordOutput(
+    //           "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+    //     });
 
-    PathPlannerLogging.setLogTargetPoseCallback(
-        (targetPose) -> {
-          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
-        });
+    // PathPlannerLogging.setLogTargetPoseCallback(
+    //     (targetPose) -> {
+    //       Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+    //     });
 
-    PathPlannerLogging.setLogCurrentPoseCallback(
-        (pose) -> {
-          Logger.recordOutput("Odometry/TrajectoryCurrentPose", pose);
-        });
+    // PathPlannerLogging.setLogCurrentPoseCallback(
+    //     (pose) -> {
+    //       Logger.recordOutput("Odometry/TrajectoryCurrentPose", pose);
+    //     });
 
     // Configure SysId
     sysId =
