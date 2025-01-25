@@ -19,11 +19,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -32,8 +33,11 @@ import frc.robot.subsystems.drive.Limelight;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
-import frc.robot.util.LoggedCommand;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -53,8 +57,15 @@ public class RobotContainer {
   // Dashboard inputs
 //  private final LoggedDashboardChooser<Command> autoChooser;
 
+    private final SendableChooser<Command> autoChooser;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+    //  I believe this should always be at the top
+    LoadRobotConfig();
+
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -162,9 +173,44 @@ public class RobotContainer {
     // autoChooser.addOption(
     //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+
+    try{
+
+    NamedCommands.registerCommand("Basic ahh path",
+        AutoBuilder.followPath(PathPlannerPath.fromPathFile("Basic path")));
+
+    }catch (Exception e){
+        System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+    }
+
+
+
+    AutoBuilder.buildAutoChooser();
+
+
+
+    autoChooser = AutoBuilder.buildAutoChooser();
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
     // Configure the button bindings
     configureButtonBindings();
   }
+
+private void LoadRobotConfig() {
+    try{
+        Constants.DriveConstants.robotConfig = RobotConfig.fromGUISettings();
+
+        Constants.DriveConstants.maxSpeedMetersPerSec = Constants.DriveConstants.robotConfig.moduleConfig.maxDriveVelocityMPS;
+        Constants.DriveConstants.moduleTranslations = Constants.DriveConstants.robotConfig.moduleLocations;
+
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+
+      System.out.println("ERROR: Couldn't retrieve robot config");
+
+    }
+}
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
@@ -232,7 +278,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
 
-    return null;
+    return autoChooser.getSelected();
 
 
 

@@ -14,7 +14,6 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
-// import static frc.robot.subsystems.drive.DriveConstants.*;
 
 //import com.pathplanner.lib.auto.AutoBuilder;
 //import com.pathplanner.lib.config.PIDConstants;
@@ -38,17 +37,19 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
-import frc.robot.util.LocalADStarAK;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 public class Drive extends SubsystemBase {
   static final Lock odometryLock = new ReentrantLock();
@@ -59,8 +60,7 @@ public class Drive extends SubsystemBase {
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
-  private SwerveDriveKinematics kinematics =
-      new SwerveDriveKinematics(Constants.DriveConstants.moduleTranslations);
+  private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.DriveConstants.moduleTranslations);
   private Rotation2d rawGyroRotation = new Rotation2d();
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
@@ -72,12 +72,14 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
       ModuleIO brModuleIO) {
+
 
     this.gyroIO = gyroIO;
     modules[0] = new Module(flModuleIO, 0);
@@ -122,6 +124,39 @@ public class Drive extends SubsystemBase {
     //     Constants.DriveConstants.ppConfig,
     //     () -> false, // I believe that false is blue
     //     this);
+
+
+
+
+    kinematics = new SwerveDriveKinematics(Constants.DriveConstants.robotConfig.moduleLocations);
+
+
+    AutoBuilder.configure(
+            this::getPose, // Robot pose supplier
+            this::setPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) -> runVelocity(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(3.0, 0.0, 0.0), // Translation PID constants
+                    new PIDConstants(1.0, 0.0, 0.0) // Rotation PID constants
+            ),
+            Constants.DriveConstants.robotConfig, // The robot configuration     // Constants.DriveConstants.ppConfig,
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
+
+
+
 
     // Pathfinding.setPathfinder(new LocalADStarAK());
 
