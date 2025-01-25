@@ -185,8 +185,19 @@ public final class Constants {
 
   public static final class ElevatorConstants{
 
-    public static final double elevatorAbsoluteEncoderOffset = 0.0;
-    public static final SensorDirectionValue elevatorEncoderPositiveDirection = SensorDirectionValue.CounterClockwise_Positive;
+    //  NOTICE: None of these values have been tested. They are all arbitrary
+
+
+    public static final double handoffHeight = 50;
+    public static final double l2Height = 100;
+    public static final double l3Height = 200;
+    public static final double l4Height = 300;
+
+    public static final double elevatorSoftLowerBound = 0;
+    public static final double elevatorSoftUpperBound = 300;
+
+
+    public static final int destinationTolerance = 10;
 
   }
 }
