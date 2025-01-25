@@ -1,142 +1,127 @@
 package frc.robot.subsystems.not_drive;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SoftLimitConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Elevator extends SubsystemBase {
-    
-    //  Current plan is to use the relative encoders
-    
-    private final SparkMax elevatorMotorL;
-    private final SparkMax elevatorMotorR;
 
-    private final RelativeEncoder lEncoder;
+  //  Current plan is to use the relative encoders
 
+  private final SparkMax elevatorMotorL;
+  private final SparkMax elevatorMotorR;
 
-    private final PIDController elevatorPID;
+  private final RelativeEncoder lEncoder;
 
-    private boolean seeking = false;
-    
+  private final PIDController elevatorPID;
 
-    DoubleEntry kpelevatorPIDEntry;
-    DoubleEntry kielevatorPIDEntry;
-    DoubleEntry kdelevatorPIDEntry;
+  private boolean seeking = false;
 
+  DoubleEntry kpelevatorPIDEntry;
+  DoubleEntry kielevatorPIDEntry;
+  DoubleEntry kdelevatorPIDEntry;
 
-    public Elevator(int elevatorMotorID_L, int elevatorMotorID_R){
+  public Elevator(int elevatorMotorID_L, int elevatorMotorID_R) {
 
-        elevatorMotorL = new SparkMax(elevatorMotorID_L, MotorType.kBrushless);
-        elevatorMotorR = new SparkMax(elevatorMotorID_R, MotorType.kBrushless);
+    elevatorMotorL = new SparkMax(elevatorMotorID_L, MotorType.kBrushless);
+    elevatorMotorR = new SparkMax(elevatorMotorID_R, MotorType.kBrushless);
 
-        lEncoder = elevatorMotorL.getEncoder();
+    lEncoder = elevatorMotorL.getEncoder();
 
+    SparkMaxConfig config_L = new SparkMaxConfig();
+    config_L.idleMode(IdleMode.kBrake);
 
+    SoftLimitConfig limitConfig = new SoftLimitConfig();
+    limitConfig.forwardSoftLimit(Constants.ElevatorConstants.elevatorSoftUpperBound);
+    limitConfig.reverseSoftLimit(Constants.ElevatorConstants.elevatorSoftLowerBound);
 
-        SparkMaxConfig config_L = new SparkMaxConfig();
-        config_L.idleMode(IdleMode.kBrake);
+    config_L.softLimit.apply(limitConfig);
 
-        SoftLimitConfig limitConfig = new SoftLimitConfig();
-        limitConfig.forwardSoftLimit(Constants.ElevatorConstants.elevatorSoftUpperBound);
-        limitConfig.reverseSoftLimit(Constants.ElevatorConstants.elevatorSoftLowerBound);
+    SparkMaxConfig config_R = new SparkMaxConfig();
+    config_R.idleMode(IdleMode.kBrake);
+    config_R.follow(elevatorMotorL, true);
 
-        config_L.softLimit.apply(limitConfig);
+    elevatorMotorL.configure(config_L, null, null);
+    elevatorMotorR.configure(config_R, null, null);
 
-        SparkMaxConfig config_R = new SparkMaxConfig();
-        config_R.idleMode(IdleMode.kBrake);
-        config_R.follow(elevatorMotorL, true);
+    //   For tuning
 
-        elevatorMotorL.configure(config_L, null, null);
-        elevatorMotorR.configure(config_R, null, null);
+    kpelevatorPIDEntry =
+        NetworkTableInstance.getDefault().getDoubleTopic("Elevatorkp").getEntry(0.0);
+    kielevatorPIDEntry =
+        NetworkTableInstance.getDefault().getDoubleTopic("Elevatorki").getEntry(0.0);
+    kdelevatorPIDEntry =
+        NetworkTableInstance.getDefault().getDoubleTopic("Elevatorkd").getEntry(0.0);
 
+    kpelevatorPIDEntry.set(0.0);
+    kielevatorPIDEntry.set(0.0);
+    kdelevatorPIDEntry.set(0.0);
 
+    elevatorPID = new PIDController(0.0, 0.0, 0.0);
+  }
 
-        //   For tuning
+  @Override
+  public void periodic() {
 
-        kpelevatorPIDEntry =
-             NetworkTableInstance.getDefault().getDoubleTopic("Elevatorkp").getEntry(0.0);
-        kielevatorPIDEntry =
-            NetworkTableInstance.getDefault().getDoubleTopic("Elevatorki").getEntry(0.0);
-        kdelevatorPIDEntry =
-            NetworkTableInstance.getDefault().getDoubleTopic("Elevatorkd").getEntry(0.0);
+    elevatorPID.setPID(
+        kpelevatorPIDEntry.get(), kielevatorPIDEntry.get(), kdelevatorPIDEntry.get());
 
-        kpelevatorPIDEntry.set(0.0);
-        kielevatorPIDEntry.set(0.0);
-        kdelevatorPIDEntry.set(0.0);
+    if (!seeking) return;
 
-        elevatorPID = new PIDController(0.0, 0.0, 0.0);
-
+    if (shouldStopSeeking()) {
+      stopSeeking();
+      return;
     }
 
-    @Override
-    public void periodic(){
+    double voltage = elevatorPID.calculate(lEncoder.getPosition());
 
-        elevatorPID.setPID(kpelevatorPIDEntry.get(), kielevatorPIDEntry.get(), kdelevatorPIDEntry.get());
+    elevatorMotorL.setVoltage(voltage);
+  }
 
-        if(!seeking) return;
+  private boolean shouldStopSeeking() {
 
-        if(shouldStopSeeking()){
-            stopSeeking();
-            return;
-        }
+    return Math.abs(elevatorPID.getSetpoint() - lEncoder.getPosition())
+        <= Constants.ElevatorConstants.destinationTolerance;
+  }
 
-        double voltage = elevatorPID.calculate(lEncoder.getPosition());
+  private void stopSeeking() {
 
-        elevatorMotorL.setVoltage(voltage);
+    seeking = false;
+    elevatorMotorL.setVoltage(0.0);
+  }
 
-    }
+  private void startSeeking() {
 
-    private boolean shouldStopSeeking(){
+    seeking = true;
+  }
 
-        return Math.abs(elevatorPID.getSetpoint() - lEncoder.getPosition()) <= Constants.ElevatorConstants.destinationTolerance;
+  public void goToHandoffHeight() {
 
-    }
+    elevatorPID.setSetpoint(Constants.ElevatorConstants.handoffHeight);
 
-    private void stopSeeking(){
+    startSeeking();
+  }
 
-        seeking = false;
-        elevatorMotorL.setVoltage(0.0);
+  public void goToL2Height() {
+    elevatorPID.setSetpoint(Constants.ElevatorConstants.l2Height);
+    startSeeking();
+  }
 
-    }
-    private void startSeeking(){
+  public void goToL3Height() {
+    elevatorPID.setSetpoint(Constants.ElevatorConstants.l3Height);
+    startSeeking();
+  }
 
-        seeking = true;
-
-    }
-
-    public void goToHandoffHeight(){
-
-        elevatorPID.setSetpoint(Constants.ElevatorConstants.handoffHeight);
-
-        startSeeking();
-
-    }
-
-    public void goToL2Height(){
-        elevatorPID.setSetpoint(Constants.ElevatorConstants.l2Height);
-        startSeeking();
-    }
-
-    public void goToL3Height(){
-        elevatorPID.setSetpoint(Constants.ElevatorConstants.l3Height);
-        startSeeking();
-    }
-
-    public void goToL4Height(){
-        elevatorPID.setSetpoint(Constants.ElevatorConstants.l4Height);
-        startSeeking();
-    }
+  public void goToL4Height() {
+    elevatorPID.setSetpoint(Constants.ElevatorConstants.l4Height);
+    startSeeking();
+  }
 }
