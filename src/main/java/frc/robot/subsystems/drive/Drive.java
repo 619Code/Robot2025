@@ -125,10 +125,22 @@ public class Drive extends SubsystemBase {
     //     () -> false, // I believe that false is blue
     //     this);
 
+    // RobotConfig john;
+
+    // try{
+    //   john = RobotConfig.fromGUISettings();
+    // } catch (Exception e) {
+    //   // Handle exception as needed
+    //   e.printStackTrace();
+
+    //   john = null;
+
+    //   System.out.println("ERROR: Couldn't retrieve robot config");
+
+    // }
 
 
-
-    kinematics = new SwerveDriveKinematics(Constants.DriveConstants.robotConfig.moduleLocations);
+    kinematics = new SwerveDriveKinematics(Constants.DriveConstants.moduleTranslations); //new SwerveDriveKinematics(Constants.DriveConstants.robotConfig.moduleLocations);
 
 
     AutoBuilder.configure(

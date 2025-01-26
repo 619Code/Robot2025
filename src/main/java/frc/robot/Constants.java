@@ -15,6 +15,7 @@ package frc.robot;
 
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.RobotConfig;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -46,7 +47,7 @@ public final class Constants {
     public static final double odometryFrequency = 100.0; // Hz
 
     //  Should get overwritten in robotcontainer
-    public static double maxSpeedMetersPerSec = 0.0;  //4.0; // was default
+    public static double maxSpeedMetersPerSec = 0.0; //4.0; // was default
      public static final double angularVelocityMultiplier = 0.5;
     public static final double trackWidth = Units.inchesToMeters(21);
     public static final double wheelBase = Units.inchesToMeters(21);
@@ -132,8 +133,8 @@ public final class Constants {
     // Drive PID configuration
     public static final double driveKp = 0.0;
     public static final double driveKd = 0.0;
-    public static final double driveKs = 0.0;
-    public static final double driveKv = 0.1;
+    public static final double driveKs = 0.184445;  //  Got this value from characterization auto routine
+    public static final double driveKv = 0.093025;  //  Got this value from characterization auto routine
     public static final double driveSimP = 8.0;
     public static final double driveSimD = 0.0;
     public static final double driveSimKs = 0.0;
