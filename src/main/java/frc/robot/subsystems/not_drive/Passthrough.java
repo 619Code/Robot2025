@@ -26,5 +26,5 @@ public class Passthrough extends SubsystemBase {
         passthroughMotorL.configure(config_L, null, null);
         passthroughMotorR.configure(config_R, null, null);
     }
-
+    // Need to connect to Intake Start and Outake Sensor.
 }
