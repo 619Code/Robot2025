@@ -206,5 +206,9 @@ public final class Constants {
 
   }
 
+  public static final class PassthroughConstants{
 
+    public static double passthroughMotorVoltage = 6;
+
+  }
 }
