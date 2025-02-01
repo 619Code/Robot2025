@@ -196,4 +196,15 @@ public final class Constants {
 
     public static final int destinationTolerance = 10;
   }
+
+
+  public static final class OuttakeConstants {
+
+    public static final double turnEncoderPositionFactor = 1;
+    public static final double turnEncoderVelocityFactor = 1;
+    public static final int kIntakeSensorPort = -1;
+
+  }
+
+
 }
