@@ -14,6 +14,7 @@
 package frc.robot;
 
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -47,21 +48,21 @@ public final class Constants {
     public static final double odometryFrequency = 100.0; // Hz
 
     //  Should get overwritten in robotcontainer
-    public static double maxSpeedMetersPerSec = 0.0; //4.0; // was default
+    public static double maxSpeedMetersPerSec = 5.450; //4.0; // was default
      public static final double angularVelocityMultiplier = 0.5;
     public static final double trackWidth = Units.inchesToMeters(21);
     public static final double wheelBase = Units.inchesToMeters(21);
     public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
 
 
-    public static Translation2d[] moduleTranslations = null;
-    // public static final Translation2d[] moduleTranslations =
-    //     new Translation2d[] {
-    //       new Translation2d(trackWidth / 2.0, wheelBase / 2.0),
-    //       new Translation2d(trackWidth / 2.0, -wheelBase / 2.0),
-    //       new Translation2d(-trackWidth / 2.0, wheelBase / 2.0),
-    //       new Translation2d(-trackWidth / 2.0, -wheelBase / 2.0)
-    //     };
+   // public static Translation2d[] moduleTranslations = null;
+    public static final Translation2d[] moduleTranslations =
+        new Translation2d[] {
+          new Translation2d(trackWidth / 2.0, wheelBase / 2.0),
+          new Translation2d(trackWidth / 2.0, -wheelBase / 2.0),
+          new Translation2d(-trackWidth / 2.0, wheelBase / 2.0),
+          new Translation2d(-trackWidth / 2.0, -wheelBase / 2.0)
+        };
 
 
     // Zeroed rotation values for each module, see setup instructions
@@ -86,8 +87,8 @@ public final class Constants {
     // Drive motor configuration
     public static final int driveMotorCurrentLimit = 40;
     public static final double wheelRadiusMeters = Units.inchesToMeters(2);
-    public static final double driveMotorReduction = (45.0 * 22.0) / (14.0 * 15.0); // MAXSwerve with 14 pinion teeth and 22 spur teeth
-    public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
+    public static final double driveMotorReduction = 7.3; //(45.0 * 22.0) / (14.0 * 15.0); // MAXSwerve with 14 pinion teeth and 22 spur teeth
+    public static final DCMotor driveGearbox = DCMotor.getNEO(1); // DCMotor.getNeoVortex(1);
 
     //  Individual drive motor inversions
     public static final boolean frontLeftDriveMotorInverted = true;
@@ -128,10 +129,8 @@ public final class Constants {
     public static final double driveEncoderVelocityFactor =
         (2 * Math.PI) / 60.0 / driveMotorReduction; // Rotor RPM -> Wheel Rad/Sec
 
-    //  NOTICE: COME BACK HERE
-
     // Drive PID configuration
-    public static final double driveKp = 0.0;
+    public static final double driveKp = 0.01;
     public static final double driveKd = 0.0;
     public static final double driveKs = 0.184445;  //  Got this value from characterization auto routine
     public static final double driveKv = 0.093025;  //  Got this value from characterization auto routine
@@ -143,8 +142,8 @@ public final class Constants {
     // Turn motor configuration
     //  public static final boolean turnInverted = false;
     public static final int turnMotorCurrentLimit = 20;
-    public static final double turnMotorReduction = 9424.0 / 203.0;
-    public static final DCMotor turnGearbox = DCMotor.getNeo550(1);
+    public static final double turnMotorReduction = 21.0;  //9424.0 / 203.0;
+    public static final DCMotor turnGearbox = DCMotor.getNEO(1); //DCMotor.getNeo550(1);
 
     //  Individual turn motor inversions
     public static final boolean frontLeftTurnMotorInverted = true;
@@ -174,23 +173,23 @@ public final class Constants {
     public static final double turnPIDMaxInput = 2.0 * Math.PI; // Radians
 
 
-    public static RobotConfig robotConfig;
+   // public static RobotConfig robotConfig;
 
-//    public static final double robotMassKg = 74.088;
-//     public static final double robotMOI = 6.883;
-//     public static final double wheelCOF = 1.2;
-//     public static final RobotConfig robotConfig =
-//         new RobotConfig(
-//             robotMassKg,
-//             robotMOI,
-//             new ModuleConfig(
-//                 wheelRadiusMeters,
-//                 maxSpeedMetersPerSec,
-//                 wheelCOF,
-//                 driveGearbox.withReduction(driveMotorReduction),
-//                 driveMotorCurrentLimit,
-//                 1),
-//             moduleTranslations);
+   public static final double robotMassKg = 54.4311;
+    public static final double robotMOI = 6.883;
+    public static final double wheelCOF = 1.2;
+    public static final RobotConfig ppConfig =
+        new RobotConfig(
+            robotMassKg,
+            robotMOI,
+            new ModuleConfig(
+                wheelRadiusMeters,
+                maxSpeedMetersPerSec,
+                wheelCOF,
+                driveGearbox.withReduction(driveMotorReduction),
+                driveMotorCurrentLimit,
+                1),
+            moduleTranslations);
 
   }
 

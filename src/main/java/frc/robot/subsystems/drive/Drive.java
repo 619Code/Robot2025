@@ -42,6 +42,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.util.LocalADStarAK;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -50,6 +52,8 @@ import org.littletonrobotics.junction.Logger;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 public class Drive extends SubsystemBase {
   static final Lock odometryLock = new ReentrantLock();
@@ -61,7 +65,7 @@ public class Drive extends SubsystemBase {
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.DriveConstants.moduleTranslations);
-  private Rotation2d rawGyroRotation = new Rotation2d();
+  private Rotation2d rawGyroRotation = new Rotation2d();  // NOTICE: Try putting PI in this parenthesis to fix the autonomous problem. 
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
         new SwerveModulePosition(),
@@ -143,16 +147,40 @@ public class Drive extends SubsystemBase {
     kinematics = new SwerveDriveKinematics(Constants.DriveConstants.moduleTranslations); //new SwerveDriveKinematics(Constants.DriveConstants.robotConfig.moduleLocations);
 
 
+    // AutoBuilder.configure(
+    //         this::getPose, // Robot pose supplier
+    //         this::setPose, // Method to reset odometry (will be called if your auto has a starting pose)
+    //         this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+    //         (speeds, feedforwards) -> runVelocity(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+    //         new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+    //                 new PIDConstants(2, 0, 0), // Translation PID constants
+    //                 new PIDConstants(0, 0.0, 0.0) // Rotation PID constants
+    //         ),
+    //         Constants.DriveConstants.ppConfig,
+    //         () -> {
+    //           // Boolean supplier that controls when the path will be mirrored for the red alliance
+    //           // This will flip the path being followed to the red side of the field.
+    //           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+    //           var alliance = DriverStation.getAlliance();
+    //           if (alliance.isPresent()) {
+    //             return alliance.get() == DriverStation.Alliance.Red;
+    //           }
+    //           return false;
+    //         },
+    //         this // Reference to this subsystem to set requirements
+    // );
+
     AutoBuilder.configure(
             this::getPose, // Robot pose supplier
             this::setPose, // Method to reset odometry (will be called if your auto has a starting pose)
             this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
             (speeds, feedforwards) -> runVelocity(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
             new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-                    new PIDConstants(3.0, 0.0, 0.0), // Translation PID constants
-                    new PIDConstants(1.0, 0.0, 0.0) // Rotation PID constants
+                    new PIDConstants(2, 0, 0), // Translation PID constants
+                    new PIDConstants(0, 0.0, 0.0) // Rotation PID constants
             ),
-            Constants.DriveConstants.robotConfig, // The robot configuration     // Constants.DriveConstants.ppConfig,
+            Constants.DriveConstants.ppConfig,
             () -> {
               // Boolean supplier that controls when the path will be mirrored for the red alliance
               // This will flip the path being followed to the red side of the field.
@@ -170,23 +198,24 @@ public class Drive extends SubsystemBase {
 
 
 
-    // Pathfinding.setPathfinder(new LocalADStarAK());
+    Pathfinding.setPathfinder(new LocalADStarAK());
 
-    // PathPlannerLogging.setLogActivePathCallback(
-    //     (activePath) -> {
-    //       Logger.recordOutput(
-    //           "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
-    //     });
+    PathPlannerLogging.setLogActivePathCallback(
+        (activePath) -> {
+          Logger.recordOutput(
+              "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
+        });
 
-    // PathPlannerLogging.setLogTargetPoseCallback(
-    //     (targetPose) -> {
-    //       Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
-    //     });
+    PathPlannerLogging.setLogTargetPoseCallback(
+        (targetPose) -> {
+          Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
+        });
 
-    // PathPlannerLogging.setLogCurrentPoseCallback(
-    //     (pose) -> {
-    //       Logger.recordOutput("Odometry/TrajectoryCurrentPose", pose);
-    //     });
+    PathPlannerLogging.setLogCurrentPoseCallback(
+        (pose) -> {
+          Logger.recordOutput("Odometry/TrajectoryCurrentPose", pose);
+        });
+
 
     // Configure SysId
     sysId =

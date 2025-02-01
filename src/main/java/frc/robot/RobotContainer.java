@@ -36,7 +36,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 /**
@@ -61,9 +60,6 @@ public class RobotContainer {
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-
-    //  I believe this should always be at the top
-    LoadRobotConfig();
 
 
     switch (Constants.currentMode) {
@@ -195,22 +191,6 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
   }
-
-private void LoadRobotConfig() {
-    try{
-        Constants.DriveConstants.robotConfig = RobotConfig.fromGUISettings();
-
-        Constants.DriveConstants.maxSpeedMetersPerSec = Constants.DriveConstants.robotConfig.moduleConfig.maxDriveVelocityMPS;
-        Constants.DriveConstants.moduleTranslations = Constants.DriveConstants.robotConfig.moduleLocations;
-
-    } catch (Exception e) {
-      // Handle exception as needed
-      e.printStackTrace();
-
-      System.out.println("ERROR: Couldn't retrieve robot config");
-
-    }
-}
 
   /**
    * Use this method to define your button->command mappings. Buttons can be created by
