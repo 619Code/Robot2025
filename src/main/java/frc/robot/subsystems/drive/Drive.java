@@ -77,8 +77,8 @@ public class Drive extends SubsystemBase {
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
 
-  // private SlewRateLimiter xMovementLimiter = new SlewRateLimiter(0.5);
-  // private SlewRateLimiter yMovementLimiter = new SlewRateLimiter(0.5);
+  // private SlewRateLimiter xMovementLimiter = new SlewRateLimiter(3);
+  // private SlewRateLimiter yMovementLimiter = new SlewRateLimiter(3);
   // private SlewRateLimiter roationLimiter = new SlewRateLimiter(Math.PI / 4.0);
 
 
