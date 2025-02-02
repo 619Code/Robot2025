@@ -210,7 +210,7 @@ public class RobotContainer {
             drive,
             () -> -flightStick.getRawAxis(1),
             () -> -flightStick.getRawAxis(0),
-            () -> flightStick.getRawAxis(2)));
+            () -> -flightStick.getRawAxis(2)));
 
     Trigger gyroResetButton = new JoystickButton(flightStick, 2);
 
