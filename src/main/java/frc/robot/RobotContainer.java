@@ -71,7 +71,6 @@ public class RobotContainer {
                 new ModuleIOSpark(
                     0,
                     Constants.DriveConstants.frontLeftDriveMotorInverted,
-                    Constants.DriveConstants.frontLeftDriveEncoderInverted,
                     Constants.DriveConstants.frontLeftTurnMotorInverted,
                     Constants.DriveConstants.frontLeftTurnEncoderInverted,
                     Constants.DriveConstants.frontLeftDriveAbsoluteEncoderPort,
@@ -80,7 +79,6 @@ public class RobotContainer {
                 new ModuleIOSpark(
                     1,
                     Constants.DriveConstants.frontRightDriveMotorInverted,
-                    Constants.DriveConstants.frontRightDriveEncoderInverted,
                     Constants.DriveConstants.frontRightTurnMotorInverted,
                     Constants.DriveConstants.frontRightTurnEncoderInverted,
                     Constants.DriveConstants.frontRightDriveAbsoluteEncoderPort,
@@ -89,7 +87,6 @@ public class RobotContainer {
                 new ModuleIOSpark(
                     2,
                     Constants.DriveConstants.backLeftDriveMotorInverted,
-                    Constants.DriveConstants.backLeftDriveEncoderInverted,
                     Constants.DriveConstants.backLeftTurnMotorInverted,
                     Constants.DriveConstants.backLeftTurnEncoderInverted,
                     Constants.DriveConstants.backLeftDriveAbsoluteEncoderPort,
@@ -98,7 +95,6 @@ public class RobotContainer {
                 new ModuleIOSpark(
                     3,
                     Constants.DriveConstants.backRightDriveMotorInverted,
-                    Constants.DriveConstants.backRightDriveEncoderInverted,
                     Constants.DriveConstants.backRightTurnMotorInverted,
                     Constants.DriveConstants.backRightTurnEncoderInverted,
                     Constants.DriveConstants.backRightDriveAbsoluteEncoderPort,

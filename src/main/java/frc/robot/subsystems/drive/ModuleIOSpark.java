@@ -77,7 +77,6 @@ public class ModuleIOSpark implements ModuleIO {
   public ModuleIOSpark(
       int module,
       boolean driveMotorInverted,
-      boolean driveEncoderInverted,
       boolean turnMotorInverted,
       boolean turnEncoderInverted,
       int absoluteEncoderCANId,
@@ -192,7 +191,6 @@ public class ModuleIOSpark implements ModuleIO {
         .voltageCompensation(12.0);
     driveConfig
         .encoder
-        //    .inverted(driveEncoderInverted)
         .positionConversionFactor(Constants.DriveConstants.driveEncoderPositionFactor)
         .velocityConversionFactor(Constants.DriveConstants.driveEncoderVelocityFactor)
         .uvwMeasurementPeriod(10)

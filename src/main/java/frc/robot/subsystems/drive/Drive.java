@@ -65,7 +65,7 @@ public class Drive extends SubsystemBase {
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.DriveConstants.moduleTranslations);
-  private Rotation2d rawGyroRotation = new Rotation2d();  // NOTICE: Try putting PI in this parenthesis to fix the autonomous problem. 
+  private Rotation2d rawGyroRotation = new Rotation2d();  // NOTICE: Try putting PI in these parenthesis to fix the autonomous problem.
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
         new SwerveModulePosition(),
@@ -75,6 +75,11 @@ public class Drive extends SubsystemBase {
       };
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
+
+
+  // private SlewRateLimiter xMovementLimiter = new SlewRateLimiter(0.5);
+  // private SlewRateLimiter yMovementLimiter = new SlewRateLimiter(0.5);
+  // private SlewRateLimiter roationLimiter = new SlewRateLimiter(Math.PI / 4.0);
 
 
   public Drive(
@@ -297,6 +302,11 @@ public class Drive extends SubsystemBase {
 
     // Calculate module setpoints
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
+
+    // discreteSpeeds.vxMetersPerSecond = xMovementLimiter.calculate(discreteSpeeds.vxMetersPerSecond);
+    // discreteSpeeds.vyMetersPerSecond = yMovementLimiter.calculate(discreteSpeeds.vyMetersPerSecond);
+    // discreteSpeeds.omegaRadiansPerSecond = roationLimiter.calculate(discreteSpeeds.omegaRadiansPerSecond);
+
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
         setpointStates, Constants.DriveConstants.maxSpeedMetersPerSec);

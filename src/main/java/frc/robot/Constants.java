@@ -91,16 +91,10 @@ public final class Constants {
     public static final DCMotor driveGearbox = DCMotor.getNEO(1); // DCMotor.getNeoVortex(1);
 
     //  Individual drive motor inversions
-    public static final boolean frontLeftDriveMotorInverted = true;
-    public static final boolean frontRightDriveMotorInverted = false;
-    public static final boolean backLeftDriveMotorInverted = true;
-    public static final boolean backRightDriveMotorInverted = false;
-
-    //  Individual drive motor inversions
-    public static final boolean frontLeftDriveEncoderInverted = false;
-    public static final boolean frontRightDriveEncoderInverted = false;
-    public static final boolean backLeftDriveEncoderInverted = false;
-    public static final boolean backRightDriveEncoderInverted = false;
+    public static final boolean frontLeftDriveMotorInverted = false;
+    public static final boolean frontRightDriveMotorInverted = true;
+    public static final boolean backLeftDriveMotorInverted = false;
+    public static final boolean backRightDriveMotorInverted = true;
 
     //  Encoder data
     public static final int frontLeftDriveAbsoluteEncoderPort = 33;
