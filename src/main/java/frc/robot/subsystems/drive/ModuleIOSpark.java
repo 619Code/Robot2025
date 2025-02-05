@@ -186,9 +186,10 @@ public class ModuleIOSpark implements ModuleIO {
     SparkMaxConfig driveConfig = new SparkMaxConfig();
     driveConfig
         .inverted(driveMotorInverted)
-        .idleMode(IdleMode.kCoast)
+        .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(Constants.DriveConstants.driveMotorCurrentLimit)
-        .voltageCompensation(12.0);
+        .voltageCompensation(12.0)
+        .closedLoopRampRate(0.1);
     driveConfig
         .encoder
         .positionConversionFactor(Constants.DriveConstants.driveEncoderPositionFactor)
@@ -220,22 +221,23 @@ public class ModuleIOSpark implements ModuleIO {
     SparkMaxConfig turnConfig = new SparkMaxConfig();
     turnConfig
         .inverted(turnMotorInverted)
-        .idleMode(IdleMode.kCoast) 
+        .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(Constants.DriveConstants.turnMotorCurrentLimit)
-        .voltageCompensation(12.0);
+        .voltageCompensation(12.0)
+        .closedLoopRampRate(0.1);
     turnConfig
         .absoluteEncoder
         .inverted(turnEncoderInverted)
         .positionConversionFactor(Constants.DriveConstants.turnEncoderPositionFactor)
         .velocityConversionFactor(Constants.DriveConstants.turnEncoderVelocityFactor)
         .averageDepth(2);
-    turnConfig
-        .closedLoop
-        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-        .positionWrappingEnabled(true)
-        .positionWrappingInputRange(
-            Constants.DriveConstants.turnPIDMinInput, Constants.DriveConstants.turnPIDMaxInput)
-        .pidf(Constants.DriveConstants.turnKp, 0.0, Constants.DriveConstants.turnKd, 0.0);
+    // turnConfig
+    //     .closedLoop
+    //     .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+    //     .positionWrappingEnabled(true)
+    //     .positionWrappingInputRange(
+    //         Constants.DriveConstants.turnPIDMinInput, Constants.DriveConstants.turnPIDMaxInput)
+    //     .pidf(Constants.DriveConstants.turnKp, 0.0, Constants.DriveConstants.turnKd, 0.0);
     turnConfig
         .signals
         .absoluteEncoderPositionAlwaysOn(true)
