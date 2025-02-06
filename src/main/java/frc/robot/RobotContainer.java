@@ -16,6 +16,7 @@ package frc.robot;
 //import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -36,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 /**
@@ -175,6 +177,29 @@ public class RobotContainer {
         System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
     }
 
+
+    {
+        // Since we are using a holonomic drivetrain, the rotation component of this pose
+        // represents the goal holonomic rotation
+        Pose2d targetPose = new Pose2d(3, 2, Rotation2d.fromDegrees(0));
+
+        // Create the constraints to use while pathfinding
+        PathConstraints constraints = new PathConstraints(
+                1.0, 4.0,
+                Units.degreesToRadians(540), Units.degreesToRadians(720));
+
+        // Since AutoBuilder is configured, we can use it to build pathfinding commands
+        Command pathfindingCommand = AutoBuilder.pathfindToPose(targetPose, constraints, 0.0);
+
+
+        autoChooser.addOption("Pathfinding test",
+        Commands.runOnce(() -> {
+            drive.setPose(new Pose2d(2, 2, new Rotation2d(0)));
+        }, drive).andThen(
+        pathfindingCommand
+        ));
+
+    }
 
 
     AutoBuilder.buildAutoChooser();

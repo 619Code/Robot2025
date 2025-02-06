@@ -77,11 +77,6 @@ public class Drive extends SubsystemBase {
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
 
-  // private SlewRateLimiter xMovementLimiter = new SlewRateLimiter(3);
-  // private SlewRateLimiter yMovementLimiter = new SlewRateLimiter(3);
-  // private SlewRateLimiter roationLimiter = new SlewRateLimiter(Math.PI / 4.0);
-
-
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
@@ -302,11 +297,6 @@ public class Drive extends SubsystemBase {
 
     // Calculate module setpoints
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
-
-    // discreteSpeeds.vxMetersPerSecond = xMovementLimiter.calculate(discreteSpeeds.vxMetersPerSecond);
-    // discreteSpeeds.vyMetersPerSecond = yMovementLimiter.calculate(discreteSpeeds.vyMetersPerSecond);
-    // discreteSpeeds.omegaRadiansPerSecond = roationLimiter.calculate(discreteSpeeds.omegaRadiansPerSecond);
-
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
     SwerveDriveKinematics.desaturateWheelSpeeds(
         setpointStates, Constants.DriveConstants.maxSpeedMetersPerSec);
