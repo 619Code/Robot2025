@@ -197,6 +197,17 @@ public final class Constants {
     public static final int destinationTolerance = 10;
   }
 
+  public static final class IntakeConstants{
+  
+    // NOTICE: None of these value have been tested as well.
+    
+    public static final double extendedPosition = 100.0;
+    public static final double retractedPosition = 0.0;
+    public static final double extensionTolerance = 5.0;
+
+    public static final double intakeSoftLowerBound = 0;
+    public static final double intakeSoftUpperBound = 200;
+  }
 
   public static final class OuttakeConstants {
 
