@@ -39,6 +39,6 @@ public class Passthrough extends SubsystemBase {
     }
 
     public void HaltPassthrough(){
-        passthroughMotorL.setVoltage(0);
+        passthroughMotorL.stopMotor();
     }
 }

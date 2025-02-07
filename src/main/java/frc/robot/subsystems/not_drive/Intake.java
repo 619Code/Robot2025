@@ -88,7 +88,7 @@ public class Intake extends SubsystemBase{
     
     private void stopSeeking(){
         seeking = false;
-        intakeExtensionMotor.setVoltage(0.0);
+        intakeExtensionMotor.stopMotor();
     }
 
     private void startSeeking(){

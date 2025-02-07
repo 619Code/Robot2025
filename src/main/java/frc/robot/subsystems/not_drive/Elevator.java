@@ -96,7 +96,7 @@ public class Elevator extends SubsystemBase {
   private void stopSeeking() {
 
     seeking = false;
-    elevatorMotorL.setVoltage(0.0);
+    elevatorMotorL.stopMotor();
   }
 
   private void startSeeking() {

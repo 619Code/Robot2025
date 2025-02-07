@@ -44,9 +44,9 @@ public class Outtake extends SubsystemBase{
         
     }
 
-    public void setOuttakeVelocity(double speed) {
+    public void setOuttakeVelocity() {
 
-        outMax.set(speed);
+        outMax.set(Constants.OuttakeConstants.outtakeSpeed);
 
     }
 
