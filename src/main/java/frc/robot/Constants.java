@@ -215,6 +215,8 @@ public final class Constants {
     public static final double turnEncoderVelocityFactor = 1;
     public static final int kIntakeSensorPort = -1;
 
+    public static double outtakeSpeed = 0.5;
+
   }
 
   public static final class PassthroughConstants{
