@@ -16,7 +16,6 @@ package frc.robot;
 //import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -25,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.AutoCommands.GoToAprilTagRelative;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -37,7 +37,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 /**
@@ -178,7 +177,8 @@ public class RobotContainer {
     }
 
 
-    {
+    //  The below thing was a test for the pathplanning command
+    /*{
         // Since we are using a holonomic drivetrain, the rotation component of this pose
         // represents the goal holonomic rotation
         Pose2d targetPose = new Pose2d(3, 2, Rotation2d.fromDegrees(0));
@@ -199,7 +199,18 @@ public class RobotContainer {
         pathfindingCommand
         ));
 
-    }
+    }*/
+
+    autoChooser.addOption("Pathfinding with apriltag test",
+        Commands.sequence(
+            Commands.runOnce(() -> {
+                drive.setPose(new Pose2d(1, 1, new Rotation2d(Math.PI)));
+            }, drive),
+            new GoToAprilTagRelative(new Pose2d(0.6, 0.1, new Rotation2d()), drive)
+        )
+    );
+
+
 
 
     AutoBuilder.buildAutoChooser();
@@ -273,6 +284,9 @@ public class RobotContainer {
 
     // Trigger mainTrigger = new JoystickButton(flightStick, 1);
     // mainTrigger.whileTrue(new CenterOnAprilTagCommand(drive, limelight));
+
+    // Trigger mainTrigger = new JoystickButton(flightStick, 1);
+    // mainTrigger.whileTrue(new GoToAprilTagRelative(new Pose2d(1, 0, new Rotation2d()), drive));
   }
 
   /**
