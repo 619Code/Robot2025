@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.AutoCommands.GoToAprilTagRelative;
+import frc.robot.commands.AutoCommands.AutoFactoryGen2;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -33,6 +33,8 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
+import java.util.Set;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -206,11 +208,11 @@ public class RobotContainer {
             Commands.runOnce(() -> {
                 drive.setPose(new Pose2d(1, 1, new Rotation2d(Math.PI)));
             }, drive),
-            new GoToAprilTagRelative(new Pose2d(0.6, 0.1, new Rotation2d()), drive)
+            Commands.defer(() -> {
+                return AutoFactoryGen2.PathfindRelativeToAprilTag(new Pose2d(0.7, 0, new Rotation2d()), drive);
+            }, Set.of(drive))
         )
     );
-
-
 
 
     AutoBuilder.buildAutoChooser();
@@ -284,9 +286,6 @@ public class RobotContainer {
 
     // Trigger mainTrigger = new JoystickButton(flightStick, 1);
     // mainTrigger.whileTrue(new CenterOnAprilTagCommand(drive, limelight));
-
-    // Trigger mainTrigger = new JoystickButton(flightStick, 1);
-    // mainTrigger.whileTrue(new GoToAprilTagRelative(new Pose2d(1, 0, new Rotation2d()), drive));
   }
 
   /**
