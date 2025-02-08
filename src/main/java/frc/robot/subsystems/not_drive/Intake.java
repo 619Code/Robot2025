@@ -12,96 +12,100 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class Intake extends SubsystemBase{
-    
-    private final SparkMax intakeMotor1;
-    private final SparkMax intakeMotor2;
-    private final SparkMax intakeExtensionMotor;
-    
-    private final RelativeEncoder extensionEncoder;
-    
-    private final PIDController extensionPID;
+public class Intake extends SubsystemBase {
 
-    private boolean seeking = false;
+  private final SparkMax intakeMotor1;
+  private final SparkMax intakeMotor2;
+  private final SparkMax intakeExtensionMotor;
 
-    DoubleEntry kpextensionPIDEntry;
-    DoubleEntry kiextensionPIDEntry;
-    DoubleEntry kdextensionPIDEntry;
+  private final RelativeEncoder extensionEncoder;
 
-    public Intake(int intakeMotorID_1, int intakeMotorID_2, int intakeExtensionMotorID){
-        
-        intakeMotor1 = new SparkMax(intakeMotorID_1, MotorType.kBrushless);
-        intakeMotor2 = new SparkMax(intakeMotorID_2, MotorType.kBrushless);
-        intakeExtensionMotor = new SparkMax(intakeExtensionMotorID, MotorType.kBrushless);
-       
-        extensionEncoder = intakeExtensionMotor.getEncoder();
+  private final PIDController extensionPID;
 
-        SparkMaxConfig config_1 = new SparkMaxConfig();
-        config_1.idleMode(IdleMode.kBrake);
+  private boolean seeking = false;
 
-        SparkMaxConfig config_2 = new SparkMaxConfig();
-        config_2.idleMode(IdleMode.kBrake);
-        config_2.follow(intakeMotor1, false);
+  DoubleEntry kpextensionPIDEntry;
+  DoubleEntry kiextensionPIDEntry;
+  DoubleEntry kdextensionPIDEntry;
 
-        SparkMaxConfig config_3 = new SparkMaxConfig();
-        config_3.idleMode(IdleMode.kBrake);
+  public Intake(int intakeMotorID_1, int intakeMotorID_2, int intakeExtensionMotorID) {
 
-        SoftLimitConfig limitConfig = new SoftLimitConfig();
-        limitConfig.forwardSoftLimit(Constants.IntakeConstants.intakeSoftUpperBound);
-        limitConfig.reverseSoftLimit(Constants.IntakeConstants.intakeSoftLowerBound);
+    intakeMotor1 = new SparkMax(intakeMotorID_1, MotorType.kBrushless);
+    intakeMotor2 = new SparkMax(intakeMotorID_2, MotorType.kBrushless);
+    intakeExtensionMotor = new SparkMax(intakeExtensionMotorID, MotorType.kBrushless);
 
-        config_3.softLimit.apply(limitConfig);
+    extensionEncoder = intakeExtensionMotor.getEncoder();
 
-        intakeMotor1.configure(config_1, null, null);
-        intakeMotor2.configure(config_2, null, null);
-        intakeExtensionMotor.configure(config_3, null, null);
+    SparkMaxConfig config_1 = new SparkMaxConfig();
+    config_1.idleMode(IdleMode.kBrake);
 
-        extensionPID = new PIDController(0.0, 0.0, 0.0);
-        
-        kpextensionPIDEntry = NetworkTableInstance.getDefault().getDoubleTopic("IntakeKp").getEntry(0.0);
-        kiextensionPIDEntry = NetworkTableInstance.getDefault().getDoubleTopic("IntakeKi").getEntry(0.0);
-        kdextensionPIDEntry = NetworkTableInstance.getDefault().getDoubleTopic("IntakeKd").getEntry(0.0);
+    SparkMaxConfig config_2 = new SparkMaxConfig();
+    config_2.idleMode(IdleMode.kBrake);
+    config_2.follow(intakeMotor1, false);
+
+    SparkMaxConfig config_3 = new SparkMaxConfig();
+    config_3.idleMode(IdleMode.kBrake);
+
+    SoftLimitConfig limitConfig = new SoftLimitConfig();
+    limitConfig.forwardSoftLimit(Constants.IntakeConstants.intakeSoftUpperBound);
+    limitConfig.reverseSoftLimit(Constants.IntakeConstants.intakeSoftLowerBound);
+
+    config_3.softLimit.apply(limitConfig);
+
+    intakeMotor1.configure(config_1, null, null);
+    intakeMotor2.configure(config_2, null, null);
+    intakeExtensionMotor.configure(config_3, null, null);
+
+    extensionPID = new PIDController(0.0, 0.0, 0.0);
+
+    kpextensionPIDEntry =
+        NetworkTableInstance.getDefault().getDoubleTopic("IntakeKp").getEntry(0.0);
+    kiextensionPIDEntry =
+        NetworkTableInstance.getDefault().getDoubleTopic("IntakeKi").getEntry(0.0);
+    kdextensionPIDEntry =
+        NetworkTableInstance.getDefault().getDoubleTopic("IntakeKd").getEntry(0.0);
+  }
+
+  @Override
+  public void periodic() {
+
+    extensionPID.setP(kpextensionPIDEntry.get());
+    extensionPID.setI(kiextensionPIDEntry.get());
+    extensionPID.setD(kdextensionPIDEntry.get());
+
+    if (!seeking) return;
+
+    if (shouldStopSeeking()) {
+      stopSeeking();
+      return;
     }
-    @Override
-    public void periodic(){
-        
-        extensionPID.setP(kpextensionPIDEntry.get());
-        extensionPID.setI(kiextensionPIDEntry.get());
-        extensionPID.setD(kdextensionPIDEntry.get());
+    double voltage = extensionPID.calculate(extensionEncoder.getPosition());
+    voltage = Math.min(Math.max(voltage, -12.0), 12.0);
 
-        if (!seeking) return;
+    intakeExtensionMotor.setVoltage(voltage);
+  }
 
-        if (shouldStopSeeking()){
-            stopSeeking();
-            return;
-        }
-        double voltage = extensionPID.calculate(extensionEncoder.getPosition());
-        voltage = Math.min(Math.max(voltage, -12.0), 12.0);
+  private boolean shouldStopSeeking() {
+    return Math.abs(extensionPID.getSetpoint() - extensionEncoder.getPosition())
+        <= Constants.IntakeConstants.extensionTolerance;
+  }
 
-        intakeExtensionMotor.setVoltage(voltage);
-    }
-    
-    private boolean shouldStopSeeking(){
-        return Math.abs(extensionPID.getSetpoint() - extensionEncoder.getPosition())
-            <= Constants.IntakeConstants.extensionTolerance;
-    }
-    
-    private void stopSeeking(){
-        seeking = false;
-        intakeExtensionMotor.stopMotor();
-    }
+  private void stopSeeking() {
+    seeking = false;
+    intakeExtensionMotor.stopMotor();
+  }
 
-    private void startSeeking(){
-        seeking = true;
-    }
+  private void startSeeking() {
+    seeking = true;
+  }
 
-    public void goToExtendedPosition(){
-        extensionPID.setSetpoint(Constants.IntakeConstants.extendedPosition);
-        startSeeking();
-    }
+  public void goToExtendedPosition() {
+    extensionPID.setSetpoint(Constants.IntakeConstants.extendedPosition);
+    startSeeking();
+  }
 
-    public void goToRetractedPosition() {
-        extensionPID.setSetpoint(Constants.IntakeConstants.retractedPosition);
-        startSeeking();
-    }
+  public void goToRetractedPosition() {
+    extensionPID.setSetpoint(Constants.IntakeConstants.retractedPosition);
+    startSeeking();
+  }
 }

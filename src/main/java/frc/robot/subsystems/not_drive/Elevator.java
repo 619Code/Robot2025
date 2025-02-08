@@ -82,7 +82,7 @@ public class Elevator extends SubsystemBase {
     }
 
     double voltage = elevatorPID.calculate(lEncoder.getPosition());
-    voltage = Math.min(Math.max(voltage, -12.0), 12.0);  //  Clamp between -12 and 12
+    voltage = Math.min(Math.max(voltage, -12.0), 12.0); //  Clamp between -12 and 12
 
     elevatorMotorL.setVoltage(voltage);
   }

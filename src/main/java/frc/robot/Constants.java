@@ -197,10 +197,10 @@ public final class Constants {
     public static final int destinationTolerance = 10;
   }
 
-  public static final class IntakeConstants{
-  
+  public static final class IntakeConstants {
+
     // NOTICE: None of these value have been tested as well.
-    
+
     public static final double extendedPosition = 100.0;
     public static final double retractedPosition = 0.0;
     public static final double extensionTolerance = 5.0;
@@ -216,12 +216,15 @@ public final class Constants {
     public static final int kIntakeSensorPort = -1;
 
     public static double outtakeSpeed = 0.5;
-
   }
 
-  public static final class PassthroughConstants{
+  public static final class LEDConstants {
+    public static final int CANdleID = 40;
+    public static final int ledCount = 200;
+  }
+
+  public static final class PassthroughConstants {
 
     public static double passthroughMotorVoltage = 6;
-
   }
 }

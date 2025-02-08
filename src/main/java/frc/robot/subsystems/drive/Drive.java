@@ -101,7 +101,7 @@ public class Drive extends SubsystemBase {
         Constants.DriveConstants.ppConfig,
         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
         this);
-    
+
     //  The documentation says that the following line should be in Robot.java
     //  I am going to leave it here for now
     Pathfinding.setPathfinder(new LocalADStarAK());
