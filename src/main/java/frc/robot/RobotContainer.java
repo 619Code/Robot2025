@@ -13,46 +13,18 @@
 
 package frc.robot;
 
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftDriveAbsoluteEncoderOffsetDeg;
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftDriveAbsoluteEncoderPort;
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftDriveEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftDriveMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftEncoderPositiveDirection;
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftTurnEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backLeftTurnMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightDriveAbsoluteEncoderOffsetDeg;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightDriveAbsoluteEncoderPort;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightDriveEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightDriveMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightEncoderPositiveDirection;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightTurnEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.backRightTurnMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftDriveAbsoluteEncoderOffsetDeg;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftDriveAbsoluteEncoderPort;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftDriveEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftDriveMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftEncoderPositiveDirection;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftTurnEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontLeftTurnMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightDriveAbsoluteEncoderOffsetDeg;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightDriveAbsoluteEncoderPort;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightDriveEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightDriveMotorInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightEncoderPositiveDirection;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightTurnEncoderInverted;
-// import static frc.robot.subsystems.drive.DriveConstants.frontRightTurnMotorInverted;
-
-import com.pathplanner.lib.auto.AutoBuilder;
+//import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.commands.AutoCommands.CenterOnAprilTagCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.AutoCommands.AutoFactoryGen2;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIONavX;
@@ -60,7 +32,14 @@ import frc.robot.subsystems.drive.Limelight;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
+import java.util.Set;
+
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -74,13 +53,18 @@ public class RobotContainer {
   private final Limelight limelight = new Limelight();
 
   // Controller
-  private final CommandXboxController controller = new CommandXboxController(0);
+  //  private final CommandXboxController controller = new CommandXboxController(0);
+  private final Joystick flightStick = new Joystick(0);
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
+ //   private final SendableChooser<Command> autoChooser;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
+
+
     switch (Constants.currentMode) {
       case REAL:
         // Real robot, instantiate hardware IO implementations
@@ -90,7 +74,6 @@ public class RobotContainer {
                 new ModuleIOSpark(
                     0,
                     Constants.DriveConstants.frontLeftDriveMotorInverted,
-                    Constants.DriveConstants.frontLeftDriveEncoderInverted,
                     Constants.DriveConstants.frontLeftTurnMotorInverted,
                     Constants.DriveConstants.frontLeftTurnEncoderInverted,
                     Constants.DriveConstants.frontLeftDriveAbsoluteEncoderPort,
@@ -99,7 +82,6 @@ public class RobotContainer {
                 new ModuleIOSpark(
                     1,
                     Constants.DriveConstants.frontRightDriveMotorInverted,
-                    Constants.DriveConstants.frontRightDriveEncoderInverted,
                     Constants.DriveConstants.frontRightTurnMotorInverted,
                     Constants.DriveConstants.frontRightTurnEncoderInverted,
                     Constants.DriveConstants.frontRightDriveAbsoluteEncoderPort,
@@ -108,7 +90,6 @@ public class RobotContainer {
                 new ModuleIOSpark(
                     2,
                     Constants.DriveConstants.backLeftDriveMotorInverted,
-                    Constants.DriveConstants.backLeftDriveEncoderInverted,
                     Constants.DriveConstants.backLeftTurnMotorInverted,
                     Constants.DriveConstants.backLeftTurnEncoderInverted,
                     Constants.DriveConstants.backLeftDriveAbsoluteEncoderPort,
@@ -117,7 +98,6 @@ public class RobotContainer {
                 new ModuleIOSpark(
                     3,
                     Constants.DriveConstants.backRightDriveMotorInverted,
-                    Constants.DriveConstants.backRightDriveEncoderInverted,
                     Constants.DriveConstants.backRightTurnMotorInverted,
                     Constants.DriveConstants.backRightTurnEncoderInverted,
                     Constants.DriveConstants.backRightDriveAbsoluteEncoderPort,
@@ -148,10 +128,31 @@ public class RobotContainer {
         break;
     }
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+    //  Publishing the never-flipped path (always relative to blue side)
+    /* {
+        try {
+        List<Pose2d> examplePath = PathPlannerPath.fromPathFile("Lit path").getPathPoses();
 
-    // Set up SysId routines
+        Pose2d[] posePath = new Pose2d[examplePath.size()];
+
+        examplePath.toArray(posePath);
+
+        StructArrayPublisher<Pose2d> pub =
+            NetworkTableInstance.getDefault()
+                .getStructArrayTopic("Lit path trajectory", Pose2d.struct)
+                .publish();
+
+        pub.set(posePath);
+
+        } catch (Exception e) {
+        System.out.println("Cry");
+        }
+    }*/
+
+    // Set up auto routines
+   autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
+    //Set up SysId routines
     autoChooser.addOption(
         "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
     autoChooser.addOption(
@@ -167,6 +168,60 @@ public class RobotContainer {
     autoChooser.addOption(
         "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
+
+    try{
+
+    autoChooser.addOption("Basic ahh path",
+        AutoBuilder.followPath(PathPlannerPath.fromPathFile("Basic path")));
+
+    }catch (Exception e){
+        System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+    }
+
+
+    //  The below thing was a test for the pathplanning command
+    /*{
+        // Since we are using a holonomic drivetrain, the rotation component of this pose
+        // represents the goal holonomic rotation
+        Pose2d targetPose = new Pose2d(3, 2, Rotation2d.fromDegrees(0));
+
+        // Create the constraints to use while pathfinding
+        PathConstraints constraints = new PathConstraints(
+                1.0, 4.0,
+                Units.degreesToRadians(540), Units.degreesToRadians(720));
+
+        // Since AutoBuilder is configured, we can use it to build pathfinding commands
+        Command pathfindingCommand = AutoBuilder.pathfindToPose(targetPose, constraints, 0.0);
+
+
+        autoChooser.addOption("Pathfinding test",
+        Commands.runOnce(() -> {
+            drive.setPose(new Pose2d(2, 2, new Rotation2d(0)));
+        }, drive).andThen(
+        pathfindingCommand
+        ));
+
+    }*/
+
+    autoChooser.addOption("Pathfinding with apriltag test",
+        Commands.sequence(
+            Commands.runOnce(() -> {
+                drive.setPose(new Pose2d(1, 1, new Rotation2d(Math.PI)));
+            }, drive),
+            Commands.defer(() -> {
+                return AutoFactoryGen2.PathfindRelativeToAprilTag(new Pose2d(0.7, 0, new Rotation2d()), drive);
+            }, Set.of(drive))
+        )
+    );
+
+
+    AutoBuilder.buildAutoChooser();
+
+
+
+    // autoChooser = AutoBuilder.buildAutoChooser();
+    // SmartDashboard.putData("Auto Chooser", autoChooser);
+
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -179,38 +234,58 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     // Default command, normal field-relative drive
+    // drive.setDefaultCommand(
+    //     DriveCommands.joystickDrive(
+    //         drive,
+    //         () -> -controller.getLeftY(),
+    //         () -> -controller.getLeftX(),
+    //         () -> -controller.getRightX()));
+
+    //  Flight stick driving
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive,
-            () -> -controller.getLeftY(),
-            () -> -controller.getLeftX(),
-            () -> -controller.getRightX()));
+            () -> -flightStick.getRawAxis(1),
+            () -> -flightStick.getRawAxis(0),
+            () -> -flightStick.getRawAxis(2)));
+
+    Trigger gyroResetButton = new JoystickButton(flightStick, 2);
+
+    gyroResetButton.onTrue(
+        Commands.runOnce(
+                () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                drive)
+            .ignoringDisable(true));
 
     // Lock to 0° when A button is held
-    controller
-        .a()
-        .whileTrue(
-            DriveCommands.joystickDriveAtAngle(
-                drive,
-                () -> -controller.getLeftY(),
-                () -> -controller.getLeftX(),
-                () -> new Rotation2d()));
+    // controller
+    //     .a()
+    //     .whileTrue(
+    //         DriveCommands.joystickDriveAtAngle(
+    //             drive,
+    //             () -> -controller.getLeftY(),
+    //             () -> -controller.getLeftX(),
+    //             () -> new Rotation2d()));
 
     // Switch to X pattern when X button is pressed
-    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+    // controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
     // Reset gyro to 0° when B button is pressed
-    controller
-        .b()
-        .onTrue(
-            Commands.runOnce(
-                    () ->
-                        drive.setPose(
-                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
-                    drive)
-                .ignoringDisable(true));
+    // controller
+    //     .b()
+    //     .onTrue(
+    //         Commands.runOnce(
+    //                 () ->
+    //                     drive.setPose(
+    //                         new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+    //                 drive)
+    //             .ignoringDisable(true));
 
-    controller.y().whileTrue((new CenterOnAprilTagCommand(drive, limelight)));
+    // controller.y().whileTrue((new CenterOnAprilTagCommand(drive, limelight)));
+
+    // Trigger mainTrigger = new JoystickButton(flightStick, 1);
+    // mainTrigger.whileTrue(new CenterOnAprilTagCommand(drive, limelight));
   }
 
   /**
@@ -219,6 +294,29 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+
+ //   return autoChooser.getSelected();
+
+
+
     return autoChooser.get();
+
+    // try {
+    //   //   Command followTrajectoryCommand =
+    //   //       AutoBuilder.followPath(PathPlannerPath.fromPathFile("Lit path"))
+    //   //           .andThen(
+    //   //               Commands.run(
+    //   //                   () -> {
+    //   //                     System.out.println("FOLLOW PATH COMMAND IS FINISHED");
+    //   //                   }));
+
+    //   Command followTrajectoryCommand =
+    //       AutoBuilder.followPath(PathPlannerPath.fromPathFile("Lit path"));
+
+    //   return new LoggedCommand(followTrajectoryCommand);
+    // } catch (Exception e) {
+    //   System.out.println("AUTO FAILED");
+    //   return null;
+    // }
   }
 }

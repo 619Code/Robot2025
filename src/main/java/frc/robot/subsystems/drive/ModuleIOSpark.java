@@ -77,7 +77,6 @@ public class ModuleIOSpark implements ModuleIO {
   public ModuleIOSpark(
       int module,
       boolean driveMotorInverted,
-      boolean driveEncoderInverted,
       boolean turnMotorInverted,
       boolean turnEncoderInverted,
       int absoluteEncoderCANId,
@@ -189,10 +188,10 @@ public class ModuleIOSpark implements ModuleIO {
         .inverted(driveMotorInverted)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(Constants.DriveConstants.driveMotorCurrentLimit)
-        .voltageCompensation(12.0);
+        .voltageCompensation(12.0)
+        .closedLoopRampRate(0.1);
     driveConfig
         .encoder
-        //    .inverted(driveEncoderInverted)
         .positionConversionFactor(Constants.DriveConstants.driveEncoderPositionFactor)
         .velocityConversionFactor(Constants.DriveConstants.driveEncoderVelocityFactor)
         .uvwMeasurementPeriod(10)
@@ -224,20 +223,21 @@ public class ModuleIOSpark implements ModuleIO {
         .inverted(turnMotorInverted)
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(Constants.DriveConstants.turnMotorCurrentLimit)
-        .voltageCompensation(12.0);
+        .voltageCompensation(12.0)
+        .closedLoopRampRate(0.1);
     turnConfig
         .absoluteEncoder
         .inverted(turnEncoderInverted)
         .positionConversionFactor(Constants.DriveConstants.turnEncoderPositionFactor)
         .velocityConversionFactor(Constants.DriveConstants.turnEncoderVelocityFactor)
         .averageDepth(2);
-    turnConfig
-        .closedLoop
-        .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
-        .positionWrappingEnabled(true)
-        .positionWrappingInputRange(
-            Constants.DriveConstants.turnPIDMinInput, Constants.DriveConstants.turnPIDMaxInput)
-        .pidf(Constants.DriveConstants.turnKp, 0.0, Constants.DriveConstants.turnKd, 0.0);
+    // turnConfig
+    //     .closedLoop
+    //     .feedbackSensor(FeedbackSensor.kAbsoluteEncoder)
+    //     .positionWrappingEnabled(true)
+    //     .positionWrappingInputRange(
+    //         Constants.DriveConstants.turnPIDMinInput, Constants.DriveConstants.turnPIDMaxInput)
+    //     .pidf(Constants.DriveConstants.turnKp, 0.0, Constants.DriveConstants.turnKd, 0.0);
     turnConfig
         .signals
         .absoluteEncoderPositionAlwaysOn(true)
@@ -356,8 +356,8 @@ public class ModuleIOSpark implements ModuleIO {
     turnController.setSetpoint(setpoint);
   }
 
-  @Override
-  public void setTurnMotorPID(double kp, double kd) {
-    turnController.setPID(kp, 0.0, kd);
-  }
+  //   @Override
+  //   public void setTurnMotorPID(double kp, double kd) {
+  //     turnController.setPID(kp, 0.0, kd);
+  //   }
 }

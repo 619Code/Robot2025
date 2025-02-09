@@ -131,7 +131,7 @@ public class Module {
     return inputs.driveVelocityRadPerSec;
   }
 
-  public void setTurnMotorPID(double kp, double kd) {
-    io.setTurnMotorPID(kp, kd);
-  }
+  // public void setTurnMotorPID(double kp, double kd) {
+  //   io.setTurnMotorPID(kp, kd);
+  // }
 }

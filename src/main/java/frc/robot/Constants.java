@@ -43,11 +43,18 @@ public final class Constants {
   }
 
   public static final class DriveConstants {
-    public static final double maxSpeedMetersPerSec = 2.25; // 4.5; //  4.8 was default
+
     public static final double odometryFrequency = 100.0; // Hz
+
+    //  Should get overwritten in robotcontainer
+    public static double maxSpeedMetersPerSec = 5.450; //4.0; // was default
+     public static final double angularVelocityMultiplier = 0.5;
     public static final double trackWidth = Units.inchesToMeters(21);
     public static final double wheelBase = Units.inchesToMeters(21);
     public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
+
+
+   // public static Translation2d[] moduleTranslations = null;
     public static final Translation2d[] moduleTranslations =
         new Translation2d[] {
           new Translation2d(trackWidth / 2.0, wheelBase / 2.0),
@@ -55,6 +62,7 @@ public final class Constants {
           new Translation2d(-trackWidth / 2.0, wheelBase / 2.0),
           new Translation2d(-trackWidth / 2.0, -wheelBase / 2.0)
         };
+
 
     // Zeroed rotation values for each module, see setup instructions
     public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0);
@@ -76,23 +84,16 @@ public final class Constants {
     public static final int backRightTurnCanId = 49;
 
     // Drive motor configuration
-    public static final int driveMotorCurrentLimit = 50;
+    public static final int driveMotorCurrentLimit = 40;
     public static final double wheelRadiusMeters = Units.inchesToMeters(2);
-    public static final double driveMotorReduction =
-        (45.0 * 22.0) / (14.0 * 15.0); // MAXSwerve with 14 pinion teeth and 22 spur teeth
-    public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
+    public static final double driveMotorReduction = 7.3; //(45.0 * 22.0) / (14.0 * 15.0); // MAXSwerve with 14 pinion teeth and 22 spur teeth
+    public static final DCMotor driveGearbox = DCMotor.getNEO(1); // DCMotor.getNeoVortex(1);
 
     //  Individual drive motor inversions
-    public static final boolean frontLeftDriveMotorInverted = true;
-    public static final boolean frontRightDriveMotorInverted = false;
-    public static final boolean backLeftDriveMotorInverted = true;
-    public static final boolean backRightDriveMotorInverted = false;
-
-    //  Individual drive motor inversions
-    public static final boolean frontLeftDriveEncoderInverted = false;
-    public static final boolean frontRightDriveEncoderInverted = false;
-    public static final boolean backLeftDriveEncoderInverted = false;
-    public static final boolean backRightDriveEncoderInverted = false;
+    public static final boolean frontLeftDriveMotorInverted = false;
+    public static final boolean frontRightDriveMotorInverted = true;
+    public static final boolean backLeftDriveMotorInverted = false;
+    public static final boolean backRightDriveMotorInverted = true;
 
     //  Encoder data
     public static final int frontLeftDriveAbsoluteEncoderPort = 33;
@@ -122,11 +123,11 @@ public final class Constants {
         (2 * Math.PI) / 60.0 / driveMotorReduction; // Rotor RPM -> Wheel Rad/Sec
 
     // Drive PID configuration
-    public static final double driveKp = 0.0;
+    public static final double driveKp = 0.01;
     public static final double driveKd = 0.0;
-    public static final double driveKs = 0.0;
-    public static final double driveKv = 0.1;
-    public static final double driveSimP = 0.05;
+    public static final double driveKs = 0.184445;  //  Got this value from characterization auto routine
+    public static final double driveKv = 0.093025;  //  Got this value from characterization auto routine
+    public static final double driveSimP = 8.0;
     public static final double driveSimD = 0.0;
     public static final double driveSimKs = 0.0;
     public static final double driveSimKv = 0.0789;
@@ -134,8 +135,8 @@ public final class Constants {
     // Turn motor configuration
     //  public static final boolean turnInverted = false;
     public static final int turnMotorCurrentLimit = 20;
-    public static final double turnMotorReduction = 9424.0 / 203.0;
-    public static final DCMotor turnGearbox = DCMotor.getNeo550(1);
+    public static final double turnMotorReduction = 21.0;  //9424.0 / 203.0;
+    public static final DCMotor turnGearbox = DCMotor.getNEO(1); //DCMotor.getNeo550(1);
 
     //  Individual turn motor inversions
     public static final boolean frontLeftTurnMotorInverted = true;
@@ -157,15 +158,17 @@ public final class Constants {
     //  Networktables stuff for tuning pid
 
     // Turn PID configuration
-    public static final double turnKp = 0.05; // COME BACK HERE
+    public static final double turnKp = 0.4;
     public static final double turnKd = 0.0;
     public static final double turnSimP = 8.0;
     public static final double turnSimD = 0.0;
     public static final double turnPIDMinInput = 0; // Radians
     public static final double turnPIDMaxInput = 2.0 * Math.PI; // Radians
 
-    // PathPlanner configuration
-    public static final double robotMassKg = 74.088;
+
+   // public static RobotConfig robotConfig;
+
+   public static final double robotMassKg = 54.4311;
     public static final double robotMOI = 6.883;
     public static final double wheelCOF = 1.2;
     public static final RobotConfig ppConfig =
@@ -180,12 +183,16 @@ public final class Constants {
                 driveMotorCurrentLimit,
                 1),
             moduleTranslations);
+
   }
 
-  public static final class ElevatorConstants {
 
     //  NOTICE: None of these values have been tested. They are all arbitrary
+  public static final class ElevatorConstants {
 
+    public static final double elevatorAbsoluteEncoderOffset = 0.0;
+    public static final SensorDirectionValue elevatorEncoderPositiveDirection =
+        SensorDirectionValue.CounterClockwise_Positive;
     public static final double handoffHeight = 50;
     public static final double l2Height = 100;
     public static final double l3Height = 200;

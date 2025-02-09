@@ -126,8 +126,8 @@ public class ModuleIOSim implements ModuleIO {
     turnController.setSetpoint(rotation.getRadians());
   }
 
-  @Override
-  public void setTurnMotorPID(double kp, double kd) {
-    // Nothing
-  }
+  // @Override
+  // public void setTurnMotorPID(double kp, double kd) {
+  //   // Nothing
+  // }
 }
