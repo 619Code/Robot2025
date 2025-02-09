@@ -13,9 +13,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
 //import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -32,6 +35,10 @@ import frc.robot.subsystems.drive.Limelight;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.util.FieldCoordinatePose2d;
+import frc.robot.util.RelativeCoordinatePose2d;
+import frc.robot.util.AprilTagStuff.AprilTagDataLoader;
+import frc.robot.util.AprilTagStuff.FieldAprilTag;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import java.util.Set;
@@ -221,6 +228,12 @@ public class RobotContainer {
 
     // autoChooser = AutoBuilder.buildAutoChooser();
     // SmartDashboard.putData("Auto Chooser", autoChooser);
+
+
+
+    //  FIND A BETTER WAY OF DOING THIS
+    //  Try AprilTagFieldLayout
+    AprilTagDataLoader.LoadAprilTagDataFromJSON();
 
     // Configure the button bindings
     configureButtonBindings();
