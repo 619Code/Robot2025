@@ -32,6 +32,7 @@ import frc.robot.subsystems.drive.Limelight;
 import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSpark;
+import frc.robot.subsystems.not_drive.Intake;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import java.util.Set;
@@ -51,7 +52,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Limelight limelight = new Limelight();
-
+  private final Intake intake = new Intake(100, 101, 102);
   // Controller
   //  private final CommandXboxController controller = new CommandXboxController(0);
   private final Joystick flightStick = new Joystick(0);
@@ -284,8 +285,9 @@ public class RobotContainer {
 
     // controller.y().whileTrue((new CenterOnAprilTagCommand(drive, limelight)));
 
-    // Trigger mainTrigger = new JoystickButton(flightStick, 1);
-    // mainTrigger.whileTrue(new CenterOnAprilTagCommand(drive, limelight));
+    Trigger mainTrigger = new JoystickButton(flightStick, 1);
+    mainTrigger.whileTrue(Commands.runOnce(() -> {intake.goToExtendedPosition();}, intake));
+    mainTrigger.whileFalse(Commands.runOnce(() -> {intake.goToRetractedPosition();}, intake));
   }
 
   /**
