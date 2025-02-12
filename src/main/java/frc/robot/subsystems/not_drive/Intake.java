@@ -1,26 +1,16 @@
 package frc.robot.subsystems.not_drive;
 
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SoftLimitConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Robot;
 
 public class Intake extends SubsystemBase {
 
-  private final SparkMax intakeMotor1;
-  private final SparkMax intakeMotor2;
-
-  private final PIDController extensionPID;
-
+  private final ProfiledPIDController extensionPID;
   private boolean seeking = false;
 
   private IntakeIO intakeIO;
@@ -28,14 +18,17 @@ public class Intake extends SubsystemBase {
   DoubleEntry kpextensionPIDEntry;
   DoubleEntry kiextensionPIDEntry;
   DoubleEntry kdextensionPIDEntry;
-  DoublePublisher intakeExtensionSetpoint;
+  DoubleEntry intakeExtensionTargetInDegreesEntry;
+
+  //DoublePublisher intakeExtensionTargetInDegrees;
   DoublePublisher intakeExtensionMeasured;
   DoublePublisher intakeExtensionVoltage;
 
-  new TrapezoidProfile.State(5, 0);
-  new TrapezoidProfile.Constraints(10, 20);
+  DoubleEntry maxVelocityContraint;
+  DoubleEntry maxAccConstraint;
 
-  public Intake(int intakeMotorID_1, int intakeMotorID_2, int intakeExtensionMotorID) {
+
+  public Intake(int intakeExtensionMotorID) {
     if(Robot.isReal()){
       intakeIO = new intakeIOReal(intakeExtensionMotorID);
     }
@@ -43,29 +36,8 @@ public class Intake extends SubsystemBase {
       intakeIO = new intakeIOSim();
     }
 
-    intakeMotor1 = new SparkMax(intakeMotorID_1, MotorType.kBrushless);
-    intakeMotor2 = new SparkMax(intakeMotorID_2, MotorType.kBrushless);
-
-    SparkMaxConfig config_1 = new SparkMaxConfig();
-    config_1.idleMode(IdleMode.kBrake);
-
-    SparkMaxConfig config_2 = new SparkMaxConfig();
-    config_2.idleMode(IdleMode.kBrake);
-    config_2.follow(intakeMotor1, false);
-
-    SparkMaxConfig config_3 = new SparkMaxConfig();
-    config_3.idleMode(IdleMode.kBrake);
-
-    SoftLimitConfig limitConfig = new SoftLimitConfig();
-    limitConfig.forwardSoftLimit(Constants.IntakeConstants.intakeSoftUpperBound);
-    limitConfig.reverseSoftLimit(Constants.IntakeConstants.intakeSoftLowerBound);
-
-    config_3.softLimit.apply(limitConfig);
-
-    intakeMotor1.configure(config_1, null, null);
-    intakeMotor2.configure(config_2, null, null);
-
-    extensionPID = new PIDController(0.0, 0.0, 0.0);
+    //extensionPID = new PIDController(0.0, 0.0, 0.0);
+    //extensionPID = new ProfiledPIDController(kpextensionPIDEntry.get(), kiextensionPIDEntry.get(), kdextensionPIDEntry.get(), new TrapezoidProfile.Constraints(2,1));
 
     kpextensionPIDEntry =
         NetworkTableInstance.getDefault().getDoubleTopic("IntakeKp").getEntry(0.0);
@@ -73,12 +45,22 @@ public class Intake extends SubsystemBase {
         NetworkTableInstance.getDefault().getDoubleTopic("IntakeKi").getEntry(0.0);
     kdextensionPIDEntry =
         NetworkTableInstance.getDefault().getDoubleTopic("IntakeKd").getEntry(0.0);
-    intakeExtensionSetpoint = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionSetpoint").publish();
+
+    intakeExtensionTargetInDegreesEntry = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionTargetInDegrees").getEntry(0);
+    maxVelocityContraint = NetworkTableInstance.getDefault().getDoubleTopic("maxVelocityContraint").getEntry(2);
+    maxAccConstraint = NetworkTableInstance.getDefault().getDoubleTopic("maxAccContraint").getEntry(1);
+
     intakeExtensionMeasured = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionMeasured").publish();
     intakeExtensionVoltage = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionVoltage").publish();
     kpextensionPIDEntry.set(0);
     kiextensionPIDEntry.set(0);
     kdextensionPIDEntry.set(0);
+    intakeExtensionTargetInDegreesEntry.set(0);
+    maxVelocityContraint.set(2);
+    maxAccConstraint.set(1);
+
+    extensionPID = new ProfiledPIDController(kpextensionPIDEntry.get(), kiextensionPIDEntry.get(), kdextensionPIDEntry.get(), new TrapezoidProfile.Constraints(2,1));
+
   }
 
   @Override
@@ -87,46 +69,54 @@ public class Intake extends SubsystemBase {
     extensionPID.setP(kpextensionPIDEntry.get());
     extensionPID.setI(kiextensionPIDEntry.get());
     extensionPID.setD(kdextensionPIDEntry.get());
+    extensionPID.setConstraints(new TrapezoidProfile.Constraints(maxVelocityContraint.get(), maxAccConstraint.get()));
 
-    if (!seeking) return;
+    // if (!seeking) return;
 
-    double voltage = extensionPID.calculate(intakeIO.getPosition());
-    voltage = Math.min(Math.max(voltage, -12.0), 12.0);
+    // double voltage = extensionPID.calculate(intakeIO.getPosition());
+    // voltage = Math.min(Math.max(voltage, -12.0), 12.0);
 
-    if (shouldStopSeeking()) {
-      voltage = 0.0;
-    }
+    // if (shouldStopSeeking()) {
+    //   voltage = 0.0;
+    // }
+    double voltage = extensionPID.calculate(intakeIO.getPosition(), intakeExtensionTargetInDegreesEntry.get());
 
     intakeIO.setVoltage(voltage);
     intakeIO.update();
-    intakeExtensionSetpoint.set(extensionPID.getSetpoint());
+
     intakeExtensionMeasured.set(intakeIO.getPosition());
     intakeExtensionVoltage.set(voltage);
   }
 
-  private boolean shouldStopSeeking() {
-    return Math.abs(extensionPID.getSetpoint() - intakeIO.getPosition())
-        <= Constants.IntakeConstants.extensionTolerance;
+  // private boolean shouldStopSeeking() {
+  //   return Math.abs(extensionPID.getSetpoint() - intakeIO.getPosition())
+  //       <= Constants.IntakeConstants.extensionTolerance;
+  // }
+
+  public void goToPosition(double degrees)
+  {
+    intakeExtensionTargetInDegreesEntry.set(degrees);
   }
 
-  private void stopSeeking() {
-    seeking = false;
-    intakeIO.stopMotor();
-  }
+  // private void stopSeeking() {
+  //   seeking = false;
+  //   intakeIO.stopMotor();
+  // }
 
-  private void startSeeking() {
-    seeking = true;
-  }
+  // private void startSeeking() {
+  //   seeking = true;
+  // }
 
   public void goToExtendedPosition() {
-    extensionPID.setSetpoint(Constants.IntakeConstants.extendedPosition);
-    
-    startSeeking();
+    //extensionPID.setSetpoint(Constants.IntakeConstants.extendedPosition);
+    goToPosition(100);
+    //startSeeking();
   }
 
   public void goToRetractedPosition() {
-    extensionPID.setSetpoint(Constants.IntakeConstants.retractedPosition);
-    startSeeking();
+    goToPosition(0);
+    //extensionPID.setSetpoint(Constants.IntakeConstants.retractedPosition);
+    //startSeeking();
   }
 
 }

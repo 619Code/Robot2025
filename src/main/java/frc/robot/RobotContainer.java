@@ -52,7 +52,7 @@ public class RobotContainer {
   // Subsystems
   private final Drive drive;
   private final Limelight limelight = new Limelight();
-  private final Intake intake = new Intake(100, 101, 102);
+  private final Intake intake = new Intake(100);//, 101, 102);
   // Controller
   //  private final CommandXboxController controller = new CommandXboxController(0);
   private final Joystick flightStick = new Joystick(0);

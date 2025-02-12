@@ -9,7 +9,7 @@ public class intakeIOSim implements IntakeIO{
 
     @Override
     public double getPosition() {
-        return simMotor.getAngularPositionRotations();
+        return simMotor.getAngularPositionRotations()/100;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class intakeIOSim implements IntakeIO{
         simMotor = new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
                 motor,
-                0.000025,
+                0.00000025,
                 1.0/105
                 ),
             motor
