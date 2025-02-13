@@ -33,14 +33,15 @@ public class intakeArmIOSim implements IntakeArmIO{
         DCMotor motor = DCMotor.getNEO(1);
         armSim = new SingleJointedArmSim(
             motor,
-            105,
-            SingleJointedArmSim.estimateMOI(0.5,6),
-            0.5,
-            Rotation2d.fromDegrees(0).getRadians(),
-            Rotation2d.fromDegrees(90).getRadians(),
+            105,  // Gear ratio
+            SingleJointedArmSim.estimateMOI(0.5,6), // Moment of inertia of the arm
+            0.5,  // Arm Length in meters
+            Rotation2d.fromDegrees(0).getRadians(), // Min
+            Rotation2d.fromDegrees(90).getRadians(), // Max
             true,
-            Rotation2d.fromDegrees(90).getRadians());
+            Rotation2d.fromDegrees(90).getRadians());  // Start position
 
+        // Set the initial state of the intake
         armSim.setState(Rotation2d.fromDegrees(90).getRadians(), 0);
     }
 }
