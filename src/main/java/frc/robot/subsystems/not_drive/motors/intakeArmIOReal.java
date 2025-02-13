@@ -1,4 +1,4 @@
-package frc.robot.subsystems.not_drive;
+package frc.robot.subsystems.not_drive.motors;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -8,7 +8,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-public class intakeIOReal implements IntakeIO{
+public class intakeArmIOReal implements IntakeArmIO{
 
     private final SparkMax intakeExtensionMotor;
     private final RelativeEncoder extensionEncoder;
@@ -31,7 +31,7 @@ public class intakeIOReal implements IntakeIO{
     public void update() {
     }
 
-    public intakeIOReal(int intakeExtensionMotorID){
+    public intakeArmIOReal(int intakeExtensionMotorID){
         intakeExtensionMotor = new SparkMax (intakeExtensionMotorID, MotorType.kBrushless);
         extensionEncoder = intakeExtensionMotor.getEncoder();
         SparkMaxConfig intakeConfigure = new SparkMaxConfig();

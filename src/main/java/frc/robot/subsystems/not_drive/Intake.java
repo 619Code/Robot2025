@@ -7,13 +7,16 @@ import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.subsystems.not_drive.motors.IntakeArmIO;
+import frc.robot.subsystems.not_drive.motors.intakeArmIOReal;
+import frc.robot.subsystems.not_drive.motors.intakeArmIOSim;
 
 public class Intake extends SubsystemBase {
 
   private final ProfiledPIDController extensionPID;
-  private boolean seeking = false;
+  //private boolean seeking = false;
 
-  private IntakeIO intakeIO;
+  private IntakeArmIO intakeArmIO;
 
   DoubleEntry kpextensionPIDEntry;
   DoubleEntry kiextensionPIDEntry;
@@ -30,14 +33,11 @@ public class Intake extends SubsystemBase {
 
   public Intake(int intakeExtensionMotorID) {
     if(Robot.isReal()){
-      intakeIO = new intakeIOReal(intakeExtensionMotorID);
+      intakeArmIO = new intakeArmIOReal(intakeExtensionMotorID);
     }
     else{
-      intakeIO = new intakeIOSim();
+      intakeArmIO = new intakeArmIOSim();
     }
-
-    //extensionPID = new PIDController(0.0, 0.0, 0.0);
-    //extensionPID = new ProfiledPIDController(kpextensionPIDEntry.get(), kiextensionPIDEntry.get(), kdextensionPIDEntry.get(), new TrapezoidProfile.Constraints(2,1));
 
     kpextensionPIDEntry =
         NetworkTableInstance.getDefault().getDoubleTopic("IntakeKp").getEntry(0.0);
@@ -71,52 +71,26 @@ public class Intake extends SubsystemBase {
     extensionPID.setD(kdextensionPIDEntry.get());
     extensionPID.setConstraints(new TrapezoidProfile.Constraints(maxVelocityContraint.get(), maxAccConstraint.get()));
 
-    // if (!seeking) return;
+    double voltage = extensionPID.calculate(intakeArmIO.getPosition(), intakeExtensionTargetInDegreesEntry.get());
 
-    // double voltage = extensionPID.calculate(intakeIO.getPosition());
-    // voltage = Math.min(Math.max(voltage, -12.0), 12.0);
+    intakeArmIO.setVoltage(voltage);
+    intakeArmIO.update();
 
-    // if (shouldStopSeeking()) {
-    //   voltage = 0.0;
-    // }
-    double voltage = extensionPID.calculate(intakeIO.getPosition(), intakeExtensionTargetInDegreesEntry.get());
-
-    intakeIO.setVoltage(voltage);
-    intakeIO.update();
-
-    intakeExtensionMeasured.set(intakeIO.getPosition());
+    intakeExtensionMeasured.set(intakeArmIO.getPosition());
     intakeExtensionVoltage.set(voltage);
   }
-
-  // private boolean shouldStopSeeking() {
-  //   return Math.abs(extensionPID.getSetpoint() - intakeIO.getPosition())
-  //       <= Constants.IntakeConstants.extensionTolerance;
-  // }
 
   public void goToPosition(double degrees)
   {
     intakeExtensionTargetInDegreesEntry.set(degrees);
   }
 
-  // private void stopSeeking() {
-  //   seeking = false;
-  //   intakeIO.stopMotor();
-  // }
-
-  // private void startSeeking() {
-  //   seeking = true;
-  // }
-
   public void goToExtendedPosition() {
-    //extensionPID.setSetpoint(Constants.IntakeConstants.extendedPosition);
     goToPosition(100);
-    //startSeeking();
   }
 
   public void goToRetractedPosition() {
     goToPosition(0);
-    //extensionPID.setSetpoint(Constants.IntakeConstants.retractedPosition);
-    //startSeeking();
   }
 
 }

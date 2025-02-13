@@ -1,6 +1,6 @@
-package frc.robot.subsystems.not_drive;
+package frc.robot.subsystems.not_drive.motors;
 
-public interface IntakeIO {
+public interface IntakeArmIO {
     public double getPosition();
     public void stopMotor();
     public void setVoltage(double voltage);
