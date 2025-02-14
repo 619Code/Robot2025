@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.drive;
+package frc.robot.subsystems.drive.Module;
 
 // import static frc.robot.subsystems.drive.DriveConstants.*;
 import edu.wpi.first.math.MathUtil;
