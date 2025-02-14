@@ -234,4 +234,22 @@ public final class Constants {
 
     public static double passthroughMotorVoltage = 6;
   }
+
+  public static final class WristConstants{
+
+      public static double kDt = 0.02;
+
+      public static double passthroughPosition = 0;
+      public static double L1Position = 0;
+      public static double L2L3Position = 0;
+      public static double L4Position = 0;
+
+      public static double ksFeedforward = 1.0;
+      public static double kvFeedforward = 1.5;
+
+      public static double maxVelocity = 1.0;
+      public static double maxAcceleration = 1.5;
+
+  }
+
 }
