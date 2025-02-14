@@ -244,8 +244,19 @@ public final class Constants {
       public static double L2L3Position = 0;
       public static double L4Position = 0;
 
-      public static double ksFeedforward = 1.0;
-      public static double kvFeedforward = 1.5;
+      public static double ksFeedforward = 0;
+      public static double kvFeedforward = 0;
+
+      public static double kpWrist = 0;
+      public static double kiWrist = 0;
+      public static double kdWrist = 0;
+
+      public static double ksFeedforwardSim = 0;
+      public static double kvFeedforwardSim = 0;
+
+      public static double kpWristSim = 0;
+      public static double kiWristSim = 0;
+      public static double kdWristSim = 0;
 
       public static double maxVelocity = 1.0;
       public static double maxAcceleration = 1.5;

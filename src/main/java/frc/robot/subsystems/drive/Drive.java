@@ -42,6 +42,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.subsystems.drive.Gyro.GyroIO;
+import frc.robot.subsystems.drive.Module.Module;
+import frc.robot.subsystems.drive.Module.ModuleIO;
 import frc.robot.util.LocalADStarAK;
 
 import java.util.concurrent.locks.Lock;
@@ -96,52 +99,6 @@ public class Drive extends SubsystemBase {
 
     // Start odometry thread
     SparkOdometryThread.getInstance().start();
-
-    // Configure AutoBuilder for PathPlanner
-    // AutoBuilder.configure(
-    //     this::getPose,
-    //     this::setPose,
-    //     this::getChassisSpeeds,
-    //     this::runVelocity,
-    //     new PPHolonomicDriveController(
-    //         // new PIDConstants(
-    //         //     Constants.DriveConstants.driveKp, 0.0, Constants.DriveConstants.driveKd),
-    //         // new PIDConstants(
-    //         //     Constants.DriveConstants.turnKp, 0.0, Constants.DriveConstants.turnKd)),
-    //         new PIDConstants(10, 0.0, 0), new PIDConstants(10, 0.0, 0)),
-    //     Constants.DriveConstants.ppConfig,
-    //     () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-    //     this);
-
-    //  Testing other configurations
-    // AutoBuilder.configure(
-    //     this::getPose,
-    //     this::setPose,
-    //     this::getChassisSpeeds,
-    //     this::runVelocity,
-    //     new PPHolonomicDriveController(
-    //         // new PIDConstants(
-    //         //     Constants.DriveConstants.driveKp, 0.0, Constants.DriveConstants.driveKd),
-    //         // new PIDConstants(
-    //         //     Constants.DriveConstants.turnKp, 0.0, Constants.DriveConstants.turnKd)),
-    //         new PIDConstants(10, 0.0, 0), new PIDConstants(10, 0.0, 0)),
-    //     Constants.DriveConstants.ppConfig,
-    //     () -> false, // I believe that false is blue
-    //     this);
-
-    // RobotConfig john;
-
-    // try{
-    //   john = RobotConfig.fromGUISettings();
-    // } catch (Exception e) {
-    //   // Handle exception as needed
-    //   e.printStackTrace();
-
-    //   john = null;
-
-    //   System.out.println("ERROR: Couldn't retrieve robot config");
-
-    // }
 
 
     kinematics = new SwerveDriveKinematics(Constants.DriveConstants.moduleTranslations); //new SwerveDriveKinematics(Constants.DriveConstants.robotConfig.moduleLocations);
