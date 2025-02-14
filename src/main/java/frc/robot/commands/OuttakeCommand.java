@@ -5,7 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.not_drive.Outtake;
+import frc.robot.subsystems.Outtake.Outtake;
 
 public class OuttakeCommand extends Command {
 
