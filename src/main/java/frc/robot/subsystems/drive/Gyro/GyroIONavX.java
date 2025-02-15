@@ -11,21 +11,23 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.drive;
+package frc.robot.subsystems.drive.Gyro;
 
-//import static frc.robot.subsystems.drive.DriveConstants.*;
-
-import frc.robot.Constants;
+// import static frc.robot.subsystems.drive.DriveConstants.*;
 
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import frc.robot.Constants;
+import frc.robot.subsystems.drive.SparkOdometryThread;
+
 import java.util.Queue;
 
 /** IO implementation for NavX. */
 public class GyroIONavX implements GyroIO {
-  private final AHRS navX = new AHRS(NavXComType.kMXP_SPI, (byte) Constants.DriveConstants.odometryFrequency);
+  private final AHRS navX =
+      new AHRS(NavXComType.kMXP_SPI, (byte) Constants.DriveConstants.odometryFrequency);
   private final Queue<Double> yawPositionQueue;
   private final Queue<Double> yawTimestampQueue;
 

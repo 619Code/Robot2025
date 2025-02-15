@@ -11,16 +11,17 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.drive;
+package frc.robot.subsystems.drive.Module;
 
-//import static frc.robot.subsystems.drive.DriveConstants.*;
-import frc.robot.Constants;
-
+// import static frc.robot.subsystems.drive.DriveConstants.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import frc.robot.Constants;
+import frc.robot.subsystems.drive.ModuleIOInputsAutoLogged;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Module {
@@ -52,7 +53,8 @@ public class Module {
     int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together
     odometryPositions = new SwerveModulePosition[sampleCount];
     for (int i = 0; i < sampleCount; i++) {
-      double positionMeters = inputs.odometryDrivePositionsRad[i] * Constants.DriveConstants.wheelRadiusMeters;
+      double positionMeters =
+          inputs.odometryDrivePositionsRad[i] * Constants.DriveConstants.wheelRadiusMeters;
       Rotation2d angle = inputs.odometryTurnPositions[i];
       odometryPositions[i] = new SwerveModulePosition(positionMeters, angle);
     }
@@ -131,7 +133,7 @@ public class Module {
     return inputs.driveVelocityRadPerSec;
   }
 
-  public void setTurnMotorPID(double kp, double kd) {
-    io.setTurnMotorPID(kp, kd);
-  }
+  // public void setTurnMotorPID(double kp, double kd) {
+  //   io.setTurnMotorPID(kp, kd);
+  // }
 }

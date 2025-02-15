@@ -23,23 +23,19 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants;
 import frc.robot.subsystems.drive.Drive;
-//import frc.robot.subsystems.drive.DriveConstants;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
-import frc.robot.Constants;
 
 public class DriveCommands {
   private static final double DEADBAND = 0.1;
@@ -77,18 +73,18 @@ public class DriveCommands {
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier) {
 
-    DoubleEntry kpTurnMotorEntry =
-        NetworkTableInstance.getDefault().getDoubleTopic("kpT").getEntry(0.0);
-    DoubleEntry kdTurnMotorEntry =
-        NetworkTableInstance.getDefault().getDoubleTopic("kdT").getEntry(0.0);
+    // DoubleEntry kpTurnMotorEntry =
+    //     NetworkTableInstance.getDefault().getDoubleTopic("kpT").getEntry(0.0);
+    // DoubleEntry kdTurnMotorEntry =
+    //     NetworkTableInstance.getDefault().getDoubleTopic("kdT").getEntry(0.0);
 
-    kpTurnMotorEntry.set(0.0);
-    kdTurnMotorEntry.set(0.0);
+    // kpTurnMotorEntry.set(0.0);
+    // kdTurnMotorEntry.set(0.0);
 
     return Commands.run(
         () -> {
-          drive.SetModuleTurnMotorPD(
-              kpTurnMotorEntry.getAsDouble(), kdTurnMotorEntry.getAsDouble());
+          // drive.SetModuleTurnMotorPD(
+          //     kpTurnMotorEntry.getAsDouble(), kdTurnMotorEntry.getAsDouble());
 
           // Get linear velocity
           Translation2d linearVelocity =

@@ -14,13 +14,12 @@
 package frc.robot.subsystems.drive;
 
 import static edu.wpi.first.units.Units.*;
-//import static frc.robot.subsystems.drive.DriveConstants.*;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.pathplanner.lib.pathfinding.Pathfinding;
-import com.pathplanner.lib.util.PathPlannerLogging;
+//import com.pathplanner.lib.auto.AutoBuilder;
+//import com.pathplanner.lib.config.PIDConstants;
+//import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+//import com.pathplanner.lib.pathfinding.Pathfinding;
+//import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.HAL;
@@ -38,17 +37,26 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.subsystems.drive.Gyro.GyroIO;
+import frc.robot.subsystems.drive.Module.Module;
+import frc.robot.subsystems.drive.Module.ModuleIO;
 import frc.robot.util.LocalADStarAK;
+
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 public class Drive extends SubsystemBase {
   static final Lock odometryLock = new ReentrantLock();
@@ -60,7 +68,7 @@ public class Drive extends SubsystemBase {
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.DriveConstants.moduleTranslations);
-  private Rotation2d rawGyroRotation = new Rotation2d();
+  private Rotation2d rawGyroRotation = new Rotation2d();  // NOTICE: Try putting PI in these parenthesis to fix the autonomous problem.
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
       new SwerveModulePosition[] {
         new SwerveModulePosition(),
@@ -71,12 +79,15 @@ public class Drive extends SubsystemBase {
   private SwerveDrivePoseEstimator poseEstimator =
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
+
   public Drive(
       GyroIO gyroIO,
       ModuleIO flModuleIO,
       ModuleIO frModuleIO,
       ModuleIO blModuleIO,
       ModuleIO brModuleIO) {
+
+
     this.gyroIO = gyroIO;
     modules[0] = new Module(flModuleIO, 0);
     modules[1] = new Module(frModuleIO, 1);
@@ -89,27 +100,79 @@ public class Drive extends SubsystemBase {
     // Start odometry thread
     SparkOdometryThread.getInstance().start();
 
-    // Configure AutoBuilder for PathPlanner
+
+    kinematics = new SwerveDriveKinematics(Constants.DriveConstants.moduleTranslations); //new SwerveDriveKinematics(Constants.DriveConstants.robotConfig.moduleLocations);
+
+
+    // AutoBuilder.configure(
+    //         this::getPose, // Robot pose supplier
+    //         this::setPose, // Method to reset odometry (will be called if your auto has a starting pose)
+    //         this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+    //         (speeds, feedforwards) -> runVelocity(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+    //         new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+    //                 new PIDConstants(2, 0, 0), // Translation PID constants
+    //                 new PIDConstants(0, 0.0, 0.0) // Rotation PID constants
+    //         ),
+    //         Constants.DriveConstants.ppConfig,
+    //         () -> {
+    //           // Boolean supplier that controls when the path will be mirrored for the red alliance
+    //           // This will flip the path being followed to the red side of the field.
+    //           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+    //           var alliance = DriverStation.getAlliance();
+    //           if (alliance.isPresent()) {
+    //             return alliance.get() == DriverStation.Alliance.Red;
+    //           }
+    //           return false;
+    //         },
+    //         this // Reference to this subsystem to set requirements
+    // );
+
     AutoBuilder.configure(
-        this::getPose,
-        this::setPose,
-        this::getChassisSpeeds,
-        this::runVelocity,
-        new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+            this::getPose, // Robot pose supplier
+            this::setPose, // Method to reset odometry (will be called if your auto has a starting pose)
+            this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+            (speeds, feedforwards) -> runVelocity(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
+            new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
+                    new PIDConstants(2, 0, 0), // Translation PID constants
+                    new PIDConstants(2, 0.0, 0.0) // Rotation PID constants
+            ),
             Constants.DriveConstants.ppConfig,
-        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-        this);
+            () -> {
+              // Boolean supplier that controls when the path will be mirrored for the red alliance
+              // This will flip the path being followed to the red side of the field.
+              // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+              var alliance = DriverStation.getAlliance();
+              if (alliance.isPresent()) {
+                return alliance.get() == DriverStation.Alliance.Red;
+              }
+              return false;
+            },
+            this // Reference to this subsystem to set requirements
+    );
+
+
+
+
     Pathfinding.setPathfinder(new LocalADStarAK());
+
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {
           Logger.recordOutput(
               "Odometry/Trajectory", activePath.toArray(new Pose2d[activePath.size()]));
         });
+
     PathPlannerLogging.setLogTargetPoseCallback(
         (targetPose) -> {
           Logger.recordOutput("Odometry/TrajectorySetpoint", targetPose);
         });
+
+    PathPlannerLogging.setLogCurrentPoseCallback(
+        (pose) -> {
+          Logger.recordOutput("Odometry/TrajectoryCurrentPose", pose);
+        });
+
 
     // Configure SysId
     sysId =
@@ -188,10 +251,12 @@ public class Drive extends SubsystemBase {
    * @param speeds Speeds in meters/sec
    */
   public void runVelocity(ChassisSpeeds speeds) {
+
     // Calculate module setpoints
     ChassisSpeeds discreteSpeeds = ChassisSpeeds.discretize(speeds, 0.02);
     SwerveModuleState[] setpointStates = kinematics.toSwerveModuleStates(discreteSpeeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(setpointStates, Constants.DriveConstants.maxSpeedMetersPerSec);
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        setpointStates, Constants.DriveConstants.maxSpeedMetersPerSec);
 
     // Log unoptimized setpoints
     Logger.recordOutput("SwerveStates/Setpoints", setpointStates);
@@ -318,13 +383,15 @@ public class Drive extends SubsystemBase {
 
   /** Returns the maximum angular speed in radians per sec. */
   public double getMaxAngularSpeedRadPerSec() {
-    return Constants.DriveConstants.maxSpeedMetersPerSec / Constants.DriveConstants.driveBaseRadius;
+    return Constants.DriveConstants.maxSpeedMetersPerSec
+        / Constants.DriveConstants.driveBaseRadius
+        * Constants.DriveConstants.angularVelocityMultiplier;
   }
 
-  public void SetModuleTurnMotorPD(double kp, double kd) {
-    modules[0].setTurnMotorPID(kp, kd);
-    modules[1].setTurnMotorPID(kp, kd);
-    modules[2].setTurnMotorPID(kp, kd);
-    modules[3].setTurnMotorPID(kp, kd);
-  }
+  // public void SetModuleTurnMotorPD(double kp, double kd) {
+  //   modules[0].setTurnMotorPID(kp, kd);
+  //   modules[1].setTurnMotorPID(kp, kd);
+  //   modules[2].setTurnMotorPID(kp, kd);
+  //   modules[3].setTurnMotorPID(kp, kd);
+  // }
 }

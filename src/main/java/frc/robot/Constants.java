@@ -16,7 +16,6 @@ package frc.robot;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -43,150 +42,225 @@ public final class Constants {
     REPLAY
   }
 
-  public static final class DriveConstants{
-        public static final double maxSpeedMetersPerSec = 2.25; // 4.5; //  4.8 was default
-      public static final double odometryFrequency = 100.0; // Hz
-      public static final double trackWidth = Units.inchesToMeters(21);
-      public static final double wheelBase = Units.inchesToMeters(21);
-      public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
-      public static final Translation2d[] moduleTranslations =
-          new Translation2d[] {
-            new Translation2d(trackWidth / 2.0, wheelBase / 2.0),
-            new Translation2d(trackWidth / 2.0, -wheelBase / 2.0),
-            new Translation2d(-trackWidth / 2.0, wheelBase / 2.0),
-            new Translation2d(-trackWidth / 2.0, -wheelBase / 2.0)
-          };
+  public static final class DriveConstants {
 
-      // Zeroed rotation values for each module, see setup instructions
-      public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0);
-      public static final Rotation2d frontRightZeroRotation = new Rotation2d(0);
-      public static final Rotation2d backLeftZeroRotation = new Rotation2d(0);
-      public static final Rotation2d backRightZeroRotation = new Rotation2d(0);
+    public static final double odometryFrequency = 100.0; // Hz
 
-      // Device CAN IDs
-      public static final int pigeonCanId = 9;
+    //  Should get overwritten in robotcontainer
+    public static double maxSpeedMetersPerSec = 5.450; //4.0; // was default
+     public static final double angularVelocityMultiplier = 0.5;
+    public static final double trackWidth = Units.inchesToMeters(21);
+    public static final double wheelBase = Units.inchesToMeters(21);
+    public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
 
-      public static final int frontLeftDriveCanId = 51;
-      public static final int backLeftDriveCanId = 55;
-      public static final int frontRightDriveCanId = 58;
-      public static final int backRightDriveCanId = 62;
 
-      public static final int frontLeftTurnCanId = 50;
-      public static final int backLeftTurnCanId = 56;
-      public static final int frontRightTurnCanId = 57;
-      public static final int backRightTurnCanId = 49;
+   // public static Translation2d[] moduleTranslations = null;
+    public static final Translation2d[] moduleTranslations =
+        new Translation2d[] {
+          new Translation2d(trackWidth / 2.0, wheelBase / 2.0),
+          new Translation2d(trackWidth / 2.0, -wheelBase / 2.0),
+          new Translation2d(-trackWidth / 2.0, wheelBase / 2.0),
+          new Translation2d(-trackWidth / 2.0, -wheelBase / 2.0)
+        };
 
-      // Drive motor configuration
-      public static final int driveMotorCurrentLimit = 50;
-      public static final double wheelRadiusMeters = Units.inchesToMeters(2);
-      public static final double driveMotorReduction =
-          (45.0 * 22.0) / (14.0 * 15.0); // MAXSwerve with 14 pinion teeth and 22 spur teeth
-      public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1);
 
-      //  Individual drive motor inversions
-      public static final boolean frontLeftDriveMotorInverted = true;
-      public static final boolean frontRightDriveMotorInverted = false;
-      public static final boolean backLeftDriveMotorInverted = true;
-      public static final boolean backRightDriveMotorInverted = false;
+    // Zeroed rotation values for each module, see setup instructions
+    public static final Rotation2d frontLeftZeroRotation = new Rotation2d(0);
+    public static final Rotation2d frontRightZeroRotation = new Rotation2d(0);
+    public static final Rotation2d backLeftZeroRotation = new Rotation2d(0);
+    public static final Rotation2d backRightZeroRotation = new Rotation2d(0);
 
-      //  Individual drive motor inversions
-      public static final boolean frontLeftDriveEncoderInverted = false;
-      public static final boolean frontRightDriveEncoderInverted = false;
-      public static final boolean backLeftDriveEncoderInverted = false;
-      public static final boolean backRightDriveEncoderInverted = false;
+    // Device CAN IDs
+    public static final int pigeonCanId = 9;
 
-      //  Encoder data
-      public static final int frontLeftDriveAbsoluteEncoderPort = 33;
-      public static final double frontLeftDriveAbsoluteEncoderOffsetDeg = -.230225;
-      public static final SensorDirectionValue frontLeftEncoderPositiveDirection =
-          SensorDirectionValue.CounterClockwise_Positive;
+    public static final int frontLeftDriveCanId = 51;
+    public static final int backLeftDriveCanId = 55;
+    public static final int frontRightDriveCanId = 58;
+    public static final int backRightDriveCanId = 62;
 
-      public static final int frontRightDriveAbsoluteEncoderPort = 30;
-      public static final double frontRightDriveAbsoluteEncoderOffsetDeg = -0.261475;
-      public static final SensorDirectionValue frontRightEncoderPositiveDirection =
-          SensorDirectionValue.CounterClockwise_Positive;
+    public static final int frontLeftTurnCanId = 50;
+    public static final int backLeftTurnCanId = 56;
+    public static final int frontRightTurnCanId = 57;
+    public static final int backRightTurnCanId = 49;
 
-      public static final int backLeftDriveAbsoluteEncoderPort = 32;
-      public static final double backLeftDriveAbsoluteEncoderOffsetDeg = -0.394287;
-      public static final SensorDirectionValue backLeftEncoderPositiveDirection =
-          SensorDirectionValue.CounterClockwise_Positive;
+    // Drive motor configuration
+    public static final int driveMotorCurrentLimit = 40;
+    public static final double wheelRadiusMeters = Units.inchesToMeters(2);
+    public static final double driveMotorReduction = 7.3; //(45.0 * 22.0) / (14.0 * 15.0); // MAXSwerve with 14 pinion teeth and 22 spur teeth
+    public static final DCMotor driveGearbox = DCMotor.getNEO(1); // DCMotor.getNeoVortex(1);
 
-      public static final int backRightDriveAbsoluteEncoderPort = 31;
-      public static final double backRightDriveAbsoluteEncoderOffsetDeg = 0.397461;
-      public static final SensorDirectionValue backRightEncoderPositiveDirection =
-          SensorDirectionValue.CounterClockwise_Positive;
+    //  Individual drive motor inversions
+    public static final boolean frontLeftDriveMotorInverted = false;
+    public static final boolean frontRightDriveMotorInverted = true;
+    public static final boolean backLeftDriveMotorInverted = false;
+    public static final boolean backRightDriveMotorInverted = true;
 
-      // Drive encoder configuration
-      public static final double driveEncoderPositionFactor =
-          2 * Math.PI / driveMotorReduction; // Rotor Rotations -> Wheel Radians
-      public static final double driveEncoderVelocityFactor =
-          (2 * Math.PI) / 60.0 / driveMotorReduction; // Rotor RPM -> Wheel Rad/Sec
+    //  Encoder data
+    public static final int frontLeftDriveAbsoluteEncoderPort = 33;
+    public static final double frontLeftDriveAbsoluteEncoderOffsetDeg = -.230225;
+    public static final SensorDirectionValue frontLeftEncoderPositiveDirection =
+        SensorDirectionValue.CounterClockwise_Positive;
 
-      // Drive PID configuration
-      public static final double driveKp = 0.0;
-      public static final double driveKd = 0.0;
-      public static final double driveKs = 0.0;
-      public static final double driveKv = 0.1;
-      public static final double driveSimP = 0.05;
-      public static final double driveSimD = 0.0;
-      public static final double driveSimKs = 0.0;
-      public static final double driveSimKv = 0.0789;
+    public static final int frontRightDriveAbsoluteEncoderPort = 30;
+    public static final double frontRightDriveAbsoluteEncoderOffsetDeg = -0.261475;
+    public static final SensorDirectionValue frontRightEncoderPositiveDirection =
+        SensorDirectionValue.CounterClockwise_Positive;
 
-      // Turn motor configuration
-      //  public static final boolean turnInverted = false;
-      public static final int turnMotorCurrentLimit = 20;
-      public static final double turnMotorReduction = 9424.0 / 203.0;
-      public static final DCMotor turnGearbox = DCMotor.getNeo550(1);
+    public static final int backLeftDriveAbsoluteEncoderPort = 32;
+    public static final double backLeftDriveAbsoluteEncoderOffsetDeg = -0.394287;
+    public static final SensorDirectionValue backLeftEncoderPositiveDirection =
+        SensorDirectionValue.CounterClockwise_Positive;
 
-      //  Individual turn motor inversions
-      public static final boolean frontLeftTurnMotorInverted = true;
-      public static final boolean frontRightTurnMotorInverted = true;
-      public static final boolean backLeftTurnMotorInverted = true;
-      public static final boolean backRightTurnMotorInverted = true;
+    public static final int backRightDriveAbsoluteEncoderPort = 31;
+    public static final double backRightDriveAbsoluteEncoderOffsetDeg = 0.397461;
+    public static final SensorDirectionValue backRightEncoderPositiveDirection =
+        SensorDirectionValue.CounterClockwise_Positive;
 
-      //  Individual turn motor inversions
-      public static final boolean frontLeftTurnEncoderInverted = false;
-      public static final boolean frontRightTurnEncoderInverted = false;
-      public static final boolean backLeftTurnEncoderInverted = false;
-      public static final boolean backRightTurnEncoderInverted = false;
+    // Drive encoder configuration
+    public static final double driveEncoderPositionFactor =
+        2 * Math.PI / driveMotorReduction; // Rotor Rotations -> Wheel Radians
+    public static final double driveEncoderVelocityFactor =
+        (2 * Math.PI) / 60.0 / driveMotorReduction; // Rotor RPM -> Wheel Rad/Sec
 
-      // Turn encoder configuration
-      //  public static final boolean turnEncoderInverted = true;
-      public static final double turnEncoderPositionFactor = 2 * Math.PI; // Rotations -> Radians
-      public static final double turnEncoderVelocityFactor = (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
+    // Drive PID configuration
+    public static final double driveKp = 0.01;
+    public static final double driveKd = 0.0;
+    public static final double driveKs = 0.184445;  //  Got this value from characterization auto routine
+    public static final double driveKv = 0.093025;  //  Got this value from characterization auto routine
+    public static final double driveSimP = 8.0;
+    public static final double driveSimD = 0.0;
+    public static final double driveSimKs = 0.0;
+    public static final double driveSimKv = 0.0789;
 
-      //  Networktables stuff for tuning pid
+    // Turn motor configuration
+    //  public static final boolean turnInverted = false;
+    public static final int turnMotorCurrentLimit = 20;
+    public static final double turnMotorReduction = 21.0;  //9424.0 / 203.0;
+    public static final DCMotor turnGearbox = DCMotor.getNEO(1); //DCMotor.getNeo550(1);
 
-      // Turn PID configuration
-      public static final double turnKp = 0.05; // COME BACK HERE
-      public static final double turnKd = 0.0;
-      public static final double turnSimP = 8.0;
-      public static final double turnSimD = 0.0;
-      public static final double turnPIDMinInput = 0; // Radians
-      public static final double turnPIDMaxInput = 2.0 * Math.PI; // Radians
+    //  Individual turn motor inversions
+    public static final boolean frontLeftTurnMotorInverted = true;
+    public static final boolean frontRightTurnMotorInverted = true;
+    public static final boolean backLeftTurnMotorInverted = true;
+    public static final boolean backRightTurnMotorInverted = true;
 
-      // PathPlanner configuration
-      public static final double robotMassKg = 74.088;
-      public static final double robotMOI = 6.883;
-      public static final double wheelCOF = 1.2;
-      public static final RobotConfig ppConfig =
-          new RobotConfig(
-              robotMassKg,
-              robotMOI,
-              new ModuleConfig(
-                  wheelRadiusMeters,
-                  maxSpeedMetersPerSec,
-                  wheelCOF,
-                  driveGearbox.withReduction(driveMotorReduction),
-                  driveMotorCurrentLimit,
-                  1),
-              moduleTranslations);
+    //  Individual turn motor inversions
+    public static final boolean frontLeftTurnEncoderInverted = false;
+    public static final boolean frontRightTurnEncoderInverted = false;
+    public static final boolean backLeftTurnEncoderInverted = false;
+    public static final boolean backRightTurnEncoderInverted = false;
+
+    // Turn encoder configuration
+    //  public static final boolean turnEncoderInverted = true;
+    public static final double turnEncoderPositionFactor = 2 * Math.PI; // Rotations -> Radians
+    public static final double turnEncoderVelocityFactor = (2 * Math.PI) / 60.0; // RPM -> Rad/Sec
+
+    //  Networktables stuff for tuning pid
+
+    // Turn PID configuration
+    public static final double turnKp = 0.4;
+    public static final double turnKd = 0.0;
+    public static final double turnSimP = 8.0;
+    public static final double turnSimD = 0.0;
+    public static final double turnPIDMinInput = 0; // Radians
+    public static final double turnPIDMaxInput = 2.0 * Math.PI; // Radians
+
+
+   // public static RobotConfig robotConfig;
+
+   public static final double robotMassKg = 54.4311;
+    public static final double robotMOI = 6.883;
+    public static final double wheelCOF = 1.2;
+    public static final RobotConfig ppConfig =
+        new RobotConfig(
+            robotMassKg,
+            robotMOI,
+            new ModuleConfig(
+                wheelRadiusMeters,
+                maxSpeedMetersPerSec,
+                wheelCOF,
+                driveGearbox.withReduction(driveMotorReduction),
+                driveMotorCurrentLimit,
+                1),
+            moduleTranslations);
+
   }
 
-  public static final class ElevatorConstants{
+
+    //  NOTICE: None of these values have been tested. They are all arbitrary
+  public static final class ElevatorConstants {
 
     public static final double elevatorAbsoluteEncoderOffset = 0.0;
-    public static final SensorDirectionValue elevatorEncoderPositiveDirection = SensorDirectionValue.CounterClockwise_Positive;
+    public static final SensorDirectionValue elevatorEncoderPositiveDirection =
+        SensorDirectionValue.CounterClockwise_Positive;
+    public static final double handoffHeight = 50;
+    public static final double l2Height = 100;
+    public static final double l3Height = 200;
+    public static final double l4Height = 300;
+
+    public static final double elevatorSoftLowerBound = 0;
+    public static final double elevatorSoftUpperBound = 300;
+
+    public static final int destinationTolerance = 10;
+  }
+
+  public static final class IntakeConstants {
+
+    // NOTICE: None of these value have been tested as well.
+
+    public static final double extendedPosition = 100.0;
+    public static final double retractedPosition = 0.0;
+    public static final double extensionTolerance = 5.0;
+
+    public static final double intakeSoftLowerBound = 0;
+    public static final double intakeSoftUpperBound = 200;
+  }
+
+  public static final class OuttakeConstants {
+
+    public static final double turnEncoderPositionFactor = 1;
+    public static final double turnEncoderVelocityFactor = 1;
+    public static final int kIntakeSensorPort = -1;
+
+    public static double outtakeSpeed = 0.5;
+  }
+
+  public static final class LEDConstants {
+    public static final int CANdleID = 40;
+    public static final int ledCount = 200;
+  }
+
+  public static final class PassthroughConstants {
+
+    public static double passthroughMotorVoltage = 6;
+  }
+
+  public static final class WristConstants{
+
+      public static double kDt = 0.02;
+
+      public static double passthroughPosition = 0;
+      public static double L1Position = 0;
+      public static double L2L3Position = 0;
+      public static double L4Position = 0;
+
+      public static double ksFeedforward = 0;
+      public static double kvFeedforward = 0;
+
+      public static double kpWrist = 0;
+      public static double kiWrist = 0;
+      public static double kdWrist = 0;
+
+      public static double ksFeedforwardSim = 0;
+      public static double kvFeedforwardSim = 0;
+
+      public static double kpWristSim = 0;
+      public static double kiWristSim = 0;
+      public static double kdWristSim = 0;
+
+      public static double maxVelocity = 1.0;
+      public static double maxAcceleration = 1.5;
 
   }
+
 }
