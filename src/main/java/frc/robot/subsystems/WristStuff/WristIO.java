@@ -1,11 +1,13 @@
 package frc.robot.subsystems.WristStuff;
 
+import org.littletonrobotics.junction.AutoLog;
 
 public interface WristIO {
 
-
+    @AutoLog
     public static class WristIOInputs {
         public double wristPosition = 0.0;
+        public double wristSetpointPosition = 0.0;
     }
 
 

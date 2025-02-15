@@ -3,6 +3,7 @@ package frc.robot.subsystems.WristStuff;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,30 +21,38 @@ public class WristIOSim extends SubsystemBase implements WristIO {
 
 
 
-
-    private final TrapezoidProfile trapezoidProfile =
-        new TrapezoidProfile(new TrapezoidProfile.Constraints(
+    private final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
             Constants.WristConstants.maxVelocity,
-            Constants.WristConstants.maxAcceleration));
+            Constants.WristConstants.maxAcceleration
+        );
 
     private TrapezoidProfile.State currentGoal = new TrapezoidProfile.State();
-    private TrapezoidProfile.State currentSetpoint = new TrapezoidProfile.State();
 
 
-    private final TrapezoidProfile.State passthroughState = new TrapezoidProfile.State(Constants.WristConstants.passthroughPosition, 0);
-    private final TrapezoidProfile.State L1State = new TrapezoidProfile.State(Constants.WristConstants.L1Position, 0);
-    private final TrapezoidProfile.State L2L3State = new TrapezoidProfile.State(Constants.WristConstants.L2L3Position, 0);
-    private final TrapezoidProfile.State L4State = new TrapezoidProfile.State(Constants.WristConstants.L4Position, 0);
+    private final TrapezoidProfile.State passthroughState = new TrapezoidProfile.State(Constants.WristConstants.passthroughPositionRad, 0);
+    private final TrapezoidProfile.State L1State = new TrapezoidProfile.State(Constants.WristConstants.L1PositionRad, 0);
+    private final TrapezoidProfile.State L2L3State = new TrapezoidProfile.State(Constants.WristConstants.L2L3PositionRad, 0);
+    private final TrapezoidProfile.State L4State = new TrapezoidProfile.State(Constants.WristConstants.L4PositionRad, 0);
 
 
 
     public WristIOSim(){
 
+        wristMotor = new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                Constants.WristConstants.wristGearbox,
+                0.025,
+                Constants.WristConstants.wristMotorReduction),
+            Constants.WristConstants.wristGearbox);
+
+
         wristController = new ProfiledPIDController(
             Constants.WristConstants.kpWristSim,
             Constants.WristConstants.kiWristSim,
             Constants.WristConstants.kdWristSim,
-            null);
+            constraints);
+
+        wristController.setConstraints(constraints);
 
     }
 
@@ -51,10 +60,8 @@ public class WristIOSim extends SubsystemBase implements WristIO {
     @Override
     public void periodic() {
 
-        currentSetpoint = trapezoidProfile.calculate(Constants.WristConstants.kDt, currentSetpoint, currentGoal);
+        double voltage = wristController.calculate(wristMotor.getAngularPositionRad(), currentGoal);
 
-        wristController.setGoal(currentSetpoint);
-        double voltage = wristController.calculate(wristMotor.getAngularPositionRad());
         double feedforwardVoltMaybe = feedforward.calculate(wristController.getGoal().velocity);
 
         wristMotor.setInputVoltage(voltage + feedforwardVoltMaybe);
@@ -91,6 +98,12 @@ public class WristIOSim extends SubsystemBase implements WristIO {
 
     @Override
     public boolean hasReachedGoal(){
-         return trapezoidProfile.isFinished(0);
+         return wristController.atGoal();
+    }
+
+    @Override
+    public void updateInputs(WristIOInputs inputs){
+        inputs.wristPosition = wristMotor.getAngularPositionRad();
+        inputs.wristSetpointPosition = wristController.getSetpoint().position;
     }
 }

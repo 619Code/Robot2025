@@ -239,13 +239,16 @@ public final class Constants {
 
       public static int wristMotorID = -1;
 
+      public static final DCMotor wristGearbox = DCMotor.getNeoVortex(1);
+      public static final double wristMotorReduction = 7.3; //  This number is arbitrary as freak
+
 
       public static double kDt = 0.02;
 
-      public static double passthroughPosition = 0;
-      public static double L1Position = 0;
-      public static double L2L3Position = 0;
-      public static double L4Position = 0;
+      public static double passthroughPositionRad = 0;
+      public static double L1PositionRad = 1;
+      public static double L2L3PositionRad = 2;
+      public static double L4PositionRad = 3;
 
       public static double ksFeedforward = 0;
       public static double kvFeedforward = 0;
@@ -257,7 +260,7 @@ public final class Constants {
       public static double ksFeedforwardSim = 0;
       public static double kvFeedforwardSim = 0;
 
-      public static double kpWristSim = 0;
+      public static double kpWristSim = 0.1;
       public static double kiWristSim = 0;
       public static double kdWristSim = 0;
 

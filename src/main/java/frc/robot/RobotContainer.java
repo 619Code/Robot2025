@@ -55,7 +55,7 @@ public class RobotContainer {
     private final Wrist wrist;
 
 
-    private final boolean driveEnabled = false, wristEnabled = true, intakeEnabled = false;
+    private final boolean driveEnabled = true, wristEnabled = true, intakeEnabled = false;
 
 
     // Controller
@@ -91,9 +91,9 @@ public class RobotContainer {
         }
 
 
+
         // Set up auto routines
         autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
 
 
         if(driveEnabled){
@@ -320,34 +320,16 @@ public class RobotContainer {
     //   Hold [left bumper] to enable input for carriage
     //   Then hit
     private void configureWristBindings() {
-        Trigger carriageInputSwitch = operatorController.leftBumper();
-
         Trigger aPressedTrigger = operatorController.a();
-        aPressedTrigger.onTrue(Commands.runOnce(() -> {
-            if(carriageInputSwitch.getAsBoolean()){
-                new WristCommand(wrist, WRIST_ANGLE.PASSTHROUGH);
-            }
-        }));
+        aPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.PASSTHROUGH));
 
         Trigger bPressedTrigger = operatorController.b();
-        bPressedTrigger.onTrue(Commands.runOnce(() -> {
-            if(carriageInputSwitch.getAsBoolean()){
-                new WristCommand(wrist, WRIST_ANGLE.L1);
-            }
-        }));
+        bPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L1));
 
         Trigger xPressedTrigger = operatorController.x();
-        xPressedTrigger.onTrue(Commands.runOnce(() -> {
-            if(carriageInputSwitch.getAsBoolean()){
-                new WristCommand(wrist, WRIST_ANGLE.L2L3);
-            }
-        }));
+        xPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L2L3));
 
         Trigger yPressedTrigger = operatorController.y();
-        yPressedTrigger.onTrue(Commands.runOnce(() -> {
-            if(carriageInputSwitch.getAsBoolean()){
-                new WristCommand(wrist, WRIST_ANGLE.L4);
-            }
-        }));
+        yPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L4));
     }
 }
