@@ -52,7 +52,7 @@ public class RobotContainer {
     private final Wrist wrist;
 
 
-    private final boolean driveEnabled = true, wristEnabled = true, intakeEnabled = true;
+    private final boolean driveEnabled = false, wristEnabled = true, intakeEnabled = false;
 
 
     // Controller
@@ -87,64 +87,48 @@ public class RobotContainer {
         }
 
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+        // Set up auto routines
+        autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
 
 
-    if(driveEnabled){
-        driveConstructorStuff();
+        if(driveEnabled){
+            driveConstructorStuff();
+        }
+
+        if(intakeEnabled){
+            intakeConstructorStuff();
+        }
+
+        if(wristEnabled){
+            wristConstructorStuff();
+        }
+
+
+
+
+        AutoBuilder.buildAutoChooser();
+
+        configureButtonBindings();
     }
 
-    if(intakeEnabled){
-        intakeConstructorStuff();
+    private void configureButtonBindings() {
+        if(driveEnabled){
+            configureDriveBindings();
+        }
+
+        if(intakeEnabled){
+            configureIntakeBindings();
+        }
+
+        if(wristEnabled){
+            configureWristBindings();
+        }
     }
 
-    if(wristEnabled){
-        wristConstructorStuff();
+    public Command getAutonomousCommand() {
+        return autoChooser.get();
     }
-
-    
-
-
-    AutoBuilder.buildAutoChooser();
-
-
-    // Configure the button bindings
-    configureButtonBindings();
-    }
-
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
-
-    if(driveEnabled){
-        configureDriveBindings();
-    }
-
-    if(intakeEnabled){
-        configureIntakeBindings();
-    }
-
-    if(wristEnabled){
-        configureWristBindings();
-    }
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-
-    return autoChooser.get();
-
-  }
 
 
 
@@ -320,6 +304,6 @@ public class RobotContainer {
         mainTrigger.whileFalse(Commands.runOnce(() -> {intake.goToRetractedPosition();}, intake));
     }
     private void configureWristBindings() {
-        // ...
+        wrist.setDefaultCommand(new WristSillyCommand());
     }
 }
