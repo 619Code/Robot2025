@@ -55,9 +55,9 @@ public class WristIOSim extends SubsystemBase implements WristIO {
 
         wristController.setGoal(currentSetpoint);
         double voltage = wristController.calculate(wristMotor.getAngularPositionRad());
+        double feedforwardVoltMaybe = feedforward.calculate(wristController.getGoal().velocity);
 
-        //  NOTICE: CONTINUE HERE
-
+        wristMotor.setInputVoltage(voltage + feedforwardVoltMaybe);
 
         wristMotor.update(Constants.WristConstants.kDt);
 
