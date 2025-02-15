@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Wrist;
+package frc.robot.subsystems.WristStuff;
 
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -87,5 +87,10 @@ public class WristIOSim extends SubsystemBase implements WristIO {
     @Override
     public void goToL4Angle(){
         goToState(L4State);
+    }
+
+    @Override
+    public boolean hasReachedGoal(){
+         return trapezoidProfile.isFinished(0);
     }
 }

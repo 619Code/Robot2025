@@ -237,6 +237,9 @@ public final class Constants {
 
   public static final class WristConstants{
 
+      public static int wristMotorID = -1;
+
+
       public static double kDt = 0.02;
 
       public static double passthroughPosition = 0;

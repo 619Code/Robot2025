@@ -16,17 +16,20 @@ package frc.robot;
 //import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.WristCommand;
 import frc.robot.commands.AutoCommands.AutoFactoryGen2;
 import frc.robot.subsystems.Intake.Intake;
-import frc.robot.subsystems.Wrist.Wrist;
+import frc.robot.subsystems.WristStuff.Wrist;
+import frc.robot.subsystems.WristStuff.WristIO;
+import frc.robot.subsystems.WristStuff.WristIOReal;
+import frc.robot.subsystems.WristStuff.WristIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.Gyro.GyroIO;
 import frc.robot.subsystems.drive.Gyro.GyroIONavX;
@@ -52,11 +55,12 @@ public class RobotContainer {
     private final Wrist wrist;
 
 
-    private final boolean driveEnabled = true, wristEnabled = true, intakeEnabled = true;
+    private final boolean driveEnabled = false, wristEnabled = true, intakeEnabled = false;
 
 
     // Controller
     private final Joystick flightStick = new Joystick(0);
+    private final CommandXboxController operatorController = new CommandXboxController(1);
 
     // Dashboard inputs
     private final LoggedDashboardChooser<Command> autoChooser;
@@ -66,85 +70,69 @@ public class RobotContainer {
 
         switch (Constants.currentMode) {
             case REAL:
-            drive = driveEnabled   ? instantiateRealDrive()  : null;
-            intake = intakeEnabled ? instantiateRealIntake() : null;
-            wrist = wristEnabled   ? instantiateRealWrist()  : null;
-            break;
+                drive = driveEnabled   ? instantiateRealDrive()  : null;
+                intake = intakeEnabled ? instantiateRealIntake() : null;
+                wrist = wristEnabled   ? instantiateRealWrist()  : null;
+                break;
 
             case SIM:
-            // Sim robot, instantiate physics sim IO implementations
-            drive = driveEnabled   ? instantiateSimDrive()  : null;
-            intake = intakeEnabled ? instantiateSimIntake() : null;
-            wrist = wristEnabled   ? instantiateSimWrist()  : null;
-            break;
+                // Sim robot, instantiate physics sim IO implementations
+                drive = driveEnabled   ? instantiateSimDrive()  : null;
+                intake = intakeEnabled ? instantiateSimIntake() : null;
+                wrist = wristEnabled   ? instantiateSimWrist()  : null;
+                break;
 
             default:
-            // Replayed robot, disable IO implementations
-            drive = driveEnabled   ? instantiateDriveReplayed()  : null;
-            intake = intakeEnabled ? instantiateIntakeReplayed() : null;
-            wrist = wristEnabled   ? instantiateWristReplayed()  : null;
-            break;
+                // Replayed robot, disable IO implementations
+                drive = driveEnabled   ? instantiateDriveReplayed()  : null;
+                intake = intakeEnabled ? instantiateIntakeReplayed() : null;
+                wrist = wristEnabled   ? instantiateWristReplayed()  : null;
+                break;
         }
 
 
-    // Set up auto routines
-    autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+        // Set up auto routines
+        autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
 
 
-    if(driveEnabled){
-        driveConstructorStuff();
+        if(driveEnabled){
+            driveConstructorStuff();
+        }
+
+        if(intakeEnabled){
+            intakeConstructorStuff();
+        }
+
+        if(wristEnabled){
+            wristConstructorStuff();
+        }
+
+
+
+
+        AutoBuilder.buildAutoChooser();
+
+        configureButtonBindings();
     }
 
-    if(intakeEnabled){
-        intakeConstructorStuff();
+    private void configureButtonBindings() {
+        if(driveEnabled){
+            configureDriveBindings();
+        }
+
+        if(intakeEnabled){
+            configureIntakeBindings();
+        }
+
+        if(wristEnabled){
+            configureWristBindings();
+        }
     }
 
-    if(wristEnabled){
-        wristConstructorStuff();
+    public Command getAutonomousCommand() {
+        return autoChooser.get();
     }
-
-
-
-
-    AutoBuilder.buildAutoChooser();
-
-
-    // Configure the button bindings
-    configureButtonBindings();
-    }
-
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {
-
-    if(driveEnabled){
-        configureDriveBindings();
-    }
-
-    if(intakeEnabled){
-        configureIntakeBindings();
-    }
-
-    if(wristEnabled){
-        configureWristBindings();
-    }
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-
-    return autoChooser.get();
-
-  }
 
 
 
@@ -219,13 +207,13 @@ public class RobotContainer {
     }
 
     private Wrist instantiateRealWrist(){
-        return null;
+        return new Wrist(new WristIOReal(Constants.WristConstants.wristMotorID));
     }
     private Wrist instantiateSimWrist(){
-        return null;
+        return new Wrist(new WristIOSim());
     }
     private Wrist instantiateWristReplayed(){
-        return null;
+        return new Wrist(new WristIO() {});
     }
 
 
@@ -314,12 +302,52 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     }
+    //  NOTICE: The below function should be edited to use a command
     private void configureIntakeBindings() {
         Trigger mainTrigger = new JoystickButton(flightStick, 1);
         mainTrigger.whileTrue(Commands.runOnce(() -> {intake.goToExtendedPosition();}, intake));
         mainTrigger.whileFalse(Commands.runOnce(() -> {intake.goToRetractedPosition();}, intake));
     }
+
+    public enum WRIST_ANGLE {
+        PASSTHROUGH,
+        L1,
+        L2L3,
+        L4
+    }
+
+    //  Idea with wrist/elevator is that the operator will:
+    //   Hold [left bumper] to enable input for carriage
+    //   Then hit
     private void configureWristBindings() {
-        // ...
+        Trigger carriageInputSwitch = operatorController.leftBumper();
+
+        Trigger aPressedTrigger = operatorController.a();
+        aPressedTrigger.onTrue(Commands.runOnce(() -> {
+            if(carriageInputSwitch.getAsBoolean()){
+                new WristCommand(wrist, WRIST_ANGLE.PASSTHROUGH);
+            }
+        }));
+
+        Trigger bPressedTrigger = operatorController.b();
+        bPressedTrigger.onTrue(Commands.runOnce(() -> {
+            if(carriageInputSwitch.getAsBoolean()){
+                new WristCommand(wrist, WRIST_ANGLE.L1);
+            }
+        }));
+
+        Trigger xPressedTrigger = operatorController.x();
+        xPressedTrigger.onTrue(Commands.runOnce(() -> {
+            if(carriageInputSwitch.getAsBoolean()){
+                new WristCommand(wrist, WRIST_ANGLE.L2L3);
+            }
+        }));
+
+        Trigger yPressedTrigger = operatorController.y();
+        yPressedTrigger.onTrue(Commands.runOnce(() -> {
+            if(carriageInputSwitch.getAsBoolean()){
+                new WristCommand(wrist, WRIST_ANGLE.L4);
+            }
+        }));
     }
 }
