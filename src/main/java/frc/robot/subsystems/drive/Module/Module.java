@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.drive;
+package frc.robot.subsystems.drive.Module;
 
 // import static frc.robot.subsystems.drive.DriveConstants.*;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -20,6 +20,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import frc.robot.Constants;
+import frc.robot.subsystems.drive.ModuleIOInputsAutoLogged;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Module {

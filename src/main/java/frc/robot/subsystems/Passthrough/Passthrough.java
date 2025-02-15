@@ -1,4 +1,4 @@
-package frc.robot.subsystems.not_drive;
+package frc.robot.subsystems.Passthrough;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;

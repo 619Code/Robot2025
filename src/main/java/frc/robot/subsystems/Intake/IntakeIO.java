@@ -1,6 +1,7 @@
-package frc.robot.subsystems.not_drive;
+package frc.robot.subsystems.Intake;
 
 public interface IntakeIO {
+
     public double getPosition();
     public void stopMotor();
 

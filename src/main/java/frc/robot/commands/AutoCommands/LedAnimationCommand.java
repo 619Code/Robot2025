@@ -2,7 +2,7 @@ package frc.robot.commands.AutoCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.not_drive.ledSubsystem;
+import frc.robot.subsystems.Leds.ledSubsystem;
 
 public class LedAnimationCommand extends Command {
   private ledSubsystem subsystem;

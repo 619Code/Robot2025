@@ -1,4 +1,4 @@
-package frc.robot.subsystems.not_drive;
+package frc.robot.subsystems.Intake;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -6,8 +6,6 @@ import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -33,20 +31,10 @@ public class Intake extends SubsystemBase {
   DoublePublisher intakeExtensionMeasured;
   DoublePublisher intakeExtensionVoltage;
 
-  State startState;
-  State desiredState;
-  TrapezoidProfile trapezoidProfile;
-  Double kDt = 0.2;
-
-  //new TrapezoidProfile.State(5, 0);
-  //new TrapezoidProfile.Constraints(10, 20);
+  // new TrapezoidProfile.State(5, 0);
+  // new TrapezoidProfile.Constraints(10, 20);
 
   public Intake(int intakeMotorID_1, int intakeMotorID_2, int intakeExtensionMotorID) {
-
-    desiredState = new TrapezoidProfile.State(100, 0);
-    startState = new TrapezoidProfile.State(0, 0);
-    trapezoidProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(5, 2));
-
     if(Robot.isReal()){
       intakeIO = new intakeIOReal(intakeExtensionMotorID);
     }
@@ -95,17 +83,13 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
 
-    startState = trapezoidProfile.calculate(kDt, startState, desiredState);
-
-    double voltage = extensionPID.calculate(startState.position);
-
     extensionPID.setP(kpextensionPIDEntry.get());
     extensionPID.setI(kiextensionPIDEntry.get());
     extensionPID.setD(kdextensionPIDEntry.get());
 
     if (!seeking) return;
 
-    //double voltage = extensionPID.calculate(intakeIO.getPosition());
+    double voltage = extensionPID.calculate(intakeIO.getPosition());
     voltage = Math.min(Math.max(voltage, -12.0), 12.0);
 
     if (shouldStopSeeking()) {

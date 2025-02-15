@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
 
-package frc.robot.subsystems.drive;
+package frc.robot.subsystems.drive.Gyro;
 
 // import static frc.robot.subsystems.drive.DriveConstants.*;
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -24,6 +24,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import frc.robot.Constants;
+import frc.robot.subsystems.drive.SparkOdometryThread;
+
 import java.util.Queue;
 
 /** IO implementation for Pigeon 2. */

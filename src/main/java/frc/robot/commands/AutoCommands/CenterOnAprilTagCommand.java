@@ -164,7 +164,6 @@ public class CenterOnAprilTagCommand extends Command {
 
         xSpeedMpS = speeds[0];
         ySpeedMpS = speeds[1];
-        // ySpeedMpS = speeds[1] * Math.signum(limelightSubsystem.GetGoofyAhhHeading());
 
         CheckStateMachineMovingAndRottingStage();
         break;
