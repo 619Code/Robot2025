@@ -1,6 +1,10 @@
 package frc.robot.subsystems.Wrist;
 
 import com.revrobotics.spark.SparkBase.ControlType;
+
+import static frc.robot.util.SparkUtil.ifOk;
+
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
@@ -39,6 +43,7 @@ public class WristIOReal extends SubsystemBase implements WristIO {
     private final TrapezoidProfile.State L2L3State = new TrapezoidProfile.State(Constants.WristConstants.L2L3Position, 0);
     private final TrapezoidProfile.State L4State = new TrapezoidProfile.State(Constants.WristConstants.L4Position, 0);
 
+    private final AbsoluteEncoder wristEncoder;
 
     public WristIOReal(int wristMotorID) {
 
@@ -54,7 +59,7 @@ public class WristIOReal extends SubsystemBase implements WristIO {
 
         wristController = wristFlex.getClosedLoopController();
 
-    //      wristEncoder = wristMax.getAbsoluteEncoder();
+        wristEncoder = wristFlex.getAbsoluteEncoder();
 
     }
 
@@ -100,5 +105,11 @@ public class WristIOReal extends SubsystemBase implements WristIO {
     @Override
     public boolean hasReachedGoal(){
          return trapezoidProfile.isFinished(0);
+    }
+
+
+    @Override
+    public void updateInputs(WristIOInputs inputs){
+        ifOk(wristFlex, wristEncoder::getPosition, (value) -> inputs.wristPosition = value);
     }
 }

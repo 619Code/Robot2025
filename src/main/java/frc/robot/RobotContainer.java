@@ -27,6 +27,9 @@ import frc.robot.commands.WristCommand;
 import frc.robot.commands.AutoCommands.AutoFactoryGen2;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Wrist.Wrist;
+import frc.robot.subsystems.Wrist.WristIO;
+import frc.robot.subsystems.Wrist.WristIOReal;
+import frc.robot.subsystems.Wrist.WristIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.Gyro.GyroIO;
 import frc.robot.subsystems.drive.Gyro.GyroIONavX;
@@ -204,13 +207,13 @@ public class RobotContainer {
     }
 
     private Wrist instantiateRealWrist(){
-        return null;
+        return new Wrist(new WristIOReal(Constants.WristConstants.wristMotorID));
     }
     private Wrist instantiateSimWrist(){
-        return null;
+        return new Wrist(new WristIOSim());
     }
     private Wrist instantiateWristReplayed(){
-        return null;
+        return new Wrist(new WristIO() {});
     }
 
 
