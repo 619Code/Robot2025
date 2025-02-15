@@ -1,7 +1,7 @@
 package frc.robot.subsystems.Wrist;
 
 public interface WristIO {
-    
+
     public void goToPassthroughAngle();
 
     public void goToL1Angle();

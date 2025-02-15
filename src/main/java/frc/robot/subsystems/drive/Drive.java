@@ -43,6 +43,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.subsystems.drive.Gyro.GyroIO;
+import frc.robot.subsystems.drive.Gyro.GyroIOInputsAutoLogged;
 import frc.robot.subsystems.drive.Module.Module;
 import frc.robot.subsystems.drive.Module.ModuleIO;
 import frc.robot.util.LocalADStarAK;

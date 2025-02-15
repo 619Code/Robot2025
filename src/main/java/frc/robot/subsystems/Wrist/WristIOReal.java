@@ -20,14 +20,14 @@ public class WristIOReal extends SubsystemBase implements WristIO {
 
     // Note: These gains are fake, and will have to be tuned for your robot.
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(
-        Constants.WristConstants.ksFeedforward, 
+        Constants.WristConstants.ksFeedforward,
         Constants.WristConstants.kvFeedforward);
 
     // Create a motion profile with the given maximum velocity and maximum
     // acceleration constraints for the next setpoint.
     private final TrapezoidProfile trapezoidProfile =
             new TrapezoidProfile(new TrapezoidProfile.Constraints(
-                Constants.WristConstants.maxVelocity, 
+                Constants.WristConstants.maxVelocity,
                 Constants.WristConstants.maxAcceleration));
 
     private TrapezoidProfile.State currentGoal = new TrapezoidProfile.State();
@@ -55,7 +55,7 @@ public class WristIOReal extends SubsystemBase implements WristIO {
         wristController = wristFlex.getClosedLoopController();
 
     //      wristEncoder = wristMax.getAbsoluteEncoder();
-        
+
     }
 
 
@@ -65,9 +65,9 @@ public class WristIOReal extends SubsystemBase implements WristIO {
         currentSetpoint = trapezoidProfile.calculate(Constants.WristConstants.kDt, currentSetpoint, currentGoal);
 
         wristController.setReference(
-            currentSetpoint.position, 
-            ControlType.kPosition, 
-            ClosedLoopSlot.kSlot0, 
+            currentSetpoint.position,
+            ControlType.kPosition,
+            ClosedLoopSlot.kSlot0,
             feedforward.calculate(currentSetpoint.velocity) / 12.0);
 
     }
@@ -98,4 +98,3 @@ public class WristIOReal extends SubsystemBase implements WristIO {
         goToState(L4State);
     }
 }
-
