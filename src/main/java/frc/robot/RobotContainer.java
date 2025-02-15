@@ -104,7 +104,7 @@ public class RobotContainer {
         wristConstructorStuff();
     }
 
-    
+
 
 
     AutoBuilder.buildAutoChooser();
@@ -212,7 +212,7 @@ public class RobotContainer {
         return new Intake(100, 101, 102);
     }
     private Intake instantiateSimIntake(){
-        return null;
+        return new Intake(103, 104, 105);
     }
     private Intake instantiateIntakeReplayed(){
         return null;
@@ -261,7 +261,7 @@ public class RobotContainer {
 
             autoChooser.addOption("Basic ahh path",
                 AutoBuilder.followPath(PathPlannerPath.fromPathFile("Basic path")));
-        
+
         }catch (Exception e){
             System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
         }
@@ -294,19 +294,19 @@ public class RobotContainer {
 
 
     // ============= Bindings =============
-    
+
     private void configureDriveBindings() {
         //  Flight stick driving
-    
+
         drive.setDefaultCommand(
             DriveCommands.joystickDrive(
                 drive,
                 () -> -flightStick.getRawAxis(1),
                 () -> -flightStick.getRawAxis(0),
                 () -> -flightStick.getRawAxis(2)));
-    
-    
-    
+
+
+
         Trigger gyroResetButton = new JoystickButton(flightStick, 2);
         gyroResetButton.onTrue(
             Commands.runOnce(
