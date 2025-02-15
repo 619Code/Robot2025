@@ -1,19 +1,19 @@
 package frc.robot.subsystems.WristStuff;
 
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.util.NTProfiledPIDF;
 
 public class WristIOSim extends SubsystemBase implements WristIO {
 
 
     private DCMotorSim wristMotor;
-    private ProfiledPIDController wristController;
+    private NTProfiledPIDF wristController;
 
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(
         Constants.WristConstants.ksFeedforwardSim,
@@ -25,8 +25,6 @@ public class WristIOSim extends SubsystemBase implements WristIO {
             Constants.WristConstants.maxVelocity,
             Constants.WristConstants.maxAcceleration
         );
-
-    private TrapezoidProfile.State currentGoal = new TrapezoidProfile.State();
 
 
     private final TrapezoidProfile.State passthroughState = new TrapezoidProfile.State(Constants.WristConstants.passthroughPositionRad, 0);
@@ -46,13 +44,14 @@ public class WristIOSim extends SubsystemBase implements WristIO {
             Constants.WristConstants.wristGearbox);
 
 
-        wristController = new ProfiledPIDController(
+        wristController = new NTProfiledPIDF(
+            "Wrist",
             Constants.WristConstants.kpWristSim,
             Constants.WristConstants.kiWristSim,
             Constants.WristConstants.kdWristSim,
+            Constants.WristConstants.ksFeedforwardSim,
+            Constants.WristConstants.kvFeedforwardSim,
             constraints);
-
-        wristController.setConstraints(constraints);
 
     }
 
@@ -60,7 +59,7 @@ public class WristIOSim extends SubsystemBase implements WristIO {
     @Override
     public void periodic() {
 
-        double voltage = wristController.calculate(wristMotor.getAngularPositionRad(), currentGoal);
+        double voltage = wristController.calculate(wristMotor.getAngularPositionRad());
 
         double feedforwardVoltMaybe = feedforward.calculate(wristController.getGoal().velocity);
 
@@ -73,7 +72,7 @@ public class WristIOSim extends SubsystemBase implements WristIO {
 
 
    private void goToState(TrapezoidProfile.State _state){
-        currentGoal = _state;
+        wristController.setGoal(_state);
     }
 
     @Override

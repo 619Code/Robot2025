@@ -260,7 +260,7 @@ public final class Constants {
       public static double ksFeedforwardSim = 0;
       public static double kvFeedforwardSim = 0;
 
-      public static double kpWristSim = 0.1;
+      public static double kpWristSim = 1;
       public static double kiWristSim = 0;
       public static double kdWristSim = 0;
 
