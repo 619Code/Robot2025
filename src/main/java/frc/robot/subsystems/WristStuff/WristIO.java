@@ -1,6 +1,5 @@
-package frc.robot.subsystems.Wrist;
+package frc.robot.subsystems.WristStuff;
 
-import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 public interface WristIO {
 
@@ -22,7 +21,7 @@ public interface WristIO {
 
     public default void goToL4Angle() {}
 
-    //  NOTICE: Eventually this should definitely be changed. 
+    //  NOTICE: Eventually this should definitely be changed.
     //  I see no way this would work with the replay feature as it is now
     public default boolean hasReachedGoal() {return false;}
 }

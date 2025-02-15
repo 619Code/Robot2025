@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Wrist;
+package frc.robot.subsystems.WristStuff;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -10,7 +10,6 @@ public class Wrist extends SubsystemBase {
 
     private LoggableWristIOInputs inputs = new LoggableWristIOInputs();
 
-
     public Wrist(WristIO _io){
         io = _io;
     }
@@ -18,9 +17,9 @@ public class Wrist extends SubsystemBase {
 
     @Override
     public void periodic() {
-        
+
         io.updateInputs(inputs);
-        
+
         Logger.processInputs("Wrist", inputs);
 
     }

@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Wrist;
+package frc.robot.subsystems.WristStuff;
 
 import com.revrobotics.spark.SparkBase.ControlType;
 

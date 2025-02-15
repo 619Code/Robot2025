@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Wrist;
+package frc.robot.subsystems.WristStuff;
 
 
 import edu.wpi.first.math.controller.ProfiledPIDController;

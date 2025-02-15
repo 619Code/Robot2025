@@ -3,7 +3,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer.WRIST_ANGLE;
-import frc.robot.subsystems.Wrist.Wrist;
+import frc.robot.subsystems.WristStuff.Wrist;
 
 public class WristCommand extends Command {
 
