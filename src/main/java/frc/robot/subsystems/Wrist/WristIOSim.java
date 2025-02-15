@@ -1,13 +1,8 @@
 package frc.robot.subsystems.Wrist;
 
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkBase.ControlType;
-
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -17,9 +12,9 @@ public class WristIOSim extends SubsystemBase implements WristIO {
 
     private DCMotorSim wristMotor;
     private ProfiledPIDController wristController;
-   
+
     private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(
-        Constants.WristConstants.ksFeedforwardSim, 
+        Constants.WristConstants.ksFeedforwardSim,
         Constants.WristConstants.kvFeedforwardSim);
 
 
@@ -27,7 +22,7 @@ public class WristIOSim extends SubsystemBase implements WristIO {
 
     private final TrapezoidProfile trapezoidProfile =
         new TrapezoidProfile(new TrapezoidProfile.Constraints(
-            Constants.WristConstants.maxVelocity, 
+            Constants.WristConstants.maxVelocity,
             Constants.WristConstants.maxAcceleration));
 
     private TrapezoidProfile.State currentGoal = new TrapezoidProfile.State();
@@ -44,9 +39,9 @@ public class WristIOSim extends SubsystemBase implements WristIO {
     public WristIOSim(){
 
         wristController = new ProfiledPIDController(
-            Constants.WristConstants.kpWristSim, 
-            Constants.WristConstants.kiWristSim, 
-            Constants.WristConstants.kdWristSim, 
+            Constants.WristConstants.kpWristSim,
+            Constants.WristConstants.kiWristSim,
+            Constants.WristConstants.kdWristSim,
             null);
 
     }
@@ -64,11 +59,12 @@ public class WristIOSim extends SubsystemBase implements WristIO {
 
 
         wristMotor.update(Constants.WristConstants.kDt);
-        
+
     }
 
 
-    private void goToState(TrapezoidProfile.State _state){
+
+   private void goToState(TrapezoidProfile.State _state){
         currentGoal = _state;
     }
 
