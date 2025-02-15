@@ -1,9 +1,14 @@
 package frc.robot.subsystems.Intake;
 
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+
 
 public class intakeIOReal implements IntakeIO{
 
@@ -31,8 +36,11 @@ public class intakeIOReal implements IntakeIO{
     public intakeIOReal(int intakeExtensionMotorID){
         intakeExtensionMotor = new SparkMax(intakeExtensionMotorID, MotorType.kBrushless);
         extensionEncoder = intakeExtensionMotor.getEncoder();
-        SparkMaxConfig config_3 = new SparkMaxConfig();
-        intakeExtensionMotor.configure(config_3, null, null);
+        SparkMaxConfig intakeConfigure = new SparkMaxConfig();
+        
+        //intakeExtensionMotor.idleMode(IdleMode.kCoast);
+
+        intakeExtensionMotor.configure(intakeConfigure, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
 

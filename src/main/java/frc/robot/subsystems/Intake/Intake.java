@@ -26,7 +26,7 @@ public class Intake extends SubsystemBase {
   DoubleEntry kpextensionPIDEntry;
   DoubleEntry kiextensionPIDEntry;
   DoubleEntry kdextensionPIDEntry;
-  DoubleEntry intakeExtensionTargetInDegressEntry;
+  DoubleEntry intakeExtensionTargetInDegreesEntry;
   DoublePublisher intakeExtensionMeasured;
   DoublePublisher intakeExtensionVoltage;
 
@@ -70,7 +70,7 @@ public class Intake extends SubsystemBase {
         NetworkTableInstance.getDefault().getDoubleTopic("IntakeKi").getEntry(0.0);
     kdextensionPIDEntry =
         NetworkTableInstance.getDefault().getDoubleTopic("IntakeKd").getEntry(0.0);
-    intakeExtensionTargetInDegressEntry = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionTargetInDegrees").getEntry(0);
+    intakeExtensionTargetInDegreesEntry = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionTargetInDegrees").getEntry(0);
     intakeExtensionMeasured = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionMeasured").getEntry(2);
     intakeExtensionVoltage = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionVoltage").getEntry(1);
 
@@ -89,7 +89,7 @@ public class Intake extends SubsystemBase {
     kpextensionPIDEntry.set(0);
     kiextensionPIDEntry.set(0);
     kdextensionPIDEntry.set(0);
-    intakeExtensionTargetInDegressEntry.set(0);
+    intakeExtensionTargetInDegreesEntry.set(0);
     maxVelocityConstraint.set(2);
     maxAccConstraint.set(1);
   }
@@ -103,7 +103,7 @@ public class Intake extends SubsystemBase {
     extensionPID.setConstraints(new TrapezoidProfile.Constraints(maxVelocityConstraint.get(), maxAccConstraint.get()));
 
 
-    double voltage = extensionPID.calculate(intakeIO.getPosition(), intakeExtensionTargetInDegressEntry.get());
+    double voltage = extensionPID.calculate(intakeIO.getPosition(), intakeExtensionTargetInDegreesEntry.get());
     voltage = Math.min(Math.max(voltage, -12.0), 12.0);
 
     intakeIO.setVoltage(voltage);
@@ -114,7 +114,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void goToPosition(double degrees){
-    intakeExtensionTargetInDegressEntry.set(degrees);
+    intakeExtensionTargetInDegreesEntry.set(degrees);
   }
 
   public void goToExtendedPosition() {

@@ -200,7 +200,7 @@ public class RobotContainer {
         return new Intake(100, 101, 102);
     }
     private Intake instantiateSimIntake(){
-        return null;
+        return new Intake(103, 104, 105);
     }
     private Intake instantiateIntakeReplayed(){
         return null;
