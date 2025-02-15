@@ -9,4 +9,6 @@ public interface WristIO {
     public void goToL2L3Angle();
 
     public void goToL4Angle();
+
+    public boolean hasReachedGoal();
 }

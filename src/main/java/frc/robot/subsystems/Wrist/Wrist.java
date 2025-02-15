@@ -26,4 +26,9 @@ public class Wrist extends SubsystemBase {
     public void goToL4Angle(){
         io.goToL4Angle();
     }
+
+
+    public boolean hasReachedGoal(){
+        return io.hasReachedGoal();
+    }
 }

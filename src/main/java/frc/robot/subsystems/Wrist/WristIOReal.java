@@ -73,7 +73,6 @@ public class WristIOReal extends SubsystemBase implements WristIO {
     }
 
 
-
     private void goToState(TrapezoidProfile.State _state){
         currentGoal = _state;
     }
@@ -96,5 +95,10 @@ public class WristIOReal extends SubsystemBase implements WristIO {
     @Override
     public void goToL4Angle(){
         goToState(L4State);
+    }
+
+    @Override
+    public boolean hasReachedGoal(){
+         return trapezoidProfile.isFinished(0);
     }
 }

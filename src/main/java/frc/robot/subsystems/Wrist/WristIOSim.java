@@ -88,4 +88,9 @@ public class WristIOSim extends SubsystemBase implements WristIO {
     public void goToL4Angle(){
         goToState(L4State);
     }
+
+    @Override
+    public boolean hasReachedGoal(){
+         return trapezoidProfile.isFinished(0);
+    }
 }
