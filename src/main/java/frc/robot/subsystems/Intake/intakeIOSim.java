@@ -36,8 +36,8 @@ public class intakeIOSim implements IntakeIO{
         105,
         SingleJointedArmSim.estimateMOI(0.5, 6.0),
         0.5,
-        Rotation2d.fromDegrees(0).getRadians(),
-        Rotation2d.fromDegrees(90).getRadians(),
+        Rotation2d.fromDegrees(-20).getRadians(),
+        Rotation2d.fromDegrees(110).getRadians(),
         true,
         Rotation2d.fromDegrees(90).getRadians()
         );

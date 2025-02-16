@@ -211,6 +211,7 @@ public final class Constants {
     public static final double extendedPosition = 100.0;
     public static final double retractedPosition = 0.0;
     public static final double extensionTolerance = 5.0;
+    public static final double climbPosition = 90.0;
 
     public static final double intakeSoftLowerBound = 0;
     public static final double intakeSoftUpperBound = 200;
