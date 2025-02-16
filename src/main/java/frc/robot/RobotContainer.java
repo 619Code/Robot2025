@@ -55,7 +55,7 @@ public class RobotContainer {
     private final Wrist wrist;
 
 
-    private final boolean driveEnabled = true, wristEnabled = true, intakeEnabled = false;
+    private final boolean driveEnabled = false, wristEnabled = false, intakeEnabled = false;
 
 
     // Controller
@@ -92,12 +92,12 @@ public class RobotContainer {
 
 
 
-        // Set up auto routines
-        autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-
-
         if(driveEnabled){
+            autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
             driveConstructorStuff();
+            AutoBuilder.buildAutoChooser();
+        }else{
+            autoChooser = null;
         }
 
         if(intakeEnabled){
@@ -108,10 +108,6 @@ public class RobotContainer {
             wristConstructorStuff();
         }
 
-
-
-
-        AutoBuilder.buildAutoChooser();
 
         configureButtonBindings();
     }
@@ -131,7 +127,11 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autoChooser.get();
+        if(driveEnabled){
+            return autoChooser.get();
+        }else{
+            return null;
+        }
     }
 
 
