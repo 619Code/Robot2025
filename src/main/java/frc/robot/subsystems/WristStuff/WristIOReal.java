@@ -3,6 +3,8 @@ package frc.robot.subsystems.WristStuff;
 import static frc.robot.util.SparkUtil.ifOk;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.spark.config.SparkFlexConfig;
+
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -22,6 +24,8 @@ public class WristIOReal extends SubsystemBase implements WristIO {
 
     public WristIOReal(int wristMotorID) {
 
+        //  This should be able to be default. PID values get set in the constructor fo NTProfiledFlex
+        SparkFlexConfig config = new SparkFlexConfig();
 
         //  Set constrains
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
@@ -35,6 +39,7 @@ public class WristIOReal extends SubsystemBase implements WristIO {
             Constants.WristConstants.kpWrist,
             Constants.WristConstants.kiWrist,
             Constants.WristConstants.kdWrist,
+            config,
             constraints
         );
 

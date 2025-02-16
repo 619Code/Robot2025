@@ -40,11 +40,10 @@ public class NTProfiledFlex  {
     private double currentKd;
 
 
-    public NTProfiledFlex(String _uniqueName, int _motorID, double _kp, double _ki, double _kd, TrapezoidProfile.Constraints _contraints){
+    public NTProfiledFlex(String _uniqueName, int _motorID, double _kp, double _ki, double _kd, SparkFlexConfig _config, TrapezoidProfile.Constraints _contraints){
 
         //  Make config
-        SparkFlexConfig config = new SparkFlexConfig();
-        config.closedLoop
+        _config.closedLoop
             .p(_kp)
             .i(_ki)
             .d(_kd);
@@ -53,7 +52,7 @@ public class NTProfiledFlex  {
         motor = new SparkFlex(_motorID, MotorType.kBrushless);
         onBoardController = motor.getClosedLoopController();
 
-        motor.configure(config, null,null);
+        motor.configure(_config, null,null);
 
         trapezoidProfile = new TrapezoidProfile(_contraints);
 
