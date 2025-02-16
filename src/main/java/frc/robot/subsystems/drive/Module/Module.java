@@ -20,6 +20,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -45,8 +46,15 @@ public class Module {
   }
 
   public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
+    //  In replay mode Logger.processInputs overwrites the inputs. In the other modes it logs them.
+    if(Constants.currentMode == Mode.REPLAY){
+      Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
+      io.updateInputs(inputs);
+    }else{
+      io.updateInputs(inputs);
+      Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
+    }
+
 
     // Calculate positions for odometry
     int sampleCount = inputs.odometryTimestamps.length; // All signals are sampled together

@@ -13,8 +13,8 @@
 
 package frc.robot.subsystems.drive.Module;
 
-// import static frc.robot.subsystems.drive.DriveConstants.*;
 import edu.wpi.first.math.MathUtil;
+// import static frc.robot.subsystems.drive.DriveConstants.*;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -125,9 +125,4 @@ public class ModuleIOSim implements ModuleIO {
     turnClosedLoop = true;
     turnController.setSetpoint(rotation.getRadians());
   }
-
-  // @Override
-  // public void setTurnMotorPID(double kp, double kd) {
-  //   // Nothing
-  // }
 }

@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.RobotBase;
  * (log replay from a file).
  */
 public final class Constants {
-  public static final Mode simMode = Mode.SIM;
+  public static final Mode simMode = Mode.REPLAY;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
   public static enum Mode {
@@ -127,10 +127,10 @@ public final class Constants {
     public static final double driveKd = 0.0;
     public static final double driveKs = 0.184445;  //  Got this value from characterization auto routine
     public static final double driveKv = 0.093025;  //  Got this value from characterization auto routine
-    public static final double driveSimP = 8.0;
+    public static final double driveSimP = 0.01; //8.0;
     public static final double driveSimD = 0.0;
-    public static final double driveSimKs = 0.0;
-    public static final double driveSimKv = 0.0789;
+    public static final double driveSimKs = 0.184445; //0.0;
+    public static final double driveSimKv = 0.093025; //0.0789;
 
     // Turn motor configuration
     //  public static final boolean turnInverted = false;
@@ -160,7 +160,7 @@ public final class Constants {
     // Turn PID configuration
     public static final double turnKp = 0.4;
     public static final double turnKd = 0.0;
-    public static final double turnSimP = 8.0;
+    public static final double turnSimP = 0.4;
     public static final double turnSimD = 0.0;
     public static final double turnPIDMinInput = 0; // Radians
     public static final double turnPIDMaxInput = 2.0 * Math.PI; // Radians
@@ -216,7 +216,15 @@ public final class Constants {
     public static final double intakeSoftUpperBound = 200;
   }
 
+  public static final class AlgaeDislodgerConstants{
+
+    public static final int motorId = 52;
+
+  }
+
   public static final class OuttakeConstants {
+
+    public static final int outtakeMotorId = 51;
 
     public static final double turnEncoderPositionFactor = 1;
     public static final double turnEncoderVelocityFactor = 1;
@@ -237,7 +245,7 @@ public final class Constants {
 
   public static final class WristConstants{
 
-      public static int wristMotorID = -1;
+      public static int wristMotorID = 53;
 
       public static final DCMotor wristGearbox = DCMotor.getNeoVortex(1);
       public static final double wristMotorReduction = 7.3; //  This number is arbitrary as freak
@@ -245,10 +253,12 @@ public final class Constants {
 
       public static double kDt = 0.02;
 
-      public static double passthroughPositionRad = 0;
-      public static double L1PositionRad = 1;
-      public static double L2L3PositionRad = 2;
-      public static double L4PositionRad = 3;
+      public static double freeHangAngle = 0.8888;
+
+      public static double passthroughPositionRad = freeHangAngle;
+      public static double L1PositionRad = 1.0;
+      public static double L2L3PositionRad = freeHangAngle;
+      public static double L4PositionRad = freeHangAngle;
 
       public static double ksFeedforward = 0;
       public static double kvFeedforward = 0;
@@ -264,8 +274,12 @@ public final class Constants {
       public static double kiWristSim = 0;
       public static double kdWristSim = 0;
 
-      public static double maxVelocity = 1.0;
-      public static double maxAcceleration = 1.5;
+      public static double maxVelocity = 0.0;
+      public static double maxAcceleration = 0.0;
+
+
+      public static final double softUpperLimit = 4.07;
+      public static final double softLowerLimit = 0.19;
 
   }
 

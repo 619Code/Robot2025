@@ -33,7 +33,6 @@ import frc.robot.subsystems.WristStuff.WristIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.Gyro.GyroIO;
 import frc.robot.subsystems.drive.Gyro.GyroIONavX;
-import frc.robot.subsystems.drive.Module.ModuleIO;
 import frc.robot.subsystems.drive.Module.ModuleIOSim;
 import frc.robot.subsystems.drive.Module.ModuleIOSpark;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -55,7 +54,7 @@ public class RobotContainer {
     private final Wrist wrist;
 
 
-    private final boolean driveEnabled = false, wristEnabled = false, intakeEnabled = false;
+    private final boolean driveEnabled = false, wristEnabled = true, intakeEnabled = false;
 
 
     // Controller
@@ -67,6 +66,9 @@ public class RobotContainer {
 
 
     public RobotContainer() {
+
+
+        // System.out.println("Replay log file location: " + LogFileUtil.findReplayLog());
 
         switch (Constants.currentMode) {
             case REAL:
@@ -188,12 +190,20 @@ public class RobotContainer {
         new ModuleIOSim());
     }
     private Drive instantiateDriveReplayed() {
+        // return new Drive(
+        //     new GyroIO() {},
+        //     new ModuleIO() {},
+        //     new ModuleIO() {},
+        //     new ModuleIO() {},
+        //     new ModuleIO() {}
+        // );
         return new Drive(
             new GyroIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {});
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim()
+        );
     }
 
     private Intake instantiateRealIntake(){
@@ -320,16 +330,17 @@ public class RobotContainer {
     //   Hold [left bumper] to enable input for carriage
     //   Then hit
     private void configureWristBindings() {
+
         Trigger aPressedTrigger = operatorController.a();
         aPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.PASSTHROUGH));
 
         Trigger bPressedTrigger = operatorController.b();
         bPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L1));
 
-        Trigger xPressedTrigger = operatorController.x();
-        xPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L2L3));
+        // Trigger xPressedTrigger = operatorController.x();
+        // xPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L2L3));
 
-        Trigger yPressedTrigger = operatorController.y();
-        yPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L4));
+        // Trigger yPressedTrigger = operatorController.y();
+        // yPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L4));
     }
 }

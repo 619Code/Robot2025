@@ -3,6 +3,8 @@ package frc.robot.subsystems.WristStuff;
 import static frc.robot.util.SparkUtil.ifOk;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -26,8 +28,15 @@ public class WristIOReal extends SubsystemBase implements WristIO {
 
         //  This should be able to be default. PID values get set in the constructor fo NTProfiledFlex
         SparkFlexConfig config = new SparkFlexConfig();
+        config.closedLoop.feedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder);
 
-        //  Set constrains
+
+        SoftLimitConfig softLimits = new SoftLimitConfig();
+        softLimits.forwardSoftLimit(Constants.WristConstants.softUpperLimit);
+        softLimits.reverseSoftLimit(Constants.WristConstants.softLowerLimit);
+        config.softLimit.apply(softLimits);
+
+        //  Set constraints
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
                 Constants.WristConstants.maxVelocity,
                 Constants.WristConstants.maxAcceleration);
@@ -51,7 +60,9 @@ public class WristIOReal extends SubsystemBase implements WristIO {
     @Override
     public void periodic() {
 
-        wristFlex.update();
+      //  wristFlex.update();
+
+      System.out.println("Wrist encoder position radians: " + (wristEncoder.getPosition() * 2.0 * Math.PI));
 
     }
 
