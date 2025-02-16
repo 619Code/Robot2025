@@ -55,7 +55,7 @@ public class RobotContainer {
     private final Wrist wrist;
 
 
-    private final boolean driveEnabled = true, wristEnabled = true, intakeEnabled = false;
+    private final boolean driveEnabled = true, wristEnabled = true, intakeEnabled = true;
 
 
     // Controller
