@@ -4,6 +4,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
@@ -36,7 +37,7 @@ public class intakeIOReal implements IntakeIO{
         extensionEncoder = intakeExtensionMotor.getEncoder();
         SparkMaxConfig intakeConfigure = new SparkMaxConfig();
 
-        //intakeExtensionMotor.idleMode(IdleMode.kCoast);
+        intakeConfigure.idleMode(IdleMode.kCoast);
 
         intakeExtensionMotor.configure(intakeConfigure, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
