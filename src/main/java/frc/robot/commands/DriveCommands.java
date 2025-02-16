@@ -73,18 +73,8 @@ public class DriveCommands {
       DoubleSupplier ySupplier,
       DoubleSupplier omegaSupplier) {
 
-    // DoubleEntry kpTurnMotorEntry =
-    //     NetworkTableInstance.getDefault().getDoubleTopic("kpT").getEntry(0.0);
-    // DoubleEntry kdTurnMotorEntry =
-    //     NetworkTableInstance.getDefault().getDoubleTopic("kdT").getEntry(0.0);
-
-    // kpTurnMotorEntry.set(0.0);
-    // kdTurnMotorEntry.set(0.0);
-
     return Commands.run(
         () -> {
-          // drive.SetModuleTurnMotorPD(
-          //     kpTurnMotorEntry.getAsDouble(), kdTurnMotorEntry.getAsDouble());
 
           // Get linear velocity
           Translation2d linearVelocity =

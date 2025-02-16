@@ -16,7 +16,6 @@ package frc.robot;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -187,10 +186,87 @@ public final class Constants {
 
   }
 
+
+    //  NOTICE: None of these values have been tested. They are all arbitrary
   public static final class ElevatorConstants {
 
     public static final double elevatorAbsoluteEncoderOffset = 0.0;
     public static final SensorDirectionValue elevatorEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
+    public static final double handoffHeight = 50;
+    public static final double l2Height = 100;
+    public static final double l3Height = 200;
+    public static final double l4Height = 300;
+
+    public static final double elevatorSoftLowerBound = 0;
+    public static final double elevatorSoftUpperBound = 300;
+
+    public static final int destinationTolerance = 10;
   }
+
+  public static final class IntakeConstants {
+
+    // NOTICE: None of these value have been tested as well.
+
+    public static final double extendedPosition = 100.0;
+    public static final double retractedPosition = 0.0;
+    public static final double extensionTolerance = 5.0;
+
+    public static final double intakeSoftLowerBound = 0;
+    public static final double intakeSoftUpperBound = 200;
+  }
+
+  public static final class OuttakeConstants {
+
+    public static final double turnEncoderPositionFactor = 1;
+    public static final double turnEncoderVelocityFactor = 1;
+    public static final int kIntakeSensorPort = -1;
+
+    public static double outtakeSpeed = 0.5;
+  }
+
+  public static final class LEDConstants {
+    public static final int CANdleID = 40;
+    public static final int ledCount = 200;
+  }
+
+  public static final class PassthroughConstants {
+
+    public static double passthroughMotorVoltage = 6;
+  }
+
+  public static final class WristConstants{
+
+      public static int wristMotorID = -1;
+
+      public static final DCMotor wristGearbox = DCMotor.getNeoVortex(1);
+      public static final double wristMotorReduction = 7.3; //  This number is arbitrary as freak
+
+
+      public static double kDt = 0.02;
+
+      public static double passthroughPositionRad = 0;
+      public static double L1PositionRad = 1;
+      public static double L2L3PositionRad = 2;
+      public static double L4PositionRad = 3;
+
+      public static double ksFeedforward = 0;
+      public static double kvFeedforward = 0;
+
+      public static double kpWrist = 0;
+      public static double kiWrist = 0;
+      public static double kdWrist = 0;
+
+      public static double ksFeedforwardSim = 0;
+      public static double kvFeedforwardSim = 0;
+
+      public static double kpWristSim = 1;
+      public static double kiWristSim = 0;
+      public static double kdWristSim = 0;
+
+      public static double maxVelocity = 1.0;
+      public static double maxAcceleration = 1.5;
+
+  }
+
 }
