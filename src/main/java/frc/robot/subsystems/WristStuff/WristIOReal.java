@@ -12,30 +12,14 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.util.NTProfiledFlex;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class WristIOReal extends SubsystemBase implements WristIO {
 
-    private final SparkFlex wristFlex;
-    private final SparkClosedLoopController wristController;
-    //  private final AbsoluteEncoder wristEncoder;
-
-    // Note: These gains are fake, and will have to be tuned for your robot.
- //   private final SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(
-   //     Constants.WristConstants.ksFeedforward,
-     //   Constants.WristConstants.kvFeedforward);
-
-    // Create a motion profile with the given maximum velocity and maximum
-    // acceleration constraints for the next setpoint.
-    private final TrapezoidProfile trapezoidProfile =
-            new TrapezoidProfile(new TrapezoidProfile.Constraints(
-                Constants.WristConstants.maxVelocity,
-                Constants.WristConstants.maxAcceleration));
-
-    private TrapezoidProfile.State currentGoal = new TrapezoidProfile.State();
-    private TrapezoidProfile.State currentSetpoint = new TrapezoidProfile.State();
-
+    private final NTProfiledFlex wristFlex;
+    
 
     private final TrapezoidProfile.State passthroughState = new TrapezoidProfile.State(Constants.WristConstants.passthroughPositionRad, 0);
     private final TrapezoidProfile.State L1State = new TrapezoidProfile.State(Constants.WristConstants.L1PositionRad, 0);
@@ -46,17 +30,21 @@ public class WristIOReal extends SubsystemBase implements WristIO {
 
     public WristIOReal(int wristMotorID) {
 
-        wristFlex = new SparkFlex(wristMotorID, MotorType.kBrushless);
-        SparkFlexConfig wristConfig = new SparkFlexConfig();
-        //  Configure
-        wristConfig.closedLoop
-        .p(Constants.WristConstants.kpWrist)
-        .i(Constants.WristConstants.kiWrist)
-        .d(Constants.WristConstants.kdWrist);
-        wristFlex.configure(wristConfig, null, null);
+        
+        //  Set constrains
+        TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
+                Constants.WristConstants.maxVelocity,
+                Constants.WristConstants.maxAcceleration);
 
-
-        wristController = wristFlex.getClosedLoopController();
+        //  Create motor
+        wristFlex = new NTProfiledFlex(
+            "WristFlex", 
+            wristMotorID, 
+            Constants.WristConstants.kpWrist, 
+            Constants.WristConstants.kiWrist, 
+            Constants.WristConstants.kdWrist, 
+            constraints
+        );
 
         wristEncoder = wristFlex.getAbsoluteEncoder();
 
@@ -66,48 +54,38 @@ public class WristIOReal extends SubsystemBase implements WristIO {
     @Override
     public void periodic() {
 
-        currentSetpoint = trapezoidProfile.calculate(Constants.WristConstants.kDt, currentSetpoint, currentGoal);
+        wristFlex.update();
 
-        wristController.setReference(
-            currentSetpoint.position,
-            ControlType.kPosition,
-            ClosedLoopSlot.kSlot0);
-
-    }
-
-
-    private void goToState(TrapezoidProfile.State _state){
-        currentGoal = _state;
     }
 
     @Override
     public void goToPassthroughAngle(){
-        goToState(passthroughState);
+        wristFlex.goToState(passthroughState);
     }
 
     @Override
     public void goToL1Angle() {
-        goToState(L1State);
+        wristFlex.goToState(L1State);
     }
 
     @Override
     public void goToL2L3Angle(){
-        goToState(L2L3State);
+        wristFlex.goToState(L2L3State);
     }
 
     @Override
     public void goToL4Angle(){
-        goToState(L4State);
+        wristFlex.goToState(L4State);
     }
 
     @Override
     public boolean hasReachedGoal(){
-         return trapezoidProfile.isFinished(0);
+         return wristFlex.hasReachedGoal();
     }
 
 
     @Override
     public void updateInputs(WristIOInputs inputs){
-        ifOk(wristFlex, wristEncoder::getPosition, (value) -> inputs.wristPosition = value);
+        ifOk(wristFlex.getMotor(), wristEncoder::getPosition, (value) -> inputs.wristPosition = value);
     }
 }

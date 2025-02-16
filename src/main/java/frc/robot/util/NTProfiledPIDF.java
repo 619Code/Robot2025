@@ -10,7 +10,6 @@ public class NTProfiledPIDF {
 
     private final ProfiledPIDController controller;
 
-    private final String name;
 
 
 
@@ -23,16 +22,14 @@ public class NTProfiledPIDF {
 
     public NTProfiledPIDF(String _uniqueName, double _kp, double _ki, double _kd, double _ks, double _kv, Constraints _constraints){
 
-        name = _uniqueName;
-
         controller = new ProfiledPIDController(_kp, _ki, _kd, _constraints);
 
-        kpEntry = NetworkTableInstance.getDefault().getDoubleTopic(name + "_kp").getEntry(_kp);
-        kiEntry = NetworkTableInstance.getDefault().getDoubleTopic(name + "_ki").getEntry(_ki);
-        kdEntry = NetworkTableInstance.getDefault().getDoubleTopic(name + "_kd").getEntry(_kd);
+        kpEntry = NetworkTableInstance.getDefault().getDoubleTopic(_uniqueName + "_kp").getEntry(_kp);
+        kiEntry = NetworkTableInstance.getDefault().getDoubleTopic(_uniqueName + "_ki").getEntry(_ki);
+        kdEntry = NetworkTableInstance.getDefault().getDoubleTopic(_uniqueName + "_kd").getEntry(_kd);
 
-        ksEntry = NetworkTableInstance.getDefault().getDoubleTopic(name + "_ks").getEntry(_ks);
-        kvEntry = NetworkTableInstance.getDefault().getDoubleTopic(name + "_kv").getEntry(_kv);
+        ksEntry = NetworkTableInstance.getDefault().getDoubleTopic(_uniqueName + "_ks").getEntry(_ks);
+        kvEntry = NetworkTableInstance.getDefault().getDoubleTopic(_uniqueName + "_kv").getEntry(_kv);
 
         kpEntry.set(_kp);
         kiEntry.set(_ki);
