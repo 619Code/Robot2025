@@ -1,25 +1,17 @@
 package frc.robot.subsystems.WristStuff;
 
-import com.revrobotics.spark.SparkBase.ControlType;
-
 import static frc.robot.util.SparkUtil.ifOk;
 
 import com.revrobotics.AbsoluteEncoder;
-import com.revrobotics.spark.ClosedLoopSlot;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.NTProfiledFlex;
 
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-
 public class WristIOReal extends SubsystemBase implements WristIO {
 
     private final NTProfiledFlex wristFlex;
-    
+
 
     private final TrapezoidProfile.State passthroughState = new TrapezoidProfile.State(Constants.WristConstants.passthroughPositionRad, 0);
     private final TrapezoidProfile.State L1State = new TrapezoidProfile.State(Constants.WristConstants.L1PositionRad, 0);
@@ -30,7 +22,7 @@ public class WristIOReal extends SubsystemBase implements WristIO {
 
     public WristIOReal(int wristMotorID) {
 
-        
+
         //  Set constrains
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
                 Constants.WristConstants.maxVelocity,
@@ -38,11 +30,11 @@ public class WristIOReal extends SubsystemBase implements WristIO {
 
         //  Create motor
         wristFlex = new NTProfiledFlex(
-            "WristFlex", 
-            wristMotorID, 
-            Constants.WristConstants.kpWrist, 
-            Constants.WristConstants.kiWrist, 
-            Constants.WristConstants.kdWrist, 
+            "WristFlex",
+            wristMotorID,
+            Constants.WristConstants.kpWrist,
+            Constants.WristConstants.kiWrist,
+            Constants.WristConstants.kdWrist,
             constraints
         );
 

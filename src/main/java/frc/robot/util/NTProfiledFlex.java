@@ -22,7 +22,7 @@ public class NTProfiledFlex  {
     private final SparkClosedLoopController onBoardController;
 
     //  Control
-    
+
     private final TrapezoidProfile trapezoidProfile;
 
     private TrapezoidProfile.State currentGoal = new TrapezoidProfile.State();
@@ -49,7 +49,7 @@ public class NTProfiledFlex  {
             .i(_ki)
             .d(_kd);
 
-        
+
         motor = new SparkFlex(_motorID, MotorType.kBrushless);
         onBoardController = motor.getClosedLoopController();
 
@@ -125,13 +125,13 @@ public class NTProfiledFlex  {
 
     public boolean hasReachedGoal(){
         return trapezoidProfile.isFinished(0);
-    }   
+    }
 
     public AbsoluteEncoder getAbsoluteEncoder(){
         return motor.getAbsoluteEncoder();
-    }   
+    }
 
     public SparkFlex getMotor(){
         return motor;
-    }   
+    }
 }
