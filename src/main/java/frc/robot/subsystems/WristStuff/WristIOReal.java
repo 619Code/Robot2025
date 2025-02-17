@@ -32,8 +32,8 @@ public class WristIOReal extends SubsystemBase implements WristIO {
 
 
         SoftLimitConfig softLimits = new SoftLimitConfig();
-        softLimits.forwardSoftLimit(Constants.WristConstants.softUpperLimit);
-        softLimits.reverseSoftLimit(Constants.WristConstants.softLowerLimit);
+        softLimits.forwardSoftLimit(Constants.WristConstants.softUpperLimitRotations);
+        softLimits.reverseSoftLimit(Constants.WristConstants.softLowerLimitRotations);
         config.softLimit.apply(softLimits);
 
         //  Set constraints

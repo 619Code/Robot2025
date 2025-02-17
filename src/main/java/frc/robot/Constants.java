@@ -253,10 +253,12 @@ public final class Constants {
 
       public static double kDt = 0.02;
 
-      public static double freeHangAngle = 0.8888;
+      public static double zeroOffset = 1.0 - ((5.05128918995 - (Math.PI / 2.0)) / (2.0 * Math.PI));
+
+      public static double freeHangAngle = Math.PI / 2.0;
 
       public static double passthroughPositionRad = freeHangAngle;
-      public static double L1PositionRad = 1.0;
+      public static double L1PositionRad = Math.PI * 2.0 / 3.0;
       public static double L2L3PositionRad = freeHangAngle;
       public static double L4PositionRad = freeHangAngle;
 
@@ -278,8 +280,10 @@ public final class Constants {
       public static double maxAcceleration = 0.0;
 
 
-      public static final double softUpperLimit = 4.07;
-      public static final double softLowerLimit = 0.19;
+      // public static final double softUpperLimit = 4.07;
+      // public static final double softLowerLimit = 0.19;
+      public static final double softUpperLimitRotations = Math.PI * 45.0 / 32.0; // ~ 2pi * 0.7
+      public static final double softLowerLimitRotations = Math.PI / 4.0;
 
   }
 
