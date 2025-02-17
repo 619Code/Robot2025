@@ -1,6 +1,8 @@
 package frc.robot.util;
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -10,6 +12,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.Constants;
 
 public class NTProfiledFlex  {
 
@@ -17,15 +20,14 @@ public class NTProfiledFlex  {
 
     private final SparkFlex motor;
     private final SparkClosedLoopController onBoardController;
+    private final AbsoluteEncoder encoder;
 
     //  Control
 
     private final TrapezoidProfile trapezoidProfile;
 
-    private TrapezoidProfile.State currentGoal = new TrapezoidProfile.State();
-    private TrapezoidProfile.State currentSetpoint = new TrapezoidProfile.State();
-
-
+    private TrapezoidProfile.State currentGoal;
+    private TrapezoidProfile.State currentSetpoint;
 
     // Network tables
 
@@ -53,6 +55,11 @@ public class NTProfiledFlex  {
         motor.configure(_config, null,null);
 
         trapezoidProfile = new TrapezoidProfile(_contraints);
+
+        encoder = motor.getAbsoluteEncoder();
+
+        currentSetpoint = new TrapezoidProfile.State(encoder.getPosition(), 0);
+        currentGoal = new TrapezoidProfile.State(currentSetpoint.position, currentSetpoint.velocity);
 
 
         //  Network tables
@@ -106,14 +113,35 @@ public class NTProfiledFlex  {
     //  NOTICE: Come back here and uncomment stuff so that thangs can actually move
     public void update(){
 
-        // handleNetworkTables();
+        handleNetworkTables();
 
-        // currentSetpoint = trapezoidProfile.calculate(Constants.WristConstants.kDt, currentSetpoint, currentGoal);
+        currentSetpoint = trapezoidProfile.calculate(Constants.WristConstants.kDt, currentSetpoint, currentGoal);
+
+        double feedforward = 0.3 * Math.cos(encoder.getPosition() + Math.PI);
 
         // onBoardController.setReference(
         //     currentSetpoint.position,
         //     ControlType.kPosition,
-        //     ClosedLoopSlot.kSlot0);
+        //     ClosedLoopSlot.kSlot0
+        //     Constants.WristConstants.ksFeedforward * Math.signum(currentSetpoint.velocity) +
+        //     Constants.WristConstants.kvFeedforward * currentSetpoint.velocity
+        // );
+
+
+
+        onBoardController.setReference(
+            currentSetpoint.velocity,
+            ControlType.kVoltage,
+            ClosedLoopSlot.kSlot0,
+            feedforward
+        );
+
+        // onBoardController.setReference(
+        //     currentSetpoint.position,
+        //     ControlType.kPosition,
+        //     ClosedLoopSlot.kSlot0,
+        //     0.3 * Math.cos(encoder.getPosition() + Math.PI)
+        // );
 
     }
 

@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.WristDirectControlCommand;
+import frc.robot.commands.WristCommand;
 import frc.robot.commands.AutoCommands.AutoFactoryGen2;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.WristStuff.Wrist;
@@ -52,8 +52,8 @@ public class RobotContainer {
     // Subsystems
     private final Drive drive;
     private final Intake intake;
-//    private final Wrist wrist;
-    private final WristDirectControlSubsystem tempWrist;
+   private final Wrist wrist;
+    //private final WristDirectControlSubsystem tempWrist;
 
 
     private final boolean driveEnabled = false, wristEnabled = true, intakeEnabled = false;
@@ -76,28 +76,26 @@ public class RobotContainer {
             case REAL:
                 drive = driveEnabled   ? instantiateRealDrive()  : null;
                 intake = intakeEnabled ? instantiateRealIntake() : null;
-            //    wrist = wristEnabled   ? instantiateRealWrist()  : null;
-                tempWrist = instantiateWristDirectControlSubsystem();
+               wrist = wristEnabled   ? instantiateRealWrist()  : null;
+                // tempWrist = instantiateWristDirectControlSubsystem();
                 break;
 
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
                 drive = driveEnabled   ? instantiateSimDrive()  : null;
                 intake = intakeEnabled ? instantiateSimIntake() : null;
-           //     wrist = wristEnabled   ? instantiateSimWrist()  : null;
-                tempWrist = null;
+               wrist = wristEnabled   ? instantiateSimWrist()  : null;
+                // tempWrist = null;
                 break;
 
             default:
                 // Replayed robot, disable IO implementations
                 drive = driveEnabled   ? instantiateDriveReplayed()  : null;
                 intake = intakeEnabled ? instantiateIntakeReplayed() : null;
-          //      wrist = wristEnabled   ? instantiateWristReplayed()  : null;
-                tempWrist = null;
+               wrist = wristEnabled   ? instantiateWristReplayed()  : null;
+                // tempWrist = null;
                 break;
         }
-
-
 
         if(driveEnabled){
             autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -337,27 +335,27 @@ public class RobotContainer {
     //  Idea with wrist/elevator is that the operator will:
     //   Hold [left bumper] to enable input for carriage
     //   Then hit
-    // private void configureWristBindings() {
-
-    //     Trigger aPressedTrigger = operatorController.a();
-    //     aPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.PASSTHROUGH));
-
-    //     Trigger bPressedTrigger = operatorController.b();
-    //     bPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L1));
-
-    //     Trigger xPressedTrigger = operatorController.x();
-    //     xPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L2L3));
-
-    //     Trigger yPressedTrigger = operatorController.y();
-    //     yPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L4));
-    // }
-
     private void configureWristBindings() {
-        tempWrist.setDefaultCommand(
-            new WristDirectControlCommand(
-                tempWrist,
-                () -> operatorController.getRawAxis(1)
-            )
-        );
+
+        Trigger aPressedTrigger = operatorController.a();
+        aPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.PASSTHROUGH));
+
+        Trigger bPressedTrigger = operatorController.b();
+        bPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L1));
+
+        Trigger xPressedTrigger = operatorController.x();
+        xPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L2L3));
+
+        Trigger yPressedTrigger = operatorController.y();
+        yPressedTrigger.onTrue(new WristCommand(wrist, WRIST_ANGLE.L4));
     }
+
+    // private void configureWristBindings() {
+    //     tempWrist.setDefaultCommand(
+    //         new WristDirectControlCommand(
+    //             tempWrist,
+    //             () -> operatorController.getRawAxis(1)
+    //         )
+    //     );
+    // }
 }
