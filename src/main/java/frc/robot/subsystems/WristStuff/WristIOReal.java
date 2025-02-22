@@ -2,8 +2,10 @@ package frc.robot.subsystems.WristStuff;
 
 import static frc.robot.util.SparkUtil.ifOk;
 
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
@@ -12,6 +14,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,6 +27,8 @@ public class WristIOReal extends SubsystemBase implements WristIO {
     private final NTProfiledPIDF controller;
  //   private final ArmFeedforward deviousClown;
 
+    private final double maxVoltage = 5.0;
+
     private final TrapezoidProfile.State passthroughState = new TrapezoidProfile.State(Constants.WristConstants.passthroughPositionRad, 0);
     private final TrapezoidProfile.State L1State = new TrapezoidProfile.State(Constants.WristConstants.L1PositionRad, 0);
     private final TrapezoidProfile.State L2L3State = new TrapezoidProfile.State(Constants.WristConstants.L2L3PositionRad, 0);
@@ -35,7 +40,14 @@ public class WristIOReal extends SubsystemBase implements WristIO {
     private final DoublePublisher currentGoalPosPub;
     private final DoublePublisher currentVelocity;
     private final DoublePublisher desiredVelocity;
+    private final DoublePublisher desiredPosition;
     private final DoublePublisher currentVoltage;
+
+
+    private final DoublePublisher feedForwardProportion;
+    private final DoublePublisher positionalError;
+
+    private final BooleanPublisher voltageClamped;
 
 
     public WristIOReal(int wristMotorID) {
@@ -46,6 +58,10 @@ public class WristIOReal extends SubsystemBase implements WristIO {
 
         config.absoluteEncoder.positionConversionFactor(2.0 * Math.PI);
         config.absoluteEncoder.zeroOffset(Constants.WristConstants.zeroOffset);
+
+
+  //      config.externalEncoder.measurementPeriod(1);
+
         config.idleMode(IdleMode.kCoast);
 
 
@@ -69,6 +85,7 @@ public class WristIOReal extends SubsystemBase implements WristIO {
         wristFlex.configure(config, null, null);
 
 
+
         controller = new NTProfiledPIDF(
             "Wrist",
             Constants.WristConstants.kpWrist,
@@ -88,12 +105,20 @@ public class WristIOReal extends SubsystemBase implements WristIO {
         currentGoalPosPub = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex goal pos").publish();
         currentVelocity = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex current velocity").publish();
         desiredVelocity = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex desired velocity").publish();
+        desiredPosition = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex desired position").publish();
         currentVoltage = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex current voltage").publish();
+        feedForwardProportion = NetworkTableInstance.getDefault().getDoubleTopic("Wrist feedforward proportion").publish();
+        positionalError = NetworkTableInstance.getDefault().getDoubleTopic("Wrist position error").publish();
+        voltageClamped = NetworkTableInstance.getDefault().getBooleanTopic("Wrist voltage clamped").publish();
 
         currentGoalPosPub.set(passthroughState.position);
         currentVelocity.set(0);
         desiredVelocity.set(0);
+        desiredPosition.set(0);
         currentVoltage.set(0);
+        feedForwardProportion.set(0);
+        positionalError.set(0);
+        voltageClamped.set(false);
 
     }
 
@@ -101,20 +126,28 @@ public class WristIOReal extends SubsystemBase implements WristIO {
     @Override
     public void periodic() {
 
-
         double voltage = controller.calculate(wristEncoder.getPosition());
         double feedforward = 0.3 * Math.cos(wristEncoder.getPosition() + Math.PI);
 
+        //  Logging
+        double absValSum = Math.abs(feedforward) + Math.abs(voltage);
+        feedForwardProportion.set(Math.abs(feedforward) / Math.abs(absValSum));
+        //
+
         voltage += feedforward;
 
-        voltage = Math.min(voltage, 4.0);
-        voltage = Math.max(voltage, -4.0);
+        voltageClamped.set(Math.abs(voltage) >= maxVoltage);
+
+        voltage = Math.min(voltage, maxVoltage);
+        voltage = Math.max(voltage, -maxVoltage);
 
         wristFlex.setVoltage(voltage);
 
 
         currentVelocity.set(wristEncoder.getVelocity());
         desiredVelocity.set(controller.getSetpoint().velocity);
+        desiredPosition.set(controller.getSetpoint().position);
+        positionalError.set(controller.getSetpoint().position - wristEncoder.getPosition());
         currentVoltage.set(voltage);
 
       //  The encoder value should natively be in radians now

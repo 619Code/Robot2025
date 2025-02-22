@@ -276,8 +276,8 @@ public final class Constants {
       public static double kiWristSim = 0;
       public static double kdWristSim = 0;
 
-      public static double maxVelocity = Math.PI / 3.0;
-      public static double maxAcceleration = Math.PI / 2.0;
+      public static double maxVelocity = Math.PI / 1.0;
+      public static double maxAcceleration = Math.PI / 0.50;
 
 
       // public static final double softUpperLimit = 4.07;
