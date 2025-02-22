@@ -8,19 +8,19 @@ import frc.robot.subsystems.WristStuff.Wrist;
 public class WristCommand extends Command {
 
   private final Wrist wristSub;
-  private final WristAngle johnson;
+  private final WristAngle wristAngle;
 
 
-  public WristCommand(Wrist _wrist, WristAngle _johnson) {
+  public WristCommand(Wrist _wrist, WristAngle _wristAngle) {
     wristSub = _wrist;
-    johnson = _johnson;
+    wristAngle = _wristAngle;
 
     addRequirements(wristSub);
   }
 
   @Override
   public void initialize() {
-    switch (johnson) {
+    switch (wristAngle) {
       case PASSTHROUGH:
         wristSub.goToPassthroughAngle();
         break;

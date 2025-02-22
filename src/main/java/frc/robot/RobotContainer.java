@@ -28,13 +28,13 @@ import frc.robot.commands.WristCommand;
 import frc.robot.commands.AutoCommands.AutoFactoryGen2;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.WristStuff.Wrist;
+import frc.robot.subsystems.WristStuff.WristDirectControlSubsystem;
 import frc.robot.subsystems.WristStuff.WristIO;
 import frc.robot.subsystems.WristStuff.WristIOReal;
 import frc.robot.subsystems.WristStuff.WristIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.Gyro.GyroIO;
 import frc.robot.subsystems.drive.Gyro.GyroIONavX;
-import frc.robot.subsystems.drive.Module.ModuleIO;
 import frc.robot.subsystems.drive.Module.ModuleIOSim;
 import frc.robot.subsystems.drive.Module.ModuleIOSpark;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -53,10 +53,11 @@ public class RobotContainer {
     // Subsystems
     private final Drive drive;
     private final Intake intake;
-    private final Wrist wrist;
+   private final Wrist wrist;
+    //private final WristDirectControlSubsystem tempWrist;
 
 
-    private final boolean driveEnabled = true, wristEnabled = true, intakeEnabled = true;
+    private final boolean driveEnabled = false, wristEnabled = true, intakeEnabled = false;
 
 
     // Controller
@@ -69,29 +70,33 @@ public class RobotContainer {
 
     public RobotContainer() {
 
+
+        // System.out.println("Replay log file location: " + LogFileUtil.findReplayLog());
+
         switch (Constants.currentMode) {
             case REAL:
                 drive = driveEnabled   ? instantiateRealDrive()  : null;
                 intake = intakeEnabled ? instantiateRealIntake() : null;
-                wrist = wristEnabled   ? instantiateRealWrist()  : null;
+               wrist = wristEnabled   ? instantiateRealWrist()  : null;
+                // tempWrist = instantiateWristDirectControlSubsystem();
                 break;
 
             case SIM:
                 // Sim robot, instantiate physics sim IO implementations
                 drive = driveEnabled   ? instantiateSimDrive()  : null;
                 intake = intakeEnabled ? instantiateSimIntake() : null;
-                wrist = wristEnabled   ? instantiateSimWrist()  : null;
+               wrist = wristEnabled   ? instantiateSimWrist()  : null;
+                // tempWrist = null;
                 break;
 
             default:
                 // Replayed robot, disable IO implementations
                 drive = driveEnabled   ? instantiateDriveReplayed()  : null;
                 intake = intakeEnabled ? instantiateIntakeReplayed() : null;
-                wrist = wristEnabled   ? instantiateWristReplayed()  : null;
+               wrist = wristEnabled   ? instantiateWristReplayed()  : null;
+                // tempWrist = null;
                 break;
         }
-
-
 
         if(driveEnabled){
             autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -189,12 +194,20 @@ public class RobotContainer {
         new ModuleIOSim());
     }
     private Drive instantiateDriveReplayed() {
+        // return new Drive(
+        //     new GyroIO() {},
+        //     new ModuleIO() {},
+        //     new ModuleIO() {},
+        //     new ModuleIO() {},
+        //     new ModuleIO() {}
+        // );
         return new Drive(
             new GyroIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {});
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim()
+        );
     }
 
     private Intake instantiateRealIntake(){
@@ -209,6 +222,9 @@ public class RobotContainer {
 
     private Wrist instantiateRealWrist(){
         return new Wrist(new WristIOReal(Constants.WristConstants.wristMotorID));
+    }
+    private WristDirectControlSubsystem instantiateWristDirectControlSubsystem(){
+        return new WristDirectControlSubsystem(Constants.WristConstants.wristMotorID);
     }
     private Wrist instantiateSimWrist(){
         return new Wrist(new WristIOSim());
@@ -327,6 +343,7 @@ public class RobotContainer {
     //   Hold [left bumper] to enable input for carriage
     //   Then hit
     private void configureWristBindings() {
+
         Trigger aPressedTrigger = operatorController.a();
         aPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.PASSTHROUGH));
 
@@ -339,4 +356,13 @@ public class RobotContainer {
         Trigger yPressedTrigger = operatorController.y();
         yPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.L4));
     }
+
+    // private void configureWristBindings() {
+    //     tempWrist.setDefaultCommand(
+    //         new WristDirectControlCommand(
+    //             tempWrist,
+    //             () -> operatorController.getRawAxis(1)
+    //         )
+    //     );
+    // }
 }

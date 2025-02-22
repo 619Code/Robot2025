@@ -190,8 +190,15 @@ public class Drive extends SubsystemBase {
   @Override
   public void periodic() {
     odometryLock.lock(); // Prevents odometry updates while reading data
-    gyroIO.updateInputs(gyroInputs);
-    Logger.processInputs("Drive/Gyro", gyroInputs);
+
+    if(Constants.currentMode == Mode.REPLAY){
+      //  There isnt a Logger.processInputs here because it was overwriting gyroInputs to be too correct
+      gyroIO.updateInputs(gyroInputs);
+    }else{
+      gyroIO.updateInputs(gyroInputs);
+      Logger.processInputs("Drive/Gyro", gyroInputs);
+    }
+
     for (var module : modules) {
       module.periodic();
     }
