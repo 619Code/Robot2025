@@ -57,7 +57,7 @@ public class WristIOReal implements WristIO {
         config.absoluteEncoder.positionConversionFactor(2.0 * Math.PI);
         config.absoluteEncoder.zeroOffset(Constants.WristConstants.zeroOffset);
 
-        config.smartCurrentLimit(20);
+        config.smartCurrentLimit(60);
 
         // config.periodicFramePeriod(PeriodicFrame.kStatus5, 20);
         // config.periodicFramePeriod(PeriodicFrame.kStatus6, 20);

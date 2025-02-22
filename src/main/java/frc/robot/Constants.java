@@ -234,7 +234,7 @@ public final class Constants {
 
     public static final double outtakeVoltage = 4;
     public static final double intakeVoltage = -2;
-    public static final double dislodgerVoltage = 4;
+    public static final double dislodgerVoltage = -1;
 
   }
 
@@ -264,7 +264,7 @@ public final class Constants {
 
       public static double passthroughPositionRad = freeHangAngle;
       public static double L1PositionRad = Math.PI * 2.0 / 3.0;
-      public static double L2L3PositionRad = Math.PI;
+      public static double L2L3PositionRad = Math.PI * 1.1;
       public static double L4PositionRad = Math.PI * 2.8 / 2.0;
 
       public static double ksFeedforward = 0;

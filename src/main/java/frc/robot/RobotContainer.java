@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
@@ -395,10 +396,13 @@ public class RobotContainer {
     }
 
     private void configureManipulatorBindings(){
-        Trigger leftBumper = operatorController.leftBumper();
-        leftBumper.whileTrue(new IntakeCoralCommand(manipulator));
+        Trigger intakeCoralTrigger = operatorController.leftBumper();
+        intakeCoralTrigger.whileTrue(new IntakeCoralCommand(manipulator));
 
-        Trigger rightBumper = operatorController.rightBumper();
-        rightBumper.whileTrue(new OuttakeCoralCommand(manipulator));
+        Trigger outtakeCoralTrigger = operatorController.rightBumper();
+        outtakeCoralTrigger.whileTrue(new OuttakeCoralCommand(manipulator));
+
+        Trigger dislodgerTrigger = operatorController.rightStick();
+       dislodgerTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator));
     }
 }
