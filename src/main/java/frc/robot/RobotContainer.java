@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.WristCommand;
 import frc.robot.commands.AutoCommands.AutoFactoryGen2;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.WristStuff.Wrist;
@@ -309,7 +310,7 @@ public class RobotContainer {
         mainTrigger.whileFalse(Commands.runOnce(() -> {intake.goToRetractedPosition();}, intake));
     }
 
-    public enum WRIST_ANGLE {
+    public enum WristAngle {
         PASSTHROUGH,
         L1,
         L2L3,
@@ -321,21 +322,21 @@ public class RobotContainer {
         CLIMB,
         STORE
     }
-    
+
     //  Idea with wrist/elevator is that the operator will:
     //   Hold [left bumper] to enable input for carriage
     //   Then hit
     private void configureWristBindings() {
         Trigger aPressedTrigger = operatorController.a();
-        aPressedTrigger.onTrue(new IntakeCommand(wrist, WRIST_ANGLE.PASSTHROUGH));
+        aPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.PASSTHROUGH));
 
         Trigger bPressedTrigger = operatorController.b();
-        bPressedTrigger.onTrue(new IntakeCommand(wrist, WRIST_ANGLE.L1));
+        bPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.L1));
 
         Trigger xPressedTrigger = operatorController.x();
-        xPressedTrigger.onTrue(new IntakeCommand(wrist, WRIST_ANGLE.L2L3));
+        xPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.L2L3));
 
         Trigger yPressedTrigger = operatorController.y();
-        yPressedTrigger.onTrue(new IntakeCommand(wrist, WRIST_ANGLE.L4));
+        yPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.L4));
     }
 }

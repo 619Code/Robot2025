@@ -2,16 +2,16 @@ package frc.robot.commands;
 
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.RobotContainer.WRIST_ANGLE;
+import frc.robot.RobotContainer.WristAngle;
 import frc.robot.subsystems.WristStuff.Wrist;
 
 public class WristCommand extends Command {
 
   private final Wrist wristSub;
-  private final WRIST_ANGLE johnson;
+  private final WristAngle johnson;
 
 
-  public WristCommand(Wrist _wrist, WRIST_ANGLE _johnson) {
+  public WristCommand(Wrist _wrist, WristAngle _johnson) {
     wristSub = _wrist;
     johnson = _johnson;
 
