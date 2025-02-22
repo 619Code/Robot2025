@@ -5,11 +5,10 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.NTProfiledPIDF;
 
-public class WristIOSim extends SubsystemBase implements WristIO {
+public class WristIOSim implements WristIO {
 
 
     private DCMotorSim wristMotor;
@@ -57,7 +56,7 @@ public class WristIOSim extends SubsystemBase implements WristIO {
 
 
     @Override
-    public void periodic() {
+    public void ioPeriodic() {
 
         double voltage = wristController.calculate(wristMotor.getAngularPositionRad());
 

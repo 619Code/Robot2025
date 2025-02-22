@@ -23,11 +23,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeCoralCommand;
+import frc.robot.commands.OuttakeCoralCommand;
 import frc.robot.commands.WristCommand;
 import frc.robot.commands.AutoCommands.AutoFactoryGen2;
 import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Outtake.Manipulator;
+import frc.robot.subsystems.Outtake.ManipulatorIOReal;
 import frc.robot.subsystems.WristStuff.Wrist;
-import frc.robot.subsystems.WristStuff.WristDirectControlSubsystem;
 import frc.robot.subsystems.WristStuff.WristIO;
 import frc.robot.subsystems.WristStuff.WristIOReal;
 import frc.robot.subsystems.WristStuff.WristIOSim;
@@ -52,11 +55,15 @@ public class RobotContainer {
     // Subsystems
     private final Drive drive;
     private final Intake intake;
-   private final Wrist wrist;
+    private final Wrist wrist;
+    private final Manipulator manipulator;
     //private final WristDirectControlSubsystem tempWrist;
 
 
-    private final boolean driveEnabled = false, wristEnabled = true, intakeEnabled = false;
+    private final boolean driveEnabled = false;
+    private final boolean wristEnabled = true;
+    private final boolean manipulatorEnabled = true;
+    private final boolean intakeEnabled = false;
 
 
     // Controller
@@ -74,9 +81,10 @@ public class RobotContainer {
 
         switch (Constants.currentMode) {
             case REAL:
-                drive = driveEnabled   ? instantiateRealDrive()  : null;
-                intake = intakeEnabled ? instantiateRealIntake() : null;
-               wrist = wristEnabled   ? instantiateRealWrist()  : null;
+                drive = driveEnabled     ? instantiateRealDrive()   : null;
+                intake = intakeEnabled   ? instantiateRealIntake()  : null;
+                wrist = wristEnabled     ? instantiateRealWrist()   : null;
+                manipulator = manipulatorEnabled ? instantiateRealManipulator() : null;
                 // tempWrist = instantiateWristDirectControlSubsystem();
                 break;
 
@@ -84,7 +92,8 @@ public class RobotContainer {
                 // Sim robot, instantiate physics sim IO implementations
                 drive = driveEnabled   ? instantiateSimDrive()  : null;
                 intake = intakeEnabled ? instantiateSimIntake() : null;
-               wrist = wristEnabled   ? instantiateSimWrist()  : null;
+                wrist = wristEnabled   ? instantiateSimWrist()  : null;
+                manipulator = manipulatorEnabled ? instantiateSimManipulator() : null;
                 // tempWrist = null;
                 break;
 
@@ -92,7 +101,8 @@ public class RobotContainer {
                 // Replayed robot, disable IO implementations
                 drive = driveEnabled   ? instantiateDriveReplayed()  : null;
                 intake = intakeEnabled ? instantiateIntakeReplayed() : null;
-               wrist = wristEnabled   ? instantiateWristReplayed()  : null;
+                wrist = wristEnabled   ? instantiateWristReplayed()  : null;
+                manipulator = manipulatorEnabled ? instantiateManipulatorReplayed() : null;
                 // tempWrist = null;
                 break;
         }
@@ -113,6 +123,10 @@ public class RobotContainer {
             wristConstructorStuff();
         }
 
+        if(manipulatorEnabled){
+            manipulatorConstructorStuff();
+        }
+
 
         configureButtonBindings();
     }
@@ -128,6 +142,10 @@ public class RobotContainer {
 
         if(wristEnabled){
             configureWristBindings();
+        }
+
+        if(manipulatorEnabled){
+            configureManipulatorBindings();
         }
     }
 
@@ -145,6 +163,9 @@ public class RobotContainer {
 
 
   // ============= Instantiation =============
+
+
+  //  DRIVE INSTANTIATION
 
   private Drive instantiateRealDrive(){
     // Real robot, instantiate hardware IO implementations
@@ -209,6 +230,8 @@ public class RobotContainer {
         );
     }
 
+    //  INTAKE INSTANTIATION
+
     private Intake instantiateRealIntake(){
         return new Intake(100, 101, 102);
     }
@@ -219,17 +242,28 @@ public class RobotContainer {
         return null;
     }
 
+    //  WRIST INSTANTIATION
+
     private Wrist instantiateRealWrist(){
-        return new Wrist(new WristIOReal(Constants.WristConstants.wristMotorID));
-    }
-    private WristDirectControlSubsystem instantiateWristDirectControlSubsystem(){
-        return new WristDirectControlSubsystem(Constants.WristConstants.wristMotorID);
+        return new Wrist(new WristIOReal());
     }
     private Wrist instantiateSimWrist(){
         return new Wrist(new WristIOSim());
     }
     private Wrist instantiateWristReplayed(){
         return new Wrist(new WristIO() {});
+    }
+
+    //  MANIPULATOR INSTANTIATION
+
+    private Manipulator instantiateRealManipulator(){
+        return new Manipulator(new ManipulatorIOReal());
+    }
+    private Manipulator instantiateSimManipulator(){
+        throw new UnsupportedOperationException("NOT IMPLEMENTED");
+    }
+    private Manipulator instantiateManipulatorReplayed(){
+        throw new UnsupportedOperationException("NOT IMPLEMENTED");
     }
 
 
@@ -289,6 +323,10 @@ public class RobotContainer {
 
     private void wristConstructorStuff() {
         // ...
+    }
+
+    private void manipulatorConstructorStuff(){
+
     }
 
 
@@ -356,12 +394,11 @@ public class RobotContainer {
         yPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.L4));
     }
 
-    // private void configureWristBindings() {
-    //     tempWrist.setDefaultCommand(
-    //         new WristDirectControlCommand(
-    //             tempWrist,
-    //             () -> operatorController.getRawAxis(1)
-    //         )
-    //     );
-    // }
+    private void configureManipulatorBindings(){
+        Trigger leftBumper = operatorController.leftBumper();
+        leftBumper.whileTrue(new IntakeCoralCommand(manipulator));
+
+        Trigger rightBumper = operatorController.rightBumper();
+        rightBumper.whileTrue(new OuttakeCoralCommand(manipulator));
+    }
 }

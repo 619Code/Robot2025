@@ -16,11 +16,10 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.BooleanPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.NTProfiledPIDF;
 
-public class WristIOReal extends SubsystemBase implements WristIO {
+public class WristIOReal implements WristIO {
 
     private final SparkFlex wristFlex;
     private final NTProfiledPIDF controller;
@@ -49,7 +48,7 @@ public class WristIOReal extends SubsystemBase implements WristIO {
     private final BooleanPublisher voltageClamped;
 
 
-    public WristIOReal(int wristMotorID) {
+    public WristIOReal() {
 
         //  This should be able to be default. PID values get set in the constructor fo NTProfiledFlex
         SparkFlexConfig config = new SparkFlexConfig();
@@ -57,6 +56,11 @@ public class WristIOReal extends SubsystemBase implements WristIO {
 
         config.absoluteEncoder.positionConversionFactor(2.0 * Math.PI);
         config.absoluteEncoder.zeroOffset(Constants.WristConstants.zeroOffset);
+
+        config.smartCurrentLimit(20);
+
+        // config.periodicFramePeriod(PeriodicFrame.kStatus5, 20);
+        // config.periodicFramePeriod(PeriodicFrame.kStatus6, 20);
 
 
   //      config.externalEncoder.measurementPeriod(1);
@@ -78,7 +82,7 @@ public class WristIOReal extends SubsystemBase implements WristIO {
 
         //  Create motor
         wristFlex = new SparkFlex(
-            wristMotorID,
+            Constants.WristConstants.wristMotorID,
             MotorType.kBrushless
         );
         wristFlex.configure(config, null, null);
@@ -123,7 +127,7 @@ public class WristIOReal extends SubsystemBase implements WristIO {
 
 
     @Override
-    public void periodic() {
+    public void ioPeriodic() {
 
         double voltage = controller.calculate(wristEncoder.getPosition());
         double feedforward = 0.3 * Math.cos(wristEncoder.getPosition() + Math.PI);

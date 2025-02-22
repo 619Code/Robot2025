@@ -226,12 +226,16 @@ public final class Constants {
   public static final class OuttakeConstants {
 
     public static final int outtakeMotorId = 51;
+    public static final int dislodgerMotorId = 52;
 
-    public static final double turnEncoderPositionFactor = 1;
-    public static final double turnEncoderVelocityFactor = 1;
-    public static final int kIntakeSensorPort = -1;
+    // public static final double turnEncoderPositionFactor = 1;
+    // public static final double turnEncoderVelocityFactor = 1;
+    public static final int kIntakeSensorPort = 0;
 
-    public static double outtakeSpeed = 0.5;
+    public static final double outtakeVoltage = 4;
+    public static final double intakeVoltage = -2;
+    public static final double dislodgerVoltage = 4;
+
   }
 
   public static final class LEDConstants {
@@ -283,7 +287,7 @@ public final class Constants {
 
       // public static final double softUpperLimit = 4.07;
       // public static final double softLowerLimit = 0.19;
-      public static final double softUpperLimitRotations = Math.PI * 45.0 / 32.0; // ~ 2pi * 0.7
+      public static final double softUpperLimitRotations = 4.51; // ~ 2pi * 0.7
       public static final double softLowerLimitRotations = Math.PI / 4.0;
 
   }
