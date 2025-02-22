@@ -42,7 +42,8 @@ public class WristIOReal implements WristIO {
     private final DoublePublisher currentVoltage;
 
 
-    private final DoublePublisher feedForwardProportion;
+    private final DoublePublisher feedforwardVoltage;
+    private final DoublePublisher pidVoltage;
     private final DoublePublisher positionalError;
 
     private final BooleanPublisher voltageClamped;
@@ -105,21 +106,23 @@ public class WristIOReal implements WristIO {
         controller.setGoal(new State(wristEncoder.getPosition(), 0));
 
 
-        currentGoalPosPub = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex goal pos").publish();
-        currentVelocity = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex current velocity").publish();
-        desiredVelocity = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex desired velocity").publish();
-        desiredPosition = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex desired position").publish();
-        currentVoltage = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex current voltage").publish();
-        feedForwardProportion = NetworkTableInstance.getDefault().getDoubleTopic("Wrist feedforward proportion").publish();
-        positionalError = NetworkTableInstance.getDefault().getDoubleTopic("Wrist position error").publish();
-        voltageClamped = NetworkTableInstance.getDefault().getBooleanTopic("Wrist voltage clamped").publish();
+        currentGoalPosPub = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/goal pos").publish();
+        currentVelocity = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/current velocity").publish();
+        desiredVelocity = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/desired velocity").publish();
+        desiredPosition = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/desired position").publish();
+        currentVoltage = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/current voltage").publish();
+        feedforwardVoltage = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/feedforward voltage").publish();
+        pidVoltage = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/pid voltage").publish();
+        positionalError = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/position error").publish();
+        voltageClamped = NetworkTableInstance.getDefault().getBooleanTopic("WristFlex/voltage clamped").publish();
 
         currentGoalPosPub.set(passthroughState.position);
         currentVelocity.set(0);
         desiredVelocity.set(0);
         desiredPosition.set(0);
         currentVoltage.set(0);
-        feedForwardProportion.set(0);
+        feedforwardVoltage.set(0);
+        pidVoltage.set(0);
         positionalError.set(0);
         voltageClamped.set(false);
 
@@ -130,14 +133,14 @@ public class WristIOReal implements WristIO {
     public void ioPeriodic() {
 
         double voltage = controller.calculate(wristEncoder.getPosition());
-        double feedforward = 0.3 * Math.cos(wristEncoder.getPosition() + Math.PI);
+        double gravityFeedforward = 0.4 * Math.cos(controller.getSetpoint().position + Math.PI);
 
         //  Logging
-        double absValSum = Math.abs(feedforward) + Math.abs(voltage);
-        feedForwardProportion.set(Math.abs(feedforward) / Math.abs(absValSum));
+        feedforwardVoltage.set(gravityFeedforward);
+        pidVoltage.set(voltage);
         //
 
-        voltage += feedforward;
+        voltage += gravityFeedforward;
 
         voltageClamped.set(Math.abs(voltage) >= maxVoltage);
 
