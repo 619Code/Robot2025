@@ -26,8 +26,6 @@ public class WristIOReal implements WristIO {
     private final NTProfiledPIDF controller;
  //   private final ArmFeedforward deviousClown;
 
-    private final double maxVoltage = 5.0;
-
     private final TrapezoidProfile.State passthroughState = new TrapezoidProfile.State(Constants.WristConstants.passthroughPositionRad, 0);
     private final TrapezoidProfile.State L1State = new TrapezoidProfile.State(Constants.WristConstants.L1PositionRad, 0);
     private final TrapezoidProfile.State L2L3State = new TrapezoidProfile.State(Constants.WristConstants.L2L3PositionRad, 0);
@@ -70,8 +68,8 @@ public class WristIOReal implements WristIO {
 
 
         SoftLimitConfig softLimits = new SoftLimitConfig();
-        softLimits.forwardSoftLimit(Constants.WristConstants.softUpperLimitRotations);
-        softLimits.reverseSoftLimit(Constants.WristConstants.softLowerLimitRotations);
+        softLimits.forwardSoftLimit(Constants.WristConstants.softUpperLimitRadians);
+        softLimits.reverseSoftLimit(Constants.WristConstants.softLowerLimitRadians);
         softLimits.forwardSoftLimitEnabled(true);
         softLimits.reverseSoftLimitEnabled(true);
         config.softLimit.apply(softLimits);
@@ -117,7 +115,7 @@ public class WristIOReal implements WristIO {
         controller = new NTProfiledPIDF(
             "Wrist",
             Constants.WristConstants.kpWrist,
-            Constants.WristConstants.kiWristSim,
+            Constants.WristConstants.kiWrist,
             Constants.WristConstants.kiWrist,
             Constants.WristConstants.ksFeedforward,
             Constants.WristConstants.kvFeedforward,
@@ -165,10 +163,10 @@ public class WristIOReal implements WristIO {
 
         voltage += gravityFeedforward;
 
-        voltageClamped.set(Math.abs(voltage) >= maxVoltage);
+        voltageClamped.set(Math.abs(voltage) >= Constants.WristConstants.maxVoltage);
 
-        voltage = Math.min(voltage, maxVoltage);
-        voltage = Math.max(voltage, -maxVoltage);
+        voltage = Math.min(voltage, Constants.WristConstants.maxVoltage);
+        voltage = Math.max(voltage, -Constants.WristConstants.maxVoltage);
 
         wristFlex.setVoltage(voltage);
 

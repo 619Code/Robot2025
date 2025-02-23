@@ -29,8 +29,8 @@ public class WristDirectControlSubsystem extends SubsystemBase {
 
 
         SoftLimitConfig softLimits = new SoftLimitConfig();
-        softLimits.forwardSoftLimit(Constants.WristConstants.softUpperLimitRotations);
-        softLimits.reverseSoftLimit(Constants.WristConstants.softLowerLimitRotations);
+        softLimits.forwardSoftLimit(Constants.WristConstants.softUpperLimitRadians);
+        softLimits.reverseSoftLimit(Constants.WristConstants.softLowerLimitRadians);
         softLimits.forwardSoftLimitEnabled(true);
         softLimits.reverseSoftLimitEnabled(true);
         config.softLimit.apply(softLimits);

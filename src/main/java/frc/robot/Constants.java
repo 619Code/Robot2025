@@ -190,18 +190,35 @@ public final class Constants {
     //  NOTICE: None of these values have been tested. They are all arbitrary
   public static final class ElevatorConstants {
 
-    public static final double elevatorAbsoluteEncoderOffset = 0.0;
-    public static final SensorDirectionValue elevatorEncoderPositiveDirection =
-        SensorDirectionValue.CounterClockwise_Positive;
-    public static final double handoffHeight = 50;
-    public static final double l2Height = 100;
-    public static final double l3Height = 200;
-    public static final double l4Height = 300;
+    public static final int leftMotorID = -1;
+    public static final int rightMotorID = -1;
 
-    public static final double elevatorSoftLowerBound = 0;
-    public static final double elevatorSoftUpperBound = 300;
 
-    public static final int destinationTolerance = 10;
+    public static final int maxVoltage = 1;
+
+
+    public static final double maxVelocity = Math.PI * 2; // Arbitrary
+    public static final double maxAcceleration = Math.PI * 4;
+
+    public static final double passthroughPositionRad = 0;
+    public static final double l1PositionRad = Math.PI / 2.0;
+    public static final double l2PositionRad = Math.PI;
+    public static final double l3PositionRad = Math.PI * 1.5;
+    public static final double l4PositionRad = Math.PI * 2.0;
+
+    public static final double encoderOffsetRotations = 0;
+
+    public static final double softUpperLimitRotations = 5;
+    public static final double softLowerLimitRotations = 0;
+
+
+    public static final double kpElevator = 0.0;
+    public static final double kiElevator = 0.0;
+    public static final double kdElevator = 0.0;
+
+    public static final double ksFeedforward = 0.0;
+    public static final double kvFeedforward = 0.0;
+
   }
 
   public static final class IntakeConstants {
@@ -261,6 +278,8 @@ public final class Constants {
 
       public static int wristMotorID = 53;
 
+      public static int maxVoltage = 5;
+
       public static final DCMotor wristGearbox = DCMotor.getNeoVortex(1);
       public static final double wristMotorReduction = 7.3; //  This number is arbitrary as freak
 
@@ -294,10 +313,8 @@ public final class Constants {
       public static double maxAcceleration = Math.PI * 2.25;
 
 
-      // public static final double softUpperLimit = 4.07;
-      // public static final double softLowerLimit = 0.19;
-      public static final double softUpperLimitRotations = 4.51; // ~ 2pi * 0.7
-      public static final double softLowerLimitRotations = Math.PI / 4.0;
+      public static final double softUpperLimitRadians = 4.51; // ~ 2pi * 0.7
+      public static final double softLowerLimitRadians = Math.PI / 4.0;
 
   }
 
