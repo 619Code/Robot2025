@@ -3,6 +3,7 @@ package frc.robot.util;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -52,7 +53,7 @@ public class NTProfiledFlex  {
         motor = new SparkFlex(_motorID, MotorType.kBrushless);
         onBoardController = motor.getClosedLoopController();
 
-        motor.configure(_config, null,null);
+        motor.configure(_config, null,PersistMode.kPersistParameters);
 
         trapezoidProfile = new TrapezoidProfile(_contraints);
 
@@ -102,7 +103,7 @@ public class NTProfiledFlex  {
                 .i(currentKi)
                 .d(currentKd);
 
-            motor.configure(newConfig, null, null);
+            motor.configure(newConfig, null, PersistMode.kPersistParameters);
 
             System.out.println("Updating pid values of NTProfiledFlex to, p: " + currentKp + ",  i: " + currentKi + ",  d: " + currentKd);
 
