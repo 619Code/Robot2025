@@ -22,10 +22,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.IntakeCommand;
+import frc.robot.commands.IntakeCoralCommand;
+import frc.robot.commands.OuttakeCoralCommand;
+import frc.robot.commands.WristCommand;
 import frc.robot.commands.AutoCommands.AutoFactoryGen2;
 import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Outtake.Manipulator;
+import frc.robot.subsystems.Outtake.ManipulatorIOReal;
 import frc.robot.subsystems.WristStuff.Wrist;
 import frc.robot.subsystems.WristStuff.WristIO;
 import frc.robot.subsystems.WristStuff.WristIOReal;
@@ -33,7 +38,6 @@ import frc.robot.subsystems.WristStuff.WristIOSim;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.Gyro.GyroIO;
 import frc.robot.subsystems.drive.Gyro.GyroIONavX;
-import frc.robot.subsystems.drive.Module.ModuleIO;
 import frc.robot.subsystems.drive.Module.ModuleIOSim;
 import frc.robot.subsystems.drive.Module.ModuleIOSpark;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -53,9 +57,14 @@ public class RobotContainer {
     private final Drive drive;
     private final Intake intake;
     private final Wrist wrist;
+    private final Manipulator manipulator;
+    //private final WristDirectControlSubsystem tempWrist;
 
 
-    private final boolean driveEnabled = true, wristEnabled = true, intakeEnabled = true;
+    private final boolean driveEnabled = false;
+    private final boolean wristEnabled = true;
+    private final boolean manipulatorEnabled = true;
+    private final boolean intakeEnabled = false;
 
 
     // Controller
@@ -68,11 +77,16 @@ public class RobotContainer {
 
     public RobotContainer() {
 
+
+        // System.out.println("Replay log file location: " + LogFileUtil.findReplayLog());
+
         switch (Constants.currentMode) {
             case REAL:
-                drive = driveEnabled   ? instantiateRealDrive()  : null;
-                intake = intakeEnabled ? instantiateRealIntake() : null;
-                wrist = wristEnabled   ? instantiateRealWrist()  : null;
+                drive = driveEnabled     ? instantiateRealDrive()   : null;
+                intake = intakeEnabled   ? instantiateRealIntake()  : null;
+                wrist = wristEnabled     ? instantiateRealWrist()   : null;
+                manipulator = manipulatorEnabled ? instantiateRealManipulator() : null;
+                // tempWrist = instantiateWristDirectControlSubsystem();
                 break;
 
             case SIM:
@@ -80,6 +94,8 @@ public class RobotContainer {
                 drive = driveEnabled   ? instantiateSimDrive()  : null;
                 intake = intakeEnabled ? instantiateSimIntake() : null;
                 wrist = wristEnabled   ? instantiateSimWrist()  : null;
+                manipulator = manipulatorEnabled ? instantiateSimManipulator() : null;
+                // tempWrist = null;
                 break;
 
             default:
@@ -87,10 +103,10 @@ public class RobotContainer {
                 drive = driveEnabled   ? instantiateDriveReplayed()  : null;
                 intake = intakeEnabled ? instantiateIntakeReplayed() : null;
                 wrist = wristEnabled   ? instantiateWristReplayed()  : null;
+                manipulator = manipulatorEnabled ? instantiateManipulatorReplayed() : null;
+                // tempWrist = null;
                 break;
         }
-
-
 
         if(driveEnabled){
             autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
@@ -106,6 +122,10 @@ public class RobotContainer {
 
         if(wristEnabled){
             wristConstructorStuff();
+        }
+
+        if(manipulatorEnabled){
+            manipulatorConstructorStuff();
         }
 
 
@@ -124,6 +144,10 @@ public class RobotContainer {
         if(wristEnabled){
             configureWristBindings();
         }
+
+        if(manipulatorEnabled){
+            configureManipulatorBindings();
+        }
     }
 
     public Command getAutonomousCommand() {
@@ -140,6 +164,9 @@ public class RobotContainer {
 
 
   // ============= Instantiation =============
+
+
+  //  DRIVE INSTANTIATION
 
   private Drive instantiateRealDrive(){
     // Real robot, instantiate hardware IO implementations
@@ -188,13 +215,23 @@ public class RobotContainer {
         new ModuleIOSim());
     }
     private Drive instantiateDriveReplayed() {
+        // return new Drive(
+        //     new GyroIO() {},
+        //     new ModuleIO() {},
+        //     new ModuleIO() {},
+        //     new ModuleIO() {},
+        //     new ModuleIO() {}
+        // );
         return new Drive(
             new GyroIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {},
-            new ModuleIO() {});
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim()
+        );
     }
+
+    //  INTAKE INSTANTIATION
 
     private Intake instantiateRealIntake(){
         return new Intake(100, 101, 102);
@@ -206,14 +243,28 @@ public class RobotContainer {
         return null;
     }
 
+    //  WRIST INSTANTIATION
+
     private Wrist instantiateRealWrist(){
-        return new Wrist(new WristIOReal(Constants.WristConstants.wristMotorID));
+        return new Wrist(new WristIOReal());
     }
     private Wrist instantiateSimWrist(){
         return new Wrist(new WristIOSim());
     }
     private Wrist instantiateWristReplayed(){
         return new Wrist(new WristIO() {});
+    }
+
+    //  MANIPULATOR INSTANTIATION
+
+    private Manipulator instantiateRealManipulator(){
+        return new Manipulator(new ManipulatorIOReal());
+    }
+    private Manipulator instantiateSimManipulator(){
+        throw new UnsupportedOperationException("NOT IMPLEMENTED");
+    }
+    private Manipulator instantiateManipulatorReplayed(){
+        throw new UnsupportedOperationException("NOT IMPLEMENTED");
     }
 
 
@@ -275,6 +326,10 @@ public class RobotContainer {
         // ...
     }
 
+    private void manipulatorConstructorStuff(){
+
+    }
+
 
 
 
@@ -309,7 +364,7 @@ public class RobotContainer {
         mainTrigger.whileFalse(Commands.runOnce(() -> {intake.goToRetractedPosition();}, intake));
     }
 
-    public enum WRIST_ANGLE {
+    public enum WristAngle {
         PASSTHROUGH,
         L1,
         L2L3,
@@ -321,21 +376,33 @@ public class RobotContainer {
         CLIMB,
         STORE
     }
-    
+
     //  Idea with wrist/elevator is that the operator will:
     //   Hold [left bumper] to enable input for carriage
     //   Then hit
     private void configureWristBindings() {
+
         Trigger aPressedTrigger = operatorController.a();
-        aPressedTrigger.onTrue(new IntakeCommand(wrist, WRIST_ANGLE.PASSTHROUGH));
+        aPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.PASSTHROUGH));
 
         Trigger bPressedTrigger = operatorController.b();
-        bPressedTrigger.onTrue(new IntakeCommand(wrist, WRIST_ANGLE.L1));
+        bPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.L1));
 
         Trigger xPressedTrigger = operatorController.x();
-        xPressedTrigger.onTrue(new IntakeCommand(wrist, WRIST_ANGLE.L2L3));
+        xPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.L2L3));
 
         Trigger yPressedTrigger = operatorController.y();
-        yPressedTrigger.onTrue(new IntakeCommand(wrist, WRIST_ANGLE.L4));
+        yPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.L4));
+    }
+
+    private void configureManipulatorBindings(){
+        Trigger intakeCoralTrigger = operatorController.leftBumper();
+        intakeCoralTrigger.whileTrue(new IntakeCoralCommand(manipulator));
+
+        Trigger outtakeCoralTrigger = operatorController.rightBumper();
+        outtakeCoralTrigger.whileTrue(new OuttakeCoralCommand(manipulator));
+
+        Trigger dislodgerTrigger = operatorController.rightStick();
+       dislodgerTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator));
     }
 }

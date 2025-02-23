@@ -4,6 +4,8 @@ package frc.robot.subsystems.WristStuff;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 
 public class Wrist extends SubsystemBase {
 
@@ -18,10 +20,15 @@ public class Wrist extends SubsystemBase {
 
     @Override
     public void periodic() {
+        if(Constants.currentMode == Mode.REPLAY){
+            Logger.processInputs("Wrist", inputs);
+            io.updateInputs(inputs);
+        }else{
+            io.updateInputs(inputs);
+            Logger.processInputs("Wrist", inputs);
+        }
 
-        io.updateInputs(inputs);
-
-        Logger.processInputs("Wrist", inputs);
+        io.ioPeriodic();
 
     }
 

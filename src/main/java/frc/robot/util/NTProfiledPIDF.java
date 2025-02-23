@@ -24,6 +24,8 @@ public class NTProfiledPIDF {
 
         controller = new ProfiledPIDController(_kp, _ki, _kd, _constraints);
 
+        controller.setIZone(0.1);
+
         kpEntry = NetworkTableInstance.getDefault().getDoubleTopic(_uniqueName + "_kp").getEntry(_kp);
         kiEntry = NetworkTableInstance.getDefault().getDoubleTopic(_uniqueName + "_ki").getEntry(_ki);
         kdEntry = NetworkTableInstance.getDefault().getDoubleTopic(_uniqueName + "_kd").getEntry(_kd);
