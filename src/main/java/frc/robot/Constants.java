@@ -217,6 +217,15 @@ public final class Constants {
     public static final double intakeSoftUpperBound = 200;
   }
 
+  public static final class ClimbConstants{
+    // This values have not been tested.
+
+    public static  final double climbOutPosition = 90;
+    public static final double climbInPosition = 0;
+
+    public static final double climbSoftLowerBound = 0;
+    public static final double climbSoftUpperBound = 200;
+  }
   public static final class AlgaeDislodgerConstants{
 
     public static final int motorId = 52;
