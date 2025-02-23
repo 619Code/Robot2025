@@ -26,8 +26,10 @@ import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
+import frc.robot.commands.ServoGoToAngleCommand;
 import frc.robot.commands.WristCommand;
 import frc.robot.commands.AutoCommands.AutoFactoryGen2;
+import frc.robot.subsystems.FunnelCollapser.ServoSubsystem;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Outtake.Manipulator;
 import frc.robot.subsystems.Outtake.ManipulatorIOReal;
@@ -58,12 +60,12 @@ public class RobotContainer {
     private final Intake intake;
     private final Wrist wrist;
     private final Manipulator manipulator;
-    //private final WristDirectControlSubsystem tempWrist;
+    private final ServoSubsystem servo;
 
 
     private final boolean driveEnabled = false;
-    private final boolean wristEnabled = true;
-    private final boolean manipulatorEnabled = true;
+    private final boolean wristEnabled = false;
+    private final boolean manipulatorEnabled = false;
     private final boolean intakeEnabled = false;
 
 
@@ -76,6 +78,9 @@ public class RobotContainer {
 
 
     public RobotContainer() {
+
+
+        servo = new ServoSubsystem(0);
 
 
         // System.out.println("Replay log file location: " + LogFileUtil.findReplayLog());
@@ -128,6 +133,7 @@ public class RobotContainer {
             manipulatorConstructorStuff();
         }
 
+        configureServoBindings();
 
         configureButtonBindings();
     }
@@ -404,5 +410,21 @@ public class RobotContainer {
 
         Trigger dislodgerTrigger = operatorController.rightStick();
        dislodgerTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator));
+    }
+
+    private void configureServoBindings(){
+
+        Trigger dPadDown = operatorController.povDown();
+        dPadDown.onTrue(new ServoGoToAngleCommand(servo, 0));
+
+        Trigger dPadRight = operatorController.povRight();
+        dPadRight.onTrue(new ServoGoToAngleCommand(servo, 45));
+
+        Trigger dPadUp = operatorController.povUp();
+        dPadUp.onTrue(new ServoGoToAngleCommand(servo, 90));
+
+        Trigger dPadLeft = operatorController.povLeft();
+        dPadLeft.onTrue(new ServoGoToAngleCommand(servo, 180));
+
     }
 }

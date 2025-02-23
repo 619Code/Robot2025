@@ -5,6 +5,7 @@ import static frc.robot.util.SparkUtil.ifOk;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkFlex;
+import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
@@ -86,7 +87,7 @@ public class WristIOReal implements WristIO {
             Constants.WristConstants.wristMotorID,
             MotorType.kBrushless
         );
-        wristFlex.configure(config, null, null);
+        wristFlex.configure(config, null, PersistMode.kPersistParameters);
 
 
 
