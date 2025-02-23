@@ -60,26 +60,6 @@ public class ElevatorIOReal implements ElevatorIO {
 
 
 
-    public void GoToPassthroughHeight(){
-        controller.setGoal(new State(Constants.ElevatorConstants.passthroughPositionRad, 0));
-    }
-    public void GoToL1Height(){
-        controller.setGoal(new State(Constants.ElevatorConstants.l1PositionRad, 0));
-    }
-    public void GoToL2Height(){
-        controller.setGoal(new State(Constants.ElevatorConstants.l2PositionRad, 0));
-    }
-    public void GoToL3Height(){
-        controller.setGoal(new State(Constants.ElevatorConstants.l3PositionRad, 0));
-    }
-    public void GoToL4Height(){
-        controller.setGoal(new State(Constants.ElevatorConstants.l4PositionRad, 0));
-    }
-
-
-
-
-
     @Override
     public void ioPeriodic() {
 
@@ -128,5 +108,28 @@ public class ElevatorIOReal implements ElevatorIO {
 
         return config;
 
+    }
+
+
+
+    @Override
+    public void goToPassthrough() {
+        controller.setGoal(new State(Constants.ElevatorConstants.passthroughPositionRad, 0));
+    }
+    @Override
+    public void goToL1() {
+        controller.setGoal(new State(Constants.ElevatorConstants.l1PositionRad, 0));
+    }
+    @Override
+    public void goToL2() {
+        controller.setGoal(new State(Constants.ElevatorConstants.l2PositionRad, 0));
+    }
+    @Override
+    public void goToL3() {
+        controller.setGoal(new State(Constants.ElevatorConstants.l3PositionRad, 0));
+    }
+    @Override
+    public void goToL4() {
+        controller.setGoal(new State(Constants.ElevatorConstants.l4PositionRad, 0));
     }
 }
