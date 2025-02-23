@@ -58,11 +58,10 @@ public class WristIOReal implements WristIO {
 
         config.absoluteEncoder.positionConversionFactor(2.0 * Math.PI);
         config.absoluteEncoder.zeroOffset(Constants.WristConstants.zeroOffset);
+        config.absoluteEncoder.inverted(true);
 
         config.smartCurrentLimit(60);
-
-        // config.periodicFramePeriod(PeriodicFrame.kStatus5, 20);
-        // config.periodicFramePeriod(PeriodicFrame.kStatus6, 20);
+        config.inverted(true);
 
 
   //      config.externalEncoder.measurementPeriod(1);
@@ -77,6 +76,27 @@ public class WristIOReal implements WristIO {
         softLimits.reverseSoftLimitEnabled(true);
         config.softLimit.apply(softLimits);
 
+
+        //  These both set periodic status frame 5, but velocity should set periodic status frame 6
+        config.signals.absoluteEncoderPositionPeriodMs(20);
+        config.signals.absoluteEncoderVelocityPeriodMs(20);
+        // config.signals.analogPositionPeriodMs(3);
+        // config.signals.analogVelocityPeriodMs(4);
+        // config.signals.analogVoltagePeriodMs(5);
+        // config.signals.appliedOutputPeriodMs(6);
+        // config.signals.busVoltagePeriodMs(7);
+        // config.signals.externalOrAltEncoderPosition(8);
+        // config.signals.externalOrAltEncoderVelocity(9);
+        // config.signals.faultsPeriodMs(10);
+        // config.signals.iAccumulationPeriodMs(11);
+        // config.signals.limitsPeriodMs(12);
+        // config.signals.motorTemperaturePeriodMs(13);
+        // config.signals.outputCurrentPeriodMs(14);
+        // config.signals.primaryEncoderPositionPeriodMs(15);
+        // config.signals.primaryEncoderVelocityPeriodMs(16);
+        // config.signals.warningsPeriodMs(17);
+
+
         //  Set constraints
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
                 Constants.WristConstants.maxVelocity,
@@ -87,6 +107,9 @@ public class WristIOReal implements WristIO {
             Constants.WristConstants.wristMotorID,
             MotorType.kBrushless
         );
+
+
+
         wristFlex.configure(config, null, PersistMode.kPersistParameters);
 
 
@@ -100,7 +123,6 @@ public class WristIOReal implements WristIO {
             Constants.WristConstants.kvFeedforward,
             constraints);
 
-       //     deviousClown = new ArmFeedforward(Constants.WristConstants.ksFeedforward, );
 
         wristEncoder = wristFlex.getAbsoluteEncoder();
 
