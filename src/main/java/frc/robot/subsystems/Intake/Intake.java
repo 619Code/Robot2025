@@ -1,5 +1,6 @@
 package frc.robot.subsystems.Intake;
 
+import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SoftLimitConfig;
@@ -62,9 +63,9 @@ public class Intake extends SubsystemBase {
     limitConfig.reverseSoftLimit(Constants.IntakeConstants.intakeSoftLowerBound);
     config_3.softLimit.apply(limitConfig);
 
-    intakeMotor1.configure(config_1, null, null);
-    intakeMotor2.configure(config_2, null, null);
-    intakeExtensionMotor.configure(config_3, null, null);
+    intakeMotor1.configure(config_1, null, PersistMode.kPersistParameters);
+    intakeMotor2.configure(config_2, null, PersistMode.kPersistParameters);
+    intakeExtensionMotor.configure(config_3, null, PersistMode.kPersistParameters);
 
     kpextensionPIDEntry =
         NetworkTableInstance.getDefault().getDoubleTopic("IntakeKp").getEntry(0.0);

@@ -3,6 +3,7 @@ package frc.robot.subsystems.WristStuff;
 
 
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SoftLimitConfig;
@@ -39,7 +40,7 @@ public class WristDirectControlSubsystem extends SubsystemBase {
         wristFlex = new SparkFlex(wristMotorID, MotorType.kBrushless);
      //   onBoardController = wristFlex.getClosedLoopController();
 
-        wristFlex.configure(config, null,null);
+        wristFlex.configure(config, null,PersistMode.kPersistParameters);
         wristEncoder = wristFlex.getAbsoluteEncoder();
 
     }

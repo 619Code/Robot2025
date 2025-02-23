@@ -64,9 +64,10 @@ public class RobotContainer {
 
 
     private final boolean driveEnabled = false;
-    private final boolean wristEnabled = false;
-    private final boolean manipulatorEnabled = false;
+    private final boolean wristEnabled = true;
+    private final boolean manipulatorEnabled = true;
     private final boolean intakeEnabled = false;
+    private final boolean funnelCollapserEnabled = false;
 
 
     // Controller
@@ -78,11 +79,6 @@ public class RobotContainer {
 
 
     public RobotContainer() {
-
-
-        servo = new ServoSubsystem(0);
-
-
         // System.out.println("Replay log file location: " + LogFileUtil.findReplayLog());
 
         switch (Constants.currentMode) {
@@ -91,7 +87,9 @@ public class RobotContainer {
                 intake = intakeEnabled   ? instantiateRealIntake()  : null;
                 wrist = wristEnabled     ? instantiateRealWrist()   : null;
                 manipulator = manipulatorEnabled ? instantiateRealManipulator() : null;
-                // tempWrist = instantiateWristDirectControlSubsystem();
+
+                servo = funnelCollapserEnabled ? new ServoSubsystem(0) : null;
+
                 break;
 
             case SIM:
@@ -100,7 +98,9 @@ public class RobotContainer {
                 intake = intakeEnabled ? instantiateSimIntake() : null;
                 wrist = wristEnabled   ? instantiateSimWrist()  : null;
                 manipulator = manipulatorEnabled ? instantiateSimManipulator() : null;
-                // tempWrist = null;
+
+                servo = null;
+
                 break;
 
             default:
@@ -109,7 +109,9 @@ public class RobotContainer {
                 intake = intakeEnabled ? instantiateIntakeReplayed() : null;
                 wrist = wristEnabled   ? instantiateWristReplayed()  : null;
                 manipulator = manipulatorEnabled ? instantiateManipulatorReplayed() : null;
-                // tempWrist = null;
+
+                servo = null;
+
                 break;
         }
 
@@ -133,8 +135,6 @@ public class RobotContainer {
             manipulatorConstructorStuff();
         }
 
-        configureServoBindings();
-
         configureButtonBindings();
     }
 
@@ -153,6 +153,9 @@ public class RobotContainer {
 
         if(manipulatorEnabled){
             configureManipulatorBindings();
+        }
+        if(funnelCollapserEnabled){
+            configureServoBindings();
         }
     }
 
@@ -408,8 +411,11 @@ public class RobotContainer {
         Trigger outtakeCoralTrigger = operatorController.rightBumper();
         outtakeCoralTrigger.whileTrue(new OuttakeCoralCommand(manipulator));
 
-        Trigger dislodgerTrigger = operatorController.rightStick();
-       dislodgerTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator));
+        Trigger dislodgeDownwardTrigger = operatorController.rightStick();
+       dislodgeDownwardTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, false));
+
+       Trigger dislodgeUpwardTrigger = operatorController.leftStick();
+       dislodgeUpwardTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, true));
     }
 
     private void configureServoBindings(){

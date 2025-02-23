@@ -1,5 +1,6 @@
 package frc.robot.subsystems.Passthrough;
 
+import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
@@ -26,8 +27,8 @@ public class Passthrough extends SubsystemBase {
     config_R.idleMode(IdleMode.kBrake);
     config_R.follow(passthroughMotorL, false);
 
-    passthroughMotorL.configure(config_L, null, null);
-    passthroughMotorR.configure(config_R, null, null);
+    passthroughMotorL.configure(config_L, null, PersistMode.kPersistParameters);
+    passthroughMotorR.configure(config_R, null, PersistMode.kPersistParameters);
   }
   // Need to connect to Intake Start and Outake Sensor.
 

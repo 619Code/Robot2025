@@ -19,7 +19,7 @@ public interface ManipulatorIO  {
     public void stopDislodger();
 
     //  Dislodger
-    public void runDislodger();
+    public void runDislodger(boolean invert);
     public void stopOuttake();
 
     //  Proximity sensor

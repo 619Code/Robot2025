@@ -1,6 +1,7 @@
 package frc.robot.subsystems.Elevator;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SoftLimitConfig;
@@ -49,8 +50,8 @@ public class Elevator extends SubsystemBase {
     config_R.idleMode(IdleMode.kBrake);
     config_R.follow(elevatorMotorL, true);
 
-    elevatorMotorL.configure(config_L, null, null);
-    elevatorMotorR.configure(config_R, null, null);
+    elevatorMotorL.configure(config_L, null, PersistMode.kPersistParameters);
+    elevatorMotorR.configure(config_R, null, PersistMode.kPersistParameters);
 
     //   For tuning
 

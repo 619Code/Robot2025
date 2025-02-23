@@ -12,16 +12,20 @@ public class DislodgeAlgaeCommand extends Command {
 
   public Manipulator manipulator;
 
-  public DislodgeAlgaeCommand(Manipulator _manipulator) {
+  private final boolean invert;
+
+  public DislodgeAlgaeCommand(Manipulator _manipulator, boolean _invert) {
 
     manipulator = _manipulator;
+
+    invert = _invert;
 
     addRequirements(manipulator);
   }
 
   @Override
   public void initialize() {
-    manipulator.runDislodger();
+    manipulator.runDislodger(invert);
   }
 
   @Override

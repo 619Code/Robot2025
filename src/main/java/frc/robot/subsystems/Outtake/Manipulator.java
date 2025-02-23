@@ -50,8 +50,8 @@ public class Manipulator extends SubsystemBase {
   }
 
   //  Dislodger
-  public void runDislodger(){
-    io.runDislodger();
+  public void runDislodger(boolean invert){
+    io.runDislodger(invert);
   }
   public void stopDislodger(){
     io.stopDislodger();

@@ -234,7 +234,7 @@ public final class Constants {
 
     public static final double outtakeVoltage = 4;
     public static final double intakeVoltage = -2;
-    public static final double dislodgerVoltage = -1;
+    public static final double dislodgerVoltage = 3;
 
   }
 
