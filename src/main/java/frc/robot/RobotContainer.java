@@ -27,8 +27,8 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
 import frc.robot.commands.ServoGoToAngleCommand;
-import frc.robot.commands.WristCommand;
 import frc.robot.commands.AutoCommands.AutoFactoryGen2;
+import frc.robot.commands.WristCommands.WristGoToPositionCommand;
 import frc.robot.subsystems.FunnelCollapser.ServoSubsystem;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Outtake.Manipulator;
@@ -392,16 +392,16 @@ public class RobotContainer {
     private void configureWristBindings() {
 
         Trigger aPressedTrigger = operatorController.a();
-        aPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.PASSTHROUGH));
+        aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, WristAngle.PASSTHROUGH));
 
         Trigger bPressedTrigger = operatorController.b();
-        bPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.L1));
+        bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, WristAngle.L1));
 
         Trigger xPressedTrigger = operatorController.x();
-        xPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.L2L3));
+        xPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, WristAngle.L2L3));
 
         Trigger yPressedTrigger = operatorController.y();
-        yPressedTrigger.onTrue(new WristCommand(wrist, WristAngle.L4));
+        yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, WristAngle.L4));
     }
 
     private void configureManipulatorBindings(){

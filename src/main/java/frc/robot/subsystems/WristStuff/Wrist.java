@@ -18,8 +18,7 @@ public class Wrist extends SubsystemBase {
     }
 
 
-    @Override
-    public void periodic() {
+    public void updateTowardsCurrentGoal() {
         if(Constants.currentMode == Mode.REPLAY){
             Logger.processInputs("Wrist", inputs);
             io.updateInputs(inputs);
@@ -33,24 +32,8 @@ public class Wrist extends SubsystemBase {
     }
 
 
-    public void goToPassthroughAngle(){
-        System.out.println("Go to passthrough");
-        io.goToPassthroughAngle();
-    }
-
-    public void goToL1Angle(){
-        System.out.println("Go to TROUGH LEVEL");
-        io.goToL1Angle();
-    }
-
-    public void goToL2L3Angle(){
-        System.out.println("Go to middle two levels");
-        io.goToL2L3Angle();
-    }
-
-    public void goToL4Angle(){
-        System.out.println("Go to highest L4 thing");
-        io.goToL4Angle();
+    public void setTargetAngle(double _angleRad){
+        io.setTargetAngle(_angleRad);
     }
 
 

@@ -19,7 +19,7 @@ public interface WristIO {
     public default void ioPeriodic(){}
 
 
-    public default void goToPassthroughAngle() {}
+    public default void setTargetAngle(double _angleRad) {}
 
     public default void goToL1Angle() {}
 

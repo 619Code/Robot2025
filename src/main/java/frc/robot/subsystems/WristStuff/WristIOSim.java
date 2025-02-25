@@ -4,6 +4,7 @@ package frc.robot.subsystems.WristStuff;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import frc.robot.Constants;
 import frc.robot.util.NTProfiledPIDF;
@@ -24,13 +25,6 @@ public class WristIOSim implements WristIO {
             Constants.WristConstants.maxVelocity,
             Constants.WristConstants.maxAcceleration
         );
-
-
-    private final TrapezoidProfile.State passthroughState = new TrapezoidProfile.State(Constants.WristConstants.passthroughPositionRad, 0);
-    private final TrapezoidProfile.State L1State = new TrapezoidProfile.State(Constants.WristConstants.L1PositionRad, 0);
-    private final TrapezoidProfile.State L2L3State = new TrapezoidProfile.State(Constants.WristConstants.L2L3PositionRad, 0);
-    private final TrapezoidProfile.State L4State = new TrapezoidProfile.State(Constants.WristConstants.L4PositionRad, 0);
-
 
 
     public WristIOSim(){
@@ -75,23 +69,8 @@ public class WristIOSim implements WristIO {
     }
 
     @Override
-    public void goToPassthroughAngle(){
-        goToState(passthroughState);
-    }
-
-    @Override
-    public void goToL1Angle() {
-        goToState(L1State);
-    }
-
-    @Override
-    public void goToL2L3Angle(){
-        goToState(L2L3State);
-    }
-
-    @Override
-    public void goToL4Angle(){
-        goToState(L4State);
+    public void setTargetAngle(double _angleRad){
+        goToState(new State(_angleRad, 0));
     }
 
     @Override

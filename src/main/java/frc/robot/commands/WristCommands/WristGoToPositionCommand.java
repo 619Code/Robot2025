@@ -1,17 +1,18 @@
-package frc.robot.commands;
+package frc.robot.commands.WristCommands;
 
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.RobotContainer.WristAngle;
 import frc.robot.subsystems.WristStuff.Wrist;
 
-public class WristCommand extends Command {
+public class WristGoToPositionCommand extends Command {
 
   private final Wrist wristSub;
   private final WristAngle wristAngle;
 
 
-  public WristCommand(Wrist _wrist, WristAngle _wristAngle) {
+  public WristGoToPositionCommand(Wrist _wrist, WristAngle _wristAngle) {
     wristSub = _wrist;
     wristAngle = _wristAngle;
 
@@ -22,16 +23,16 @@ public class WristCommand extends Command {
   public void initialize() {
     switch (wristAngle) {
       case PASSTHROUGH:
-        wristSub.goToPassthroughAngle();
+        wristSub.setTargetAngle(Constants.WristConstants.passthroughPositionRad);
         break;
       case L1:
-        wristSub.goToL1Angle();
+        wristSub.setTargetAngle(Constants.WristConstants.L1PositionRad);
         break;
       case L2L3:
-        wristSub.goToL2L3Angle();
+        wristSub.setTargetAngle(Constants.WristConstants.L2L3PositionRad);
         break;
       case L4:
-        wristSub.goToL4Angle();
+        wristSub.setTargetAngle(Constants.WristConstants.L4PositionRad);
         break;
       default:
         end(true);
@@ -41,7 +42,7 @@ public class WristCommand extends Command {
 
   @Override
   public void execute() {
-
+    wristSub.updateTowardsCurrentGoal();
   }
 
   @Override
