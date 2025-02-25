@@ -36,7 +36,7 @@ public class ElevatorIOReal implements ElevatorIO {
 
         leftMotorLeader.configure(leftMotorConfig, null, PersistMode.kPersistParameters);
         rightMotorFollower.configure(rightMotorConfig, null, PersistMode.kPersistParameters);
-        
+
         elevatorEncoder = leftMotorLeader.getAbsoluteEncoder();
 
 
@@ -113,23 +113,22 @@ public class ElevatorIOReal implements ElevatorIO {
 
 
     @Override
-    public void goToPassthrough() {
-        controller.setGoal(new State(Constants.ElevatorConstants.passthroughPositionRad, 0));
+    public void setTargetAngle(double _positionRad) {
+        controller.setGoal(new State(_positionRad, 0));
     }
+
+
+
     @Override
-    public void goToL1() {
-        controller.setGoal(new State(Constants.ElevatorConstants.l1PositionRad, 0));
+    public boolean hasReachedGoal() {
+        return controller.atGoal();
     }
+
+
+
     @Override
-    public void goToL2() {
-        controller.setGoal(new State(Constants.ElevatorConstants.l2PositionRad, 0));
-    }
-    @Override
-    public void goToL3() {
-        controller.setGoal(new State(Constants.ElevatorConstants.l3PositionRad, 0));
-    }
-    @Override
-    public void goToL4() {
-        controller.setGoal(new State(Constants.ElevatorConstants.l4PositionRad, 0));
+    public void updateInputs(ElevatorIOInputsAutoLogged inputs) {
+        inputs.elevatorPosition = elevatorEncoder.getPosition();
+        inputs.elevatorSetpointPosition = controller.getSetpoint().position;
     }
 }

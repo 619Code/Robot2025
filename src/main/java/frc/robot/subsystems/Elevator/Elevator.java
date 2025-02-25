@@ -1,29 +1,39 @@
 package frc.robot.subsystems.Elevator;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 
 public class Elevator extends SubsystemBase {
 
     private final ElevatorIO io;
-    
+
+    private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
+
     public Elevator(ElevatorIO _io){
         io = _io;
     }
 
 
-    public void GoToPassthroughHeight(){
-        io.goToPassthrough();
+    public void updateTowardsCurrentGoal(){
+        if(Constants.currentMode == Mode.REPLAY){
+            Logger.processInputs("Elevator", inputs);
+            io.updateInputs(inputs);
+        }else{
+            io.updateInputs(inputs);
+            Logger.processInputs("Elevator", inputs);
+        }
+
+        io.ioPeriodic();
     }
-    public void GoToL1Height(){
-        io.goToL1();
+
+    public void setTargetPosition(double _positionRad){
+        io.setTargetAngle(_positionRad);
     }
-    public void GoToL2Height(){
-        io.goToL2();
-    }
-    public void GoToL3Height(){
-        io.goToL3();
-    }
-    public void GoToL4Height(){
-        io.goToL4();
+
+    public boolean hasReachedGoal(){
+        return io.hasReachedGoal();
     }
 }

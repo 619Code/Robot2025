@@ -29,6 +29,10 @@ import frc.robot.commands.OuttakeCoralCommand;
 import frc.robot.commands.ServoGoToAngleCommand;
 import frc.robot.commands.AutoCommands.AutoFactoryGen2;
 import frc.robot.commands.WristCommands.WristGoToPositionCommand;
+import frc.robot.commands.WristCommands.WristHoldCurrentPositionCommand;
+import frc.robot.subsystems.Elevator.Elevator;
+import frc.robot.subsystems.Elevator.ElevatorIOInputsAutoLogged;
+import frc.robot.subsystems.Elevator.ElevatorIOReal;
 import frc.robot.subsystems.FunnelCollapser.ServoSubsystem;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Outtake.Manipulator;
@@ -60,14 +64,14 @@ public class RobotContainer {
     private final Intake intake;
     private final Wrist wrist;
     private final Manipulator manipulator;
-    private final ServoSubsystem servo;
+    private final Elevator elevator;
 
 
     private final boolean driveEnabled = false;
-    private final boolean wristEnabled = true;
-    private final boolean manipulatorEnabled = true;
+    private final boolean wristEnabled = false;
+    private final boolean manipulatorEnabled = false;
     private final boolean intakeEnabled = false;
-    private final boolean funnelCollapserEnabled = false;
+    private final boolean elevatorEnabled = true;
 
 
     // Controller
@@ -79,7 +83,6 @@ public class RobotContainer {
 
 
     public RobotContainer() {
-        // System.out.println("Replay log file location: " + LogFileUtil.findReplayLog());
 
         switch (Constants.currentMode) {
             case REAL:
@@ -87,8 +90,7 @@ public class RobotContainer {
                 intake = intakeEnabled   ? instantiateRealIntake()  : null;
                 wrist = wristEnabled     ? instantiateRealWrist()   : null;
                 manipulator = manipulatorEnabled ? instantiateRealManipulator() : null;
-
-                servo = funnelCollapserEnabled ? new ServoSubsystem(0) : null;
+                elevator = elevatorEnabled ? instantiateRealElevator() : null;
 
                 break;
 
@@ -98,8 +100,7 @@ public class RobotContainer {
                 intake = intakeEnabled ? instantiateSimIntake() : null;
                 wrist = wristEnabled   ? instantiateSimWrist()  : null;
                 manipulator = manipulatorEnabled ? instantiateSimManipulator() : null;
-
-                servo = null;
+                elevator = elevatorEnabled ? instantiateSimElevator() : null;
 
                 break;
 
@@ -109,8 +110,7 @@ public class RobotContainer {
                 intake = intakeEnabled ? instantiateIntakeReplayed() : null;
                 wrist = wristEnabled   ? instantiateWristReplayed()  : null;
                 manipulator = manipulatorEnabled ? instantiateManipulatorReplayed() : null;
-
-                servo = null;
+                elevator = elevatorEnabled ? instantiateElevatorReplayed() : null;
 
                 break;
         }
@@ -123,6 +123,13 @@ public class RobotContainer {
             autoChooser = null;
         }
 
+        constructorThings();
+
+        configureButtonBindings();
+    }
+
+
+    private void constructorThings(){
         if(intakeEnabled){
             intakeConstructorStuff();
         }
@@ -135,8 +142,13 @@ public class RobotContainer {
             manipulatorConstructorStuff();
         }
 
-        configureButtonBindings();
+        if(elevatorEnabled){
+            elevatorConstructorStuff();
+        }
     }
+
+
+
 
     private void configureButtonBindings() {
         if(driveEnabled){
@@ -154,9 +166,6 @@ public class RobotContainer {
         if(manipulatorEnabled){
             configureManipulatorBindings();
         }
-        if(funnelCollapserEnabled){
-            configureServoBindings();
-        }
     }
 
     public Command getAutonomousCommand() {
@@ -169,6 +178,31 @@ public class RobotContainer {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 
@@ -276,6 +310,18 @@ public class RobotContainer {
         throw new UnsupportedOperationException("NOT IMPLEMENTED");
     }
 
+    //  ELEVATOR INSTANTIATION
+
+    private Elevator instantiateRealElevator(){
+        return new Elevator(new ElevatorIOReal());
+    }
+    private Elevator instantiateSimElevator(){
+        return null;
+    }
+    private Elevator instantiateElevatorReplayed(){
+        return null;
+    }
+
 
 
 
@@ -332,11 +378,15 @@ public class RobotContainer {
     }
 
     private void wristConstructorStuff() {
-        // ...
+        wrist.setDefaultCommand(new WristHoldCurrentPositionCommand(wrist));
     }
 
     private void manipulatorConstructorStuff(){
+        // ...
+    }
 
+    private void elevatorConstructorStuff(){
+        // ...
     }
 
 
@@ -416,21 +466,5 @@ public class RobotContainer {
 
        Trigger dislodgeUpwardTrigger = operatorController.leftStick();
        dislodgeUpwardTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, true));
-    }
-
-    private void configureServoBindings(){
-
-        Trigger dPadDown = operatorController.povDown();
-        dPadDown.onTrue(new ServoGoToAngleCommand(servo, 0));
-
-        Trigger dPadRight = operatorController.povRight();
-        dPadRight.onTrue(new ServoGoToAngleCommand(servo, 45));
-
-        Trigger dPadUp = operatorController.povUp();
-        dPadUp.onTrue(new ServoGoToAngleCommand(servo, 90));
-
-        Trigger dPadLeft = operatorController.povLeft();
-        dPadLeft.onTrue(new ServoGoToAngleCommand(servo, 180));
-
     }
 }

@@ -1,14 +1,21 @@
 package frc.robot.subsystems.Elevator;
 
+import org.littletonrobotics.junction.AutoLog;
+
 public interface ElevatorIO {
-    
+
+    @AutoLog
+    public static class ElevatorIOInputs {
+        public double elevatorPosition = 0.0;
+        public double elevatorSetpointPosition = 0.0;
+    }
+
+    public void updateInputs(ElevatorIOInputsAutoLogged inputs);
 
     public void ioPeriodic();
 
 
-    public void goToPassthrough();
-    public void goToL1();
-    public void goToL2();
-    public void goToL3();
-    public void goToL4();
+    public void setTargetAngle(double _positionRad);
+
+    public boolean hasReachedGoal();
 }

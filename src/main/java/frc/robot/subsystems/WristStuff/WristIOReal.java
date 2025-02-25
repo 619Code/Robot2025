@@ -192,5 +192,6 @@ public class WristIOReal implements WristIO {
     @Override
     public void updateInputs(WristIOInputs inputs){
         ifOk(wristFlex, wristEncoder::getPosition, (value) -> inputs.wristPosition = value);
+        inputs.wristSetpointPosition = controller.getSetpoint().position;
     }
 }
