@@ -64,7 +64,7 @@ public class RobotContainer {
     private final Elevator elevator;
 
 
-    private final boolean driveEnabled = false;
+    private final boolean driveEnabled = true;
     private final boolean wristEnabled = false;
     private final boolean manipulatorEnabled = false;
     private final boolean intakeEnabled = false;
@@ -322,6 +322,17 @@ public class RobotContainer {
 
     private void driveConstructorStuff() {
 
+        NamedCommands.registerCommand("ElevatorToPassthrough",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.PASSTHROUGH));
+        NamedCommands.registerCommand("ElevatorToL1",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L1));
+        NamedCommands.registerCommand("ElevatorToL2",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2));
+        NamedCommands.registerCommand("ElevatorToL3",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L3));
+        NamedCommands.registerCommand("ElevatorToL4",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4));
+
         //Set up SysId routines
         // autoChooser.addOption(
         //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
@@ -349,17 +360,6 @@ public class RobotContainer {
         //         }, Set.of(drive))
         //     )
         // );
-
-        NamedCommands.registerCommand("ElevatorToPassthrough",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.PASSTHROUGH));
-        NamedCommands.registerCommand("ElevatorToL1",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L1));
-        NamedCommands.registerCommand("ElevatorToL2",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2));
-        NamedCommands.registerCommand("ElevatorToL3",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L3));
-        NamedCommands.registerCommand("ElevatorToL4",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4));
     }
 
     private void intakeConstructorStuff() {
