@@ -5,9 +5,16 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Precise Path"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "StartToReefI"
+                }
+              }
+            ]
           }
         }
       ]

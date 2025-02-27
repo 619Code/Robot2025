@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 
 public class Elevator extends SubsystemBase {
 
@@ -29,8 +30,8 @@ public class Elevator extends SubsystemBase {
         io.ioPeriodic();
     }
 
-    public void setTargetPosition(double _positionRad){
-        io.setTargetAngle(_positionRad);
+    public void setTargetPosition(ElevatorHeight _height){
+        io.setTargetAngle(_height);
     }
 
     public boolean hasReachedGoal(){

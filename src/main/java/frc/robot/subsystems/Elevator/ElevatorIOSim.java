@@ -9,6 +9,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.util.NTProfiledPIDF;
 
 public class ElevatorIOSim implements ElevatorIO {
@@ -44,10 +45,10 @@ public class ElevatorIOSim implements ElevatorIO {
         elevator = new ElevatorSim(
             elevatorSystem,
             Constants.ElevatorConstants.elevatorGearbox,
-            Constants.ElevatorConstants.minHeight,
-            Constants.ElevatorConstants.maxHeight,
+            Constants.ElevatorConstants.minHeightMeters,
+            Constants.ElevatorConstants.maxHeightMeters,
             true,
-            Constants.ElevatorConstants.minHeight
+            Constants.ElevatorConstants.minHeightMeters
         );
     }
 
@@ -68,8 +69,8 @@ public class ElevatorIOSim implements ElevatorIO {
 
 
     @Override
-    public void setTargetAngle(double _positionRad) {
-        elevatorController.setGoal(new State(_positionRad, 0));
+    public void setTargetAngle(ElevatorHeight _height) {
+        elevatorController.setGoal(new State(_height.heightMeters, 0));
     }
 
 

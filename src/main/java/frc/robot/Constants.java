@@ -197,25 +197,16 @@ public final class Constants {
     public static final int maxVoltage = 1;
 
     public static final double wristMotorReduction = 1.0;
+    public static final double elevatorEncoderConversionFactor = 1.0; // Use this to make the encoder natively in meters
 
 
     public static final double maxVelocity = Math.PI * 2; // Arbitrary
     public static final double maxAcceleration = Math.PI * 4;
 
-    public static final double minHeight = 0;
-    public static final double maxHeight = Math.PI * 6;
+    public static final double minHeightMeters = 0;
+    public static final double maxHeightMeters = 1;
 
-    public static final double passthroughPositionRad = 0;
-    public static final double l1PositionRad = Math.PI / 2.0;
-    public static final double l2PositionRad = Math.PI;
-    public static final double l3PositionRad = Math.PI * 1.5;
-    public static final double l4PositionRad = Math.PI * 2.0;
-
-    public static final double encoderOffsetRotations = 0;
-
-    public static final double softUpperLimitRotations = 5;
-    public static final double softLowerLimitRotations = 0;
-
+    public static final double encoderZeroOffsetRotations = 0;
 
     public static final double kpElevator = 0.0;
     public static final double kiElevator = 0.0;
@@ -234,6 +225,19 @@ public final class Constants {
 
     public static final DCMotor elevatorGearbox = DCMotor.getNeoVortex(2);
 
+
+    public enum ElevatorHeight{
+        PASSTHROUGH(0),
+        L1(0.2),
+        L2(0.4),
+        L3(0.6),
+        L4(0.8);
+
+        public final double heightMeters;
+        ElevatorHeight(double _heightMeters){
+            heightMeters = _heightMeters;
+        }
+    }
   }
 
   public static final class IntakeConstants {
@@ -258,6 +262,7 @@ public final class Constants {
     public static final double climbSoftLowerBound = 0;
     public static final double climbSoftUpperBound = 200;
   }
+
   public static final class AlgaeDislodgerConstants{
 
     public static final int motorId = 52;

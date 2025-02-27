@@ -12,6 +12,7 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.util.NTProfiledPIDF;
 
 public class ElevatorIOReal implements ElevatorIO {
@@ -28,10 +29,10 @@ public class ElevatorIOReal implements ElevatorIO {
         leftMotorLeader = new SparkFlex(Constants.ElevatorConstants.leftMotorID, MotorType.kBrushless);
         rightMotorFollower = new SparkFlex(Constants.ElevatorConstants.rightMotorID, MotorType.kBrushless);
 
+        //  Left motor config
         SparkFlexConfig leftMotorConfig = createLeftMotorConfig();
-        SparkFlexConfig rightMotorConfig = createLeftMotorConfig();
-        rightMotorConfig.inverted(true);
-        rightMotorConfig.follow(leftMotorLeader);
+        //  Right motor config
+        SparkFlexConfig rightMotorConfig = createRightMotorConfig();
 
 
         leftMotorLeader.configure(leftMotorConfig, null, PersistMode.kPersistParameters);
@@ -84,8 +85,8 @@ public class ElevatorIOReal implements ElevatorIO {
         SparkFlexConfig config = new SparkFlexConfig();
         config.closedLoop.feedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder);
 
-        config.absoluteEncoder.positionConversionFactor(1.0);
-        config.absoluteEncoder.zeroOffset(Constants.ElevatorConstants.encoderOffsetRotations);
+        config.absoluteEncoder.positionConversionFactor(Constants.ElevatorConstants.elevatorEncoderConversionFactor);
+        config.absoluteEncoder.zeroOffset(Constants.ElevatorConstants.encoderZeroOffsetRotations);
         config.absoluteEncoder.inverted(false);
 
         config.smartCurrentLimit(60);
@@ -94,8 +95,8 @@ public class ElevatorIOReal implements ElevatorIO {
 
 
         SoftLimitConfig softLimits = new SoftLimitConfig();
-        softLimits.forwardSoftLimit(Constants.ElevatorConstants.softUpperLimitRotations);
-        softLimits.reverseSoftLimit(Constants.ElevatorConstants.softLowerLimitRotations);
+        softLimits.forwardSoftLimit(Constants.ElevatorConstants.maxHeightMeters);
+        softLimits.reverseSoftLimit(Constants.ElevatorConstants.minHeightMeters);
         softLimits.forwardSoftLimitEnabled(true);
         softLimits.reverseSoftLimitEnabled(true);
         config.softLimit.apply(softLimits);
@@ -110,11 +111,21 @@ public class ElevatorIOReal implements ElevatorIO {
 
     }
 
+    private SparkFlexConfig createRightMotorConfig(){
+
+        SparkFlexConfig config = createLeftMotorConfig();
+        config.inverted(true);
+        config.follow(leftMotorLeader);
+
+        return config;
+
+    }
+
 
 
     @Override
-    public void setTargetAngle(double _positionRad) {
-        controller.setGoal(new State(_positionRad, 0));
+    public void setTargetAngle(ElevatorHeight _height) {
+        controller.setGoal(new State(_height.heightMeters, 0));
     }
 
 

@@ -2,6 +2,8 @@ package frc.robot.subsystems.Elevator;
 
 import org.littletonrobotics.junction.AutoLog;
 
+import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
+
 public interface ElevatorIO {
 
     @AutoLog
@@ -15,7 +17,7 @@ public interface ElevatorIO {
     public void ioPeriodic();
 
 
-    public void setTargetAngle(double _positionRad);
+    public void setTargetAngle(ElevatorHeight elevatorHeight);
 
     public boolean hasReachedGoal();
 }

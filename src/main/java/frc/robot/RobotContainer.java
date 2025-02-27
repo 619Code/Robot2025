@@ -22,11 +22,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
-import frc.robot.commands.AutoCommands.AutoFactoryGen2;
 import frc.robot.commands.ElevatorCommands.ElevatorGoToPositionPositionCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorHoldCurrentPositionCommand;
 import frc.robot.commands.WristCommands.WristGoToPositionCommand;
@@ -38,7 +38,6 @@ import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Outtake.Manipulator;
 import frc.robot.subsystems.Outtake.ManipulatorIOReal;
 import frc.robot.subsystems.WristStuff.Wrist;
-import frc.robot.subsystems.WristStuff.WristIO;
 import frc.robot.subsystems.WristStuff.WristIOReal;
 import frc.robot.subsystems.WristStuff.WristIOSim;
 import frc.robot.subsystems.drive.Drive;
@@ -46,14 +45,12 @@ import frc.robot.subsystems.drive.Gyro.GyroIO;
 import frc.robot.subsystems.drive.Gyro.GyroIONavX;
 import frc.robot.subsystems.drive.Module.ModuleIOSim;
 import frc.robot.subsystems.drive.Module.ModuleIOSpark;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
-import java.util.Set;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.auto.NamedCommands;
 
 
 public class RobotContainer {
@@ -215,7 +212,7 @@ public class RobotContainer {
 
   //  DRIVE INSTANTIATION
 
-  private Drive instantiateRealDrive(){
+    private Drive instantiateRealDrive(){
     // Real robot, instantiate hardware IO implementations
     return
         new Drive(
@@ -252,23 +249,17 @@ public class RobotContainer {
                 Constants.DriveConstants.backRightDriveAbsoluteEncoderPort,
                 Constants.DriveConstants.backRightDriveAbsoluteEncoderOffsetDeg,
                 Constants.DriveConstants.backRightEncoderPositiveDirection)); // BACK RIGHT
-  }
-  private Drive instantiateSimDrive() {
-    return new Drive(
-        new GyroIO() {},
-        new ModuleIOSim(),
-        new ModuleIOSim(),
-        new ModuleIOSim(),
-        new ModuleIOSim());
+    }
+    private Drive instantiateSimDrive() {
+        return new Drive(
+            new GyroIO() {},
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim(),
+            new ModuleIOSim()
+        );
     }
     private Drive instantiateDriveReplayed() {
-        // return new Drive(
-        //     new GyroIO() {},
-        //     new ModuleIO() {},
-        //     new ModuleIO() {},
-        //     new ModuleIO() {},
-        //     new ModuleIO() {}
-        // );
         return new Drive(
             new GyroIO() {},
             new ModuleIOSim(),
@@ -299,7 +290,7 @@ public class RobotContainer {
         return new Wrist(new WristIOSim());
     }
     private Wrist instantiateWristReplayed(){
-        return new Wrist(new WristIO() {});
+        return new Wrist(new WristIOSim());
     }
 
     //  MANIPULATOR INSTANTIATION
@@ -327,54 +318,48 @@ public class RobotContainer {
     }
 
 
-
-
-
-
-
-
-
-
     // ============= Constructor Stuff =============
 
     private void driveConstructorStuff() {
+
         //Set up SysId routines
-        autoChooser.addOption(
-            "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-        autoChooser.addOption(
-            "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-        autoChooser.addOption(
-            "Drive SysId (Quasistatic Forward)",
-            drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption(
-            "Drive SysId (Quasistatic Reverse)",
-            drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        autoChooser.addOption(
-            "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption(
-            "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // autoChooser.addOption(
+        //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+        // autoChooser.addOption(
+        //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+        // autoChooser.addOption(
+        //     "Drive SysId (Quasistatic Forward)",
+        //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // autoChooser.addOption(
+        //     "Drive SysId (Quasistatic Reverse)",
+        //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // autoChooser.addOption(
+        //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // autoChooser.addOption(
+        //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
 
-        try{
+        // autoChooser.addOption("Pathfinding with apriltag test",
+        //     Commands.sequence(
+        //         Commands.runOnce(() -> {
+        //             drive.setPose(new Pose2d(1, 1, new Rotation2d(Math.PI)));
+        //         }, drive),
+        //         Commands.defer(() -> {
+        //             return AutoFactoryGen2.PathfindRelativeToAprilTag(new Pose2d(0.7, 0, new Rotation2d()), drive);
+        //         }, Set.of(drive))
+        //     )
+        // );
 
-            autoChooser.addOption("Basic ahh path",
-                AutoBuilder.followPath(PathPlannerPath.fromPathFile("Basic path")));
-
-        }catch (Exception e){
-            System.out.println("AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
-        }
-
-
-        autoChooser.addOption("Pathfinding with apriltag test",
-            Commands.sequence(
-                Commands.runOnce(() -> {
-                    drive.setPose(new Pose2d(1, 1, new Rotation2d(Math.PI)));
-                }, drive),
-                Commands.defer(() -> {
-                    return AutoFactoryGen2.PathfindRelativeToAprilTag(new Pose2d(0.7, 0, new Rotation2d()), drive);
-                }, Set.of(drive))
-            )
-        );
+        NamedCommands.registerCommand("ElevatorToPassthrough",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.PASSTHROUGH));
+        NamedCommands.registerCommand("ElevatorToL1",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L1));
+        NamedCommands.registerCommand("ElevatorToL2",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2));
+        NamedCommands.registerCommand("ElevatorToL3",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L3));
+        NamedCommands.registerCommand("ElevatorToL4",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4));
     }
 
     private void intakeConstructorStuff() {
@@ -476,12 +461,12 @@ public class RobotContainer {
 
         Trigger elevatorToPassthroughHeight = operatorController.povDown();
         elevatorToPassthroughHeight.whileTrue(
-            new ElevatorGoToPositionPositionCommand(elevator, Constants.ElevatorConstants.passthroughPositionRad)
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.PASSTHROUGH)
         );
 
         Trigger elevatorToL2Height = operatorController.povRight();
         elevatorToL2Height.whileTrue(
-            new ElevatorGoToPositionPositionCommand(elevator, Constants.ElevatorConstants.l2PositionRad)
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2)
         );
 
     }

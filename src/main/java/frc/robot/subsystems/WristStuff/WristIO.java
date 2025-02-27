@@ -14,20 +14,14 @@ public interface WristIO {
     }
 
 
-    public default void updateInputs(WristIOInputs inputs) {}
+    public void updateInputs(WristIOInputs inputs);
 
-    public default void ioPeriodic(){}
+    public void ioPeriodic();
 
 
-    public default void setTargetAngle(double _angleRad) {}
-
-    public default void goToL1Angle() {}
-
-    public default void goToL2L3Angle() {}
-
-    public default void goToL4Angle() {}
+    public void setTargetAngle(double _angleRad);
 
     //  NOTICE: Eventually this should definitely be changed.
     //  I see no way this would work with the replay feature as it is now
-    public default boolean hasReachedGoal() {return false;}
+    public boolean hasReachedGoal();
 }
