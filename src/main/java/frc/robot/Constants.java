@@ -196,9 +196,14 @@ public final class Constants {
 
     public static final int maxVoltage = 1;
 
+    public static final double wristMotorReduction = 1.0;
+
 
     public static final double maxVelocity = Math.PI * 2; // Arbitrary
     public static final double maxAcceleration = Math.PI * 4;
+
+    public static final double minHeight = 0;
+    public static final double maxHeight = Math.PI * 6;
 
     public static final double passthroughPositionRad = 0;
     public static final double l1PositionRad = Math.PI / 2.0;
@@ -218,6 +223,16 @@ public final class Constants {
 
     public static final double ksFeedforward = 0.0;
     public static final double kvFeedforward = 0.0;
+
+
+    public static final double kpElevatorSim = 5.0;
+    public static final double kiElevatorSim = 0.0;
+    public static final double kdElevatorSim = 0.0;
+
+    public static final double ksFeedforwardSim = 4.0;
+    public static final double kvFeedforwardSim = 0.0;
+
+    public static final DCMotor elevatorGearbox = DCMotor.getNeoVortex(2);
 
   }
 

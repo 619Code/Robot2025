@@ -19,11 +19,11 @@ public class Elevator extends SubsystemBase {
 
     public void updateTowardsCurrentGoal(){
         if(Constants.currentMode == Mode.REPLAY){
-            Logger.processInputs("Elevator", inputs);
+            Logger.processInputs("RealOutputs/Elevator", inputs);
             io.updateInputs(inputs);
         }else{
             io.updateInputs(inputs);
-            Logger.processInputs("Elevator", inputs);
+            Logger.processInputs("RealOutputs/Elevator", inputs);
         }
 
         io.ioPeriodic();

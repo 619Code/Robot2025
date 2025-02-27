@@ -45,7 +45,7 @@ public class ElevatorIOReal implements ElevatorIO {
                 Constants.ElevatorConstants.maxAcceleration);
 
         controller = new NTProfiledPIDF(
-            "Wrist",
+            "Elevator",
             Constants.ElevatorConstants.kpElevator,
             Constants.ElevatorConstants.kiElevator,
             Constants.ElevatorConstants.kiElevator,

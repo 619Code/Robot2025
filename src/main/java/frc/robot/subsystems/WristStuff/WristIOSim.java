@@ -38,7 +38,7 @@ public class WristIOSim implements WristIO {
 
 
         wristController = new NTProfiledPIDF(
-            "Wrist",
+            "WristSim",
             Constants.WristConstants.kpWristSim,
             Constants.WristConstants.kiWristSim,
             Constants.WristConstants.kdWristSim,
@@ -54,9 +54,7 @@ public class WristIOSim implements WristIO {
 
         double voltage = wristController.calculate(wristMotor.getAngularPositionRad());
 
-        double feedforwardVoltMaybe = feedforward.calculate(wristController.getGoal().velocity);
-
-        wristMotor.setInputVoltage(voltage + feedforwardVoltMaybe);
+        wristMotor.setInputVoltage(voltage);
 
         wristMotor.update(Constants.WristConstants.kDt);
 
