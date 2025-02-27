@@ -34,8 +34,6 @@ public class Intake extends SubsystemBase {
   DoubleEntry maxVelocityConstraint;
   DoubleEntry maxAccConstraint;
 
-  //private static final double gravityCompensation = 0.1; //Adjust if needed
-
   public Intake(int intakeMotorID_1, int intakeMotorID_2, int intakeExtensionMotorID) {
     if(Robot.isReal()){
       intakeIO = new intakeIOReal(intakeExtensionMotorID);
@@ -106,32 +104,23 @@ public class Intake extends SubsystemBase {
     extensionPID.setConstraints(new TrapezoidProfile.Constraints(maxVelocityConstraint.get(), maxAccConstraint.get()));
 
     double targetPosition = intakeExtensionTargetInDegreesEntry.get();
-    double currentPosition = intakeIO.getPosition();
+
+    intakeIO.setTargetPosition(targetPosition);
+
+    IntakeIO.IntakeIOInputs inputs = new IntakeIO.IntakeIOInputs();
+    intakeIO.updateInputs(inputs);
+    double currentPosition = inputs.intakePosition;
 
     double voltage = extensionPID.calculate(currentPosition, targetPosition);
-  // Extra Gravity Comp.
-  /*
-  double angleRadians = Math.toRadians(intakeIO.getPosition());
-    double gravityEffect = gravityCompensation * Math.cos(angleRadians);
-
-    if(intakeExtensionTargetInDegreesEntry.get() < intakeIO.getPosition()){
-      voltage += gravityEffect;
-    }
-    else{
-      voltage -= gravityEffect;
-    }
-    */
     voltage = Math.min(Math.max(voltage, -12.0), 12.0);
-
-    intakeIO.setVoltage(voltage);
-    intakeIO.update();
-
-    intakeExtensionMeasured.set(intakeIO.getPosition());
     intakeExtensionVoltage.set(voltage);
+
+    intakeIO.ioPeriodic();
+    intakeExtensionMeasured.set(inputs.intakePosition);
   }
 
   public void goToPosition(double degrees){
-    intakeExtensionTargetInDegreesEntry.set(degrees);
+    intakeIO.setTargetPosition(degrees);
   }
 
   public void goToExtendedPosition() {
