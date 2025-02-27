@@ -22,11 +22,11 @@ public class Manipulator extends SubsystemBase {
   public void periodic() {
 
       if(Constants.currentMode == Mode.REPLAY){
-          Logger.processInputs("Manipulator", inputs);
+          Logger.processInputs("RealOutputs/Manipulator", inputs);
           io.updateInputs(inputs);
       }else{
           io.updateInputs(inputs);
-          Logger.processInputs("Manipulator", inputs);
+          Logger.processInputs("RealOutputs/Manipulator", inputs);
       }
 
       io.ioPeriodic();

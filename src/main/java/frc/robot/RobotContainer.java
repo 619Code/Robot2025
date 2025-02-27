@@ -26,14 +26,14 @@ import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
-import frc.robot.commands.ServoGoToAngleCommand;
 import frc.robot.commands.AutoCommands.AutoFactoryGen2;
+import frc.robot.commands.ElevatorCommands.ElevatorGoToPositionPositionCommand;
+import frc.robot.commands.ElevatorCommands.ElevatorHoldCurrentPositionCommand;
 import frc.robot.commands.WristCommands.WristGoToPositionCommand;
 import frc.robot.commands.WristCommands.WristHoldCurrentPositionCommand;
 import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.Elevator.ElevatorIOInputsAutoLogged;
 import frc.robot.subsystems.Elevator.ElevatorIOReal;
-import frc.robot.subsystems.FunnelCollapser.ServoSubsystem;
+import frc.robot.subsystems.Elevator.ElevatorIOSim;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Outtake.Manipulator;
 import frc.robot.subsystems.Outtake.ManipulatorIOReal;
@@ -166,6 +166,10 @@ public class RobotContainer {
         if(manipulatorEnabled){
             configureManipulatorBindings();
         }
+
+        if(elevatorEnabled){
+            configureElevatorBindings();
+        }
     }
 
     public Command getAutonomousCommand() {
@@ -202,7 +206,7 @@ public class RobotContainer {
 
 
 
-    
+
 
 
 
@@ -316,7 +320,7 @@ public class RobotContainer {
         return new Elevator(new ElevatorIOReal());
     }
     private Elevator instantiateSimElevator(){
-        return null;
+        return new Elevator(new ElevatorIOSim());
     }
     private Elevator instantiateElevatorReplayed(){
         return null;
@@ -386,7 +390,7 @@ public class RobotContainer {
     }
 
     private void elevatorConstructorStuff(){
-        // ...
+        elevator.setDefaultCommand(new ElevatorHoldCurrentPositionCommand(elevator));
     }
 
 
@@ -466,5 +470,19 @@ public class RobotContainer {
 
        Trigger dislodgeUpwardTrigger = operatorController.leftStick();
        dislodgeUpwardTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, true));
+    }
+
+    private void configureElevatorBindings(){
+
+        Trigger elevatorToPassthroughHeight = operatorController.povDown();
+        elevatorToPassthroughHeight.whileTrue(
+            new ElevatorGoToPositionPositionCommand(elevator, Constants.ElevatorConstants.passthroughPositionRad)
+        );
+
+        Trigger elevatorToL2Height = operatorController.povRight();
+        elevatorToL2Height.whileTrue(
+            new ElevatorGoToPositionPositionCommand(elevator, Constants.ElevatorConstants.l2PositionRad)
+        );
+
     }
 }

@@ -20,11 +20,11 @@ public class Wrist extends SubsystemBase {
 
     public void updateTowardsCurrentGoal() {
         if(Constants.currentMode == Mode.REPLAY){
-            Logger.processInputs("Wrist", inputs);
+            Logger.processInputs("RealOutputs/Wrist", inputs);
             io.updateInputs(inputs);
         }else{
             io.updateInputs(inputs);
-            Logger.processInputs("Wrist", inputs);
+            Logger.processInputs("RealOutputs/Wrist", inputs);
         }
 
         io.ioPeriodic();
