@@ -122,7 +122,6 @@ public class ElevatorIOReal implements ElevatorIO {
     }
 
 
-
     @Override
     public void setTargetAngle(ElevatorHeight _height) {
         controller.setGoal(new State(_height.heightMeters, 0));

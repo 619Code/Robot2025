@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 //import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
+import frc.robot.Constants.WristConstants.WristAngleRad;
 import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCoralCommand;
@@ -113,8 +115,8 @@ public class RobotContainer {
         }
 
         if(driveEnabled){
-            autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
             driveConstructorStuff();
+            autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
             AutoBuilder.buildAutoChooser();
         }else{
             autoChooser = null;
@@ -332,6 +334,15 @@ public class RobotContainer {
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L3));
         NamedCommands.registerCommand("ElevatorToL4",
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4));
+        
+        NamedCommands.registerCommand("SetWristAnglePassthrough",
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.PASSTHROUGH));
+        NamedCommands.registerCommand("SetWristAngleL1",
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
+        NamedCommands.registerCommand("SetWristAngleL2L3",
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3));
+        NamedCommands.registerCommand("SetWristAngleL4",
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4));
 
         //Set up SysId routines
         // autoChooser.addOption(
@@ -412,12 +423,6 @@ public class RobotContainer {
         mainTrigger.whileFalse(Commands.runOnce(() -> {intake.goToRetractedPosition();}, intake));
     }
 
-    public enum WristAngle {
-        PASSTHROUGH,
-        L1,
-        L2L3,
-        L4
-    }
 
     public enum INTAKE_POSITION{
         INTAKE,
@@ -431,16 +436,16 @@ public class RobotContainer {
     private void configureWristBindings() {
 
         Trigger aPressedTrigger = operatorController.a();
-        aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, WristAngle.PASSTHROUGH));
+        aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.PASSTHROUGH));
 
         Trigger bPressedTrigger = operatorController.b();
-        bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, WristAngle.L1));
+        bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
 
         Trigger xPressedTrigger = operatorController.x();
-        xPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, WristAngle.L2L3));
+        xPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3));
 
         Trigger yPressedTrigger = operatorController.y();
-        yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, WristAngle.L4));
+        yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4));
     }
 
     private void configureManipulatorBindings(){

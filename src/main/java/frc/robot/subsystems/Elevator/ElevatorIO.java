@@ -16,7 +16,6 @@ public interface ElevatorIO {
 
     public void ioPeriodic();
 
-
     public void setTargetAngle(ElevatorHeight elevatorHeight);
 
     public boolean hasReachedGoal();

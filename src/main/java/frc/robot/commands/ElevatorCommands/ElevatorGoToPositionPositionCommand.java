@@ -24,9 +24,7 @@ public class ElevatorGoToPositionPositionCommand extends Command {
   }
 
   @Override
-  public void execute() {
-    elevatorSubsystem.updateTowardsCurrentGoal();
-  }
+  public void execute() {}
 
   @Override
   public void end(boolean interrupted) {}
