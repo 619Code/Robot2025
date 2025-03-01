@@ -12,10 +12,5 @@ public interface IntakeIO {
 
     public void updateInputs(IntakeIOInputs inputs);
 
-    public void ioPeriodic();
-
-    public void setTargetPosition(double _position);
-
-    public boolean hasReachedGoal();
-
+    public void ioPeriodic(double voltage);
 }

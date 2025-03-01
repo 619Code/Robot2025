@@ -6,14 +6,15 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.util.NTProfiledPIDF;
 
 public class Intake extends SubsystemBase {
 
@@ -21,7 +22,7 @@ public class Intake extends SubsystemBase {
   private final SparkMax intakeMotor2;
   private final SparkMax intakeExtensionMotor;
 
-  private final ProfiledPIDController extensionPID;
+  private final NTProfiledPIDF extensionPID;
   private IntakeIO intakeIO;
 
   DoubleEntry kpextensionPIDEntry;
@@ -41,6 +42,8 @@ public class Intake extends SubsystemBase {
     else{
       intakeIO = new intakeIOSim();
     }
+
+    // Motor Initialization and Configuration
 
     intakeMotor1 = new SparkMax(intakeMotorID_1, MotorType.kBrushless);
     intakeMotor2 = new SparkMax(intakeMotorID_2, MotorType.kBrushless);
@@ -65,62 +68,65 @@ public class Intake extends SubsystemBase {
     intakeMotor2.configure(config_2, null, PersistMode.kPersistParameters);
     intakeExtensionMotor.configure(config_3, null, PersistMode.kPersistParameters);
 
-    kpextensionPIDEntry =
-        NetworkTableInstance.getDefault().getDoubleTopic("IntakeKp").getEntry(0.0);
-    kiextensionPIDEntry =
-        NetworkTableInstance.getDefault().getDoubleTopic("IntakeKi").getEntry(0.0);
-    kdextensionPIDEntry =
-        NetworkTableInstance.getDefault().getDoubleTopic("IntakeKd").getEntry(0.0);
-    intakeExtensionTargetInDegreesEntry = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionTargetInDegrees").getEntry(0);
+    // PID Constraints and Initialization
+
+    TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
+      Constants.IntakeConstants.maxVelocity,
+      Constants.IntakeConstants.maxAcceleration);
+
+    extensionPID = new NTProfiledPIDF("Intake",
+    Constants.IntakeConstants.kp,
+    Constants.IntakeConstants.ki,
+    Constants.IntakeConstants.kd,
+    Constants.IntakeConstants.ksFeedforward,
+    Constants.IntakeConstants.kvFeedforward,
+    constraints);
+
+    // Initialization of NetworkTables
+
+    intakeExtensionTargetInDegreesEntry = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionTargetInDegrees").getEntry(90);
     intakeExtensionMeasured = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionMeasured").getEntry(2);
     intakeExtensionVoltage = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionVoltage").getEntry(1);
 
-    intakeExtensionMeasured = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionMeasured").publish();
-    intakeExtensionVoltage = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionVoltage").publish();
+    maxVelocityConstraint = NetworkTableInstance.getDefault().getDoubleTopic("maxVelocityConstraint").getEntry(20.0);
+    maxAccConstraint = NetworkTableInstance.getDefault().getDoubleTopic("maxAccConstraint").getEntry(10.0);
 
-    maxVelocityConstraint = NetworkTableInstance.getDefault().getDoubleTopic("maxVelocityConstraint").getEntry(2.0);
-    maxAccConstraint = NetworkTableInstance.getDefault().getDoubleTopic("maxAccConstraint").getEntry(1.0);
+    // Default Values
 
-    extensionPID = new ProfiledPIDController(kpextensionPIDEntry.get(), kiextensionPIDEntry.get(), kdextensionPIDEntry.get(),
-    new TrapezoidProfile.Constraints(maxVelocityConstraint.get(), maxAccConstraint.get()));
-
-    maxVelocityConstraint.set(2.0);
-    maxAccConstraint.set(1.0);
-
-    kpextensionPIDEntry.set(0);
-    kiextensionPIDEntry.set(0);
-    kdextensionPIDEntry.set(0);
-    intakeExtensionTargetInDegreesEntry.set(0);
-    maxVelocityConstraint.set(2);
-    maxAccConstraint.set(1);
+    intakeExtensionTargetInDegreesEntry.set(90);
+    maxVelocityConstraint.set(20);
+    maxAccConstraint.set(10);
   }
 
   @Override
   public void periodic() {
 
-    extensionPID.setP(kpextensionPIDEntry.get());
-    extensionPID.setI(kiextensionPIDEntry.get());
-    extensionPID.setD(kdextensionPIDEntry.get());
-    extensionPID.setConstraints(new TrapezoidProfile.Constraints(maxVelocityConstraint.get(), maxAccConstraint.get()));
+    // Get targetPosition and set PID goal
 
     double targetPosition = intakeExtensionTargetInDegreesEntry.get();
+    extensionPID.setGoal(new State(targetPosition, 0));
 
-    intakeIO.setTargetPosition(targetPosition);
+    // IntakeIO current position
 
     IntakeIO.IntakeIOInputs inputs = new IntakeIO.IntakeIOInputs();
     intakeIO.updateInputs(inputs);
     double currentPosition = inputs.intakePosition;
 
-    double voltage = extensionPID.calculate(currentPosition, targetPosition);
-    voltage = Math.min(Math.max(voltage, -12.0), 12.0);
-    intakeExtensionVoltage.set(voltage);
+    // Voltage
 
-    intakeIO.ioPeriodic();
+    double voltage = extensionPID.calculate(currentPosition);
+    voltage = Math.min(Math.max(voltage, -12.0), 12.0);
+
+    intakeExtensionVoltage.set(voltage);
+    intakeIO.ioPeriodic(voltage);
     intakeExtensionMeasured.set(inputs.intakePosition);
   }
 
+  // Methods for specific positions
+
   public void goToPosition(double degrees){
-    intakeIO.setTargetPosition(degrees);
+    extensionPID.setGoal(new State(degrees, 0));
+    intakeExtensionTargetInDegreesEntry.set(degrees);
   }
 
   public void goToExtendedPosition() {
@@ -131,4 +137,9 @@ public class Intake extends SubsystemBase {
     goToPosition(0);
   }
 
+  // Check if Intake reached targetPosition
+
+  public boolean hasReachedGoal(){
+    return false; //extensionPID.hasReachedGoal();
+  }
 }
