@@ -10,37 +10,35 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 public class ClimbIOReal implements ClimbIO{
-
     private final SparkMax climbMotor;
     private final RelativeEncoder climbEncoder;
 
-    @Override
-    public double getPosition(){
-        return climbEncoder.getPosition();
+    // Climb Inputs
+    
+    public static class ClimbIOInputs{
+        public double position = 0.0;
+        public double setpointPosition = 0.0;
     }
 
-    @Override
-    public void stopMotor(){
-        climbMotor.stopMotor();
-    }
-
-    @Override
-    public void setVoltage(double voltage){
-        climbMotor.setVoltage(voltage);
-    }
-
-    @Override
-    public void update(){
-
-    }
+    // Initialization of Real Motor
 
     public ClimbIOReal(int climbMotorID){
         climbMotor = new SparkMax(climbMotorID, MotorType.kBrushless);
         climbEncoder = climbMotor.getEncoder();
         SparkMaxConfig config = new SparkMaxConfig();
-
         config.idleMode(IdleMode.kCoast);
+        climbMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+    }
 
-        climbMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    // Update System Inputs
+
+    public void updateInputs(ClimbIO.ClimbIOInputs inputs){
+        inputs.ClimbPosition = climbEncoder.getPosition();
+    }
+
+    // Set voltage
+
+    public void ioPeriodic(double voltage){
+        climbMotor.setVoltage(voltage);
     }
 }

@@ -30,7 +30,7 @@ public class intakeIOSim implements IntakeIO{
         //targetPosition = 90;
     }
 
-    // Update Intake Positon
+    // Update Intake Position
 
     @Override
     public void updateInputs(IntakeIO.IntakeIOInputs inputs){

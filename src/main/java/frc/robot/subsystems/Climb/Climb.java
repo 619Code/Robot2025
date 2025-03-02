@@ -5,22 +5,21 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.networktables.DoubleEntry;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
+import frc.robot.util.NTProfiledPIDF;
 
 public class Climb extends SubsystemBase{
 
     private final SparkMax climbMotor;
+    private final NTProfiledPIDF climbPID;
     private ClimbIO climbIO;
-
-    private final ProfiledPIDController climbPID;
 
     DoubleEntry kpClimbEntry;
     DoubleEntry kiClimbEntry;
@@ -37,8 +36,10 @@ public class Climb extends SubsystemBase{
             climbIO = new ClimbIOReal(climbMotorID);
         }
         else{
-            climbIO = new ClimbIOSim(climbMotorID);
+            climbIO = new ClimbIOSim();
         }
+
+        // Motor Initialization and Configuration
 
         climbMotor = new SparkMax(climbMotorID, MotorType.kBrushless);
 
@@ -52,44 +53,65 @@ public class Climb extends SubsystemBase{
 
         climbMotor.configure(config, null, null);
 
-        kpClimbEntry = NetworkTableInstance.getDefault().getDoubleTopic("ClimbKp").getEntry(0.0);
-        kiClimbEntry = NetworkTableInstance.getDefault().getDoubleTopic("ClimbKi").getEntry(0.0);
-        kdClimbEntry = NetworkTableInstance.getDefault().getDoubleTopic("ClimbKd").getEntry(0.0);
-        climbTargetPositionEntry = NetworkTableInstance.getDefault().getDoubleTopic("climbTargetPosition").getEntry(0);
-        climbMeasured = NetworkTableInstance.getDefault().getDoubleTopic("climbMeasured").publish();
-        climbVoltage = NetworkTableInstance.getDefault().getDoubleTopic("climbVoltage").publish();
+        // PID Constraints and Initialization
 
-        maxVelocityConstraint = NetworkTableInstance.getDefault().getDoubleTopic("climbMaxVelocity").getEntry(2.0);
-        maxAccConstraint = NetworkTableInstance.getDefault().getDoubleTopic("climbMaxAcc").getEntry(1.0);
+        TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
+            Constants.ClimbConstants.maxVelocity,
+            Constants.ClimbConstants.maxAcceleration);
 
-        climbPID = new ProfiledPIDController(kpClimbEntry.get(), kiClimbEntry.get(), kdClimbEntry.get(),
-        new TrapezoidProfile.Constraints(maxVelocityConstraint.get(), maxAccConstraint.get()));
+            climbPID = new NTProfiledPIDF("Intake",
+            Constants.ClimbConstants.kp,
+            Constants.ClimbConstants.ki,
+            Constants.ClimbConstants.kd,
+            Constants.ClimbConstants.ksFeedforward,
+            Constants.ClimbConstants.kvFeedforward,
+            constraints);
 
-        kpClimbEntry.set(0);
-        kiClimbEntry.set(0);
-        kdClimbEntry.set(0);
+        // Initialization of NetworkTables
+
+        climbTargetPositionEntry = NetworkTableInstance.getDefault().getDoubleTopic("climbTargetPosition").getEntry(90);
+        climbMeasured = NetworkTableInstance.getDefault().getDoubleTopic("climbMeasured").getEntry(2);
+        climbVoltage = NetworkTableInstance.getDefault().getDoubleTopic("climbVoltage").getEntry(1);
+
+        maxVelocityConstraint = NetworkTableInstance.getDefault().getDoubleTopic("climbMaxVelocity").getEntry(20.0);
+        maxAccConstraint = NetworkTableInstance.getDefault().getDoubleTopic("climbMaxAcc").getEntry(10.0);
+
+        // Default Values
 
         climbTargetPositionEntry.set(Constants.ClimbConstants.climbInPosition);
-        maxVelocityConstraint.set(2);
-        maxAccConstraint.set(1);
+        maxVelocityConstraint.set(20);
+        maxAccConstraint.set(10);
     }
 
     @Override
     public void periodic(){
-        climbPID.setP(kpClimbEntry.get());
-    climbPID.setI(kiClimbEntry.get());
-    climbPID.setD(kdClimbEntry.get());
-    climbPID.setConstraints(new TrapezoidProfile.Constraints(maxVelocityConstraint.get(), maxAccConstraint.get()));
+    
+    // Get targetPosition and set PID goal
+        
+    double targetPosition = climbTargetPositionEntry.get();
+    climbPID.setGoal(new State(targetPosition, 0));
+    
+    // ClimbIO Current Position
 
-    double pidVoltage = climbPID.calculate(climbIO.getPosition(), climbTargetPositionEntry.get());
-    pidVoltage = Math.min(Math.max(pidVoltage, -12.0), 12.0);
+    ClimbIO.ClimbIOInputs inputs = new ClimbIO.ClimbIOInputs();
+    climbIO.updateInputs(inputs);
+    double currentPosition = inputs.ClimbPosition;
 
-    climbMeasured.set(climbIO.getPosition());
-    climbVoltage.set(pidVoltage);
+    // Voltage
+
+    double voltage = climbPID.calculate(currentPosition);
+    voltage = Math.min(Math.max(voltage, -12.0), 12.0);
+
+    climbVoltage.set(voltage);
+    climbIO.ioPeriodic(voltage);
+    climbMeasured.set(inputs.ClimbPosition);
     }
 
-    public void goToPosition(double position){
-        climbTargetPositionEntry.set(position);
+    // Methods for specific positions
+
+    public void goToPosition(double degrees){
+        climbPID.setGoal(new State(degrees, 0));
+        climbTargetPositionEntry.set(degrees);
     }
 
     public void goToClimbOut(){
@@ -98,6 +120,12 @@ public class Climb extends SubsystemBase{
 
     public void goToClimbIn(){
         goToPosition(0);
+    }
+
+    // Check if Intake reached targetPosition
+
+    public boolean hasReachedGoal(){
+        return false;
     }
 
 }
