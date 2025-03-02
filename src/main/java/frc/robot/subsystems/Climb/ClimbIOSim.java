@@ -18,14 +18,14 @@ public class ClimbIOSim implements ClimbIO{
             SingleJointedArmSim.estimateMOI(0.5, 6.0),
             0.5,
             Rotation2d.fromDegrees(-20).getRadians(),
-            Rotation2d.fromDegrees(110).getRadians(),
+            Rotation2d.fromDegrees(200).getRadians(),
             true,
-            Rotation2d.fromDegrees(90).getRadians()
+            Rotation2d.fromDegrees(180).getRadians()
         );
 
         // Arm State
 
-        armSim.setState(Rotation2d.fromDegrees(90).getRadians(), 0);
+        armSim.setState(Rotation2d.fromDegrees(180).getRadians(), 0);
     }
 
     // Update Climb Position

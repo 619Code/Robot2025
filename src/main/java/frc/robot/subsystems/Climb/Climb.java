@@ -69,7 +69,7 @@ public class Climb extends SubsystemBase{
 
         // Initialization of NetworkTables
 
-        climbTargetPositionEntry = NetworkTableInstance.getDefault().getDoubleTopic("climbTargetPosition").getEntry(90);
+        climbTargetPositionEntry = NetworkTableInstance.getDefault().getDoubleTopic("climbTargetPosition").getEntry(180);
         climbMeasured = NetworkTableInstance.getDefault().getDoubleTopic("climbMeasured").getEntry(2);
         climbVoltage = NetworkTableInstance.getDefault().getDoubleTopic("climbVoltage").getEntry(1);
 
@@ -107,22 +107,14 @@ public class Climb extends SubsystemBase{
     climbMeasured.set(inputs.ClimbPosition);
     }
 
-    // Methods for specific positions
+    // Method for specific position
 
     public void goToPosition(double degrees){
         climbPID.setGoal(new State(degrees, 0));
         climbTargetPositionEntry.set(degrees);
     }
 
-    public void goToClimbOut(){
-        goToPosition(100);
-    }
-
-    public void goToClimbIn(){
-        goToPosition(0);
-    }
-
-    // Check if Intake reached targetPosition
+    // Check if Climb reached targetPosition
 
     public boolean hasReachedGoal(){
         return false;

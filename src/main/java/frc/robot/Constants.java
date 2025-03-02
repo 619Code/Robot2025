@@ -255,8 +255,8 @@ public final class Constants {
     public static final double ksFeedforward = 0.0;
     public static final double kvFeedforward = 0.0;
 
-    public static final double maxVelocity = 50.0;
-    public static final double maxAcceleration = 30.0;
+    public static final double maxVelocity = 20.0;
+    public static final double maxAcceleration = 10.0;
 
     public static final double maxVoltage = 12.0;
   }
@@ -265,8 +265,8 @@ public final class Constants {
 
     // These values have not been tested.
 
-    public static final double climbOutPosition = 90;
-    public static final double climbInPosition = 0;
+    public static final double climbOutPosition = 0;
+    public static final double climbInPosition = 180;
 
     public static final double climbSoftLowerBound = 0;
     public static final double climbSoftUpperBound = 200;
@@ -278,8 +278,8 @@ public final class Constants {
     public static final double ksFeedforward = 0.0;
     public static final double kvFeedforward = 0.0;
 
-    public static final double maxVelocity = 50.0;
-    public static final double maxAcceleration = 30.0;
+    public static final double maxVelocity = 20.0;
+    public static final double maxAcceleration = 10.0;
 
     public static final double maxVoltage = 12.0;
   }
