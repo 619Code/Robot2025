@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
 import frc.robot.commands.AutoCommands.AutoFactoryGen2;
@@ -420,11 +421,16 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     }
-    //  NOTICE: The below function should be edited to use a command
+    
     private void configureIntakeBindings() {
-        Trigger mainTrigger = new JoystickButton(flightStick, 1);
-        mainTrigger.whileTrue(Commands.runOnce(() -> {intake.goToExtendedPosition();}, intake));
-        mainTrigger.whileFalse(Commands.runOnce(() -> {intake.goToRetractedPosition();}, intake));
+        Trigger aPressedTrigger = operatorController.a();
+        aPressedTrigger.onTrue(new IntakeCommand(intake, INTAKE_POSITION.INTAKE));
+        
+        Trigger yPressedTrigger = operatorController.y();
+        yPressedTrigger.onTrue(new IntakeCommand(intake, INTAKE_POSITION.CLIMB));
+        
+        Trigger xPressedTrigger = operatorController.x();
+        xPressedTrigger.onTrue(new IntakeCommand(intake, INTAKE_POSITION.STORE));
     }
 
     public enum WristAngle {

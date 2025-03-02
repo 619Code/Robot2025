@@ -129,14 +129,6 @@ public class Intake extends SubsystemBase {
     intakeExtensionTargetInDegreesEntry.set(degrees);
   }
 
-  public void goToExtendedPosition() {
-    goToPosition(100);
-  }
-
-  public void goToRetractedPosition() {
-    goToPosition(0);
-  }
-
   // Check if Intake reached targetPosition
 
   public boolean hasReachedGoal(){
