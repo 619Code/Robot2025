@@ -19,14 +19,14 @@ public class intakeIOSim implements IntakeIO{
         SingleJointedArmSim.estimateMOI(0.5, 6.0),
         0.5,
         Rotation2d.fromDegrees(-20).getRadians(),
-        Rotation2d.fromDegrees(110).getRadians(),
+        Rotation2d.fromDegrees(120).getRadians(),
         true,
-        Rotation2d.fromDegrees(90).getRadians()
+        Rotation2d.fromDegrees(110).getRadians()
         );
 
         // Arm State
 
-        armSim.setState(Rotation2d.fromDegrees(90).getRadians(), 0);
+        armSim.setState(Rotation2d.fromDegrees(110).getRadians(), 0);
         //targetPosition = 90;
     }
 

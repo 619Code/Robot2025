@@ -240,8 +240,8 @@ public final class Constants {
 
     // NOTICE: None of these value have been tested as well.
 
-    public static final double extendedPosition = 100.0;
-    public static final double retractedPosition = 0.0;
+    public static final double extendedPosition = 0.0;
+    public static final double retractedPosition = 110.0;
     public static final double extensionTolerance = 5.0;
     public static final double climbPosition = 90.0;
 
@@ -262,7 +262,7 @@ public final class Constants {
   }
 
   public static final class ClimbConstants{
-    
+
     // These values have not been tested.
 
     public static final double climbOutPosition = 90;

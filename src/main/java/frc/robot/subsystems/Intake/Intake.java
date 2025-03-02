@@ -84,7 +84,7 @@ public class Intake extends SubsystemBase {
 
     // Initialization of NetworkTables
 
-    intakeExtensionTargetInDegreesEntry = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionTargetInDegrees").getEntry(90);
+    intakeExtensionTargetInDegreesEntry = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionTargetInDegrees").getEntry(110);
     intakeExtensionMeasured = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionMeasured").getEntry(2);
     intakeExtensionVoltage = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionVoltage").getEntry(1);
 
@@ -93,7 +93,7 @@ public class Intake extends SubsystemBase {
 
     // Default Values
 
-    intakeExtensionTargetInDegreesEntry.set(90);
+    intakeExtensionTargetInDegreesEntry.set(110);
     maxVelocityConstraint.set(20);
     maxAccConstraint.set(10);
   }
