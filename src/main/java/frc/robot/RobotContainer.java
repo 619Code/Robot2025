@@ -30,8 +30,10 @@ import frc.robot.commands.OuttakeCoralCommand;
 import frc.robot.commands.AutoCommands.AutoFactoryGen2;
 import frc.robot.commands.ElevatorCommands.ElevatorGoToPositionPositionCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorHoldCurrentPositionCommand;
+import frc.robot.commands.WristCommands.ClimbCommand;
 import frc.robot.commands.WristCommands.WristGoToPositionCommand;
 import frc.robot.commands.WristCommands.WristHoldCurrentPositionCommand;
+import frc.robot.subsystems.Climb.Climb;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorIOReal;
 import frc.robot.subsystems.Elevator.ElevatorIOSim;
@@ -66,13 +68,15 @@ public class RobotContainer {
     private final Wrist wrist;
     private final Manipulator manipulator;
     private final Elevator elevator;
+    private final Climb climb;
 
 
     private final boolean driveEnabled = false;
     private final boolean wristEnabled = false;
     private final boolean manipulatorEnabled = false;
     private final boolean intakeEnabled = false;
-    private final boolean elevatorEnabled = true;
+    private final boolean elevatorEnabled = false;
+    private final boolean climbEnabled = true;
 
 
     // Controller
@@ -92,6 +96,7 @@ public class RobotContainer {
                 wrist = wristEnabled     ? instantiateRealWrist()   : null;
                 manipulator = manipulatorEnabled ? instantiateRealManipulator() : null;
                 elevator = elevatorEnabled ? instantiateRealElevator() : null;
+                climb = climbEnabled ? instantiateRealClimb() : null;
 
                 break;
 
@@ -102,6 +107,7 @@ public class RobotContainer {
                 wrist = wristEnabled   ? instantiateSimWrist()  : null;
                 manipulator = manipulatorEnabled ? instantiateSimManipulator() : null;
                 elevator = elevatorEnabled ? instantiateSimElevator() : null;
+                climb = climbEnabled ? instantiateSimClimb() : null;
 
                 break;
 
@@ -112,6 +118,7 @@ public class RobotContainer {
                 wrist = wristEnabled   ? instantiateWristReplayed()  : null;
                 manipulator = manipulatorEnabled ? instantiateManipulatorReplayed() : null;
                 elevator = elevatorEnabled ? instantiateElevatorReplayed() : null;
+                climb = climbEnabled ? instantiateClimbReplayed() : null;
 
                 break;
         }
@@ -146,6 +153,10 @@ public class RobotContainer {
         if(elevatorEnabled){
             elevatorConstructorStuff();
         }
+
+        if(climbEnabled){
+            climbConstructorStuff();
+        }
     }
 
 
@@ -170,6 +181,10 @@ public class RobotContainer {
 
         if(elevatorEnabled){
             configureElevatorBindings();
+        }
+
+        if(climbEnabled){
+            configureClimbBindings();
         }
     }
 
@@ -327,6 +342,17 @@ public class RobotContainer {
         return null;
     }
 
+    // CLIMB INSTANTIATION
+
+    private Climb instantiateRealClimb(){
+        return new Climb(106);
+    }
+    private Climb instantiateSimClimb(){
+        return new Climb(107);
+    }
+    private Climb instantiateClimbReplayed(){
+        return null;
+    }
 
 
 
@@ -394,6 +420,10 @@ public class RobotContainer {
         elevator.setDefaultCommand(new ElevatorHoldCurrentPositionCommand(elevator));
     }
 
+    private void climbConstructorStuff(){
+        // ...
+    }
+
 
 
 
@@ -421,14 +451,14 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     }
-    
+
     private void configureIntakeBindings() {
         Trigger aPressedTrigger = operatorController.a();
         aPressedTrigger.onTrue(new IntakeCommand(intake, INTAKE_POSITION.INTAKE));
-        
+
         Trigger yPressedTrigger = operatorController.y();
         yPressedTrigger.onTrue(new IntakeCommand(intake, INTAKE_POSITION.CLIMB));
-        
+
         Trigger xPressedTrigger = operatorController.x();
         xPressedTrigger.onTrue(new IntakeCommand(intake, INTAKE_POSITION.STORE));
     }
@@ -444,6 +474,11 @@ public class RobotContainer {
         INTAKE,
         CLIMB,
         STORE
+    }
+
+    public enum CLIMB_POSITION{
+        OUT,
+        IN
     }
 
     //  Idea with wrist/elevator is that the operator will:
@@ -490,5 +525,13 @@ public class RobotContainer {
             new ElevatorGoToPositionPositionCommand(elevator, Constants.ElevatorConstants.l2PositionRad)
         );
 
+    }
+
+    private void configureClimbBindings(){
+        Trigger yPressedTrigger = operatorController.y();
+        yPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.OUT));
+
+        Trigger xPressedTrigger = operatorController.x();
+        xPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.IN));
     }
 }
