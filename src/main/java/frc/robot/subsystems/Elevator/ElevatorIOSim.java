@@ -52,22 +52,6 @@ public class ElevatorIOSim implements ElevatorIO {
         );
     }
 
-
-
-    @Override
-    public void ioPeriodic() {
-
-        double voltage = elevatorController.calculate(elevator.getPositionMeters());
-        double gravityFeedforward = 1;
-
-        elevator.setInputVoltage(voltage + gravityFeedforward);
-
-        elevator.update(Constants.WristConstants.kDt);
-
-    }
-
-
-
     @Override
     public void setTargetAngle(ElevatorHeight _height) {
         elevatorController.setGoal(new State(_height.heightMeters, 0));
@@ -86,5 +70,18 @@ public class ElevatorIOSim implements ElevatorIO {
     public void updateInputs(ElevatorIOInputsAutoLogged inputs) {
         inputs.elevatorPosition = elevator.getPositionMeters();
         inputs.elevatorSetpointPosition = elevatorController.getSetpoint().position;
+
+        periodic();
+    }
+
+    private void periodic() {
+
+        double voltage = elevatorController.calculate(elevator.getPositionMeters());
+        double gravityFeedforward = 1;
+
+        elevator.setInputVoltage(voltage + gravityFeedforward);
+
+        elevator.update(Constants.WristConstants.kDt);
+
     }
 }

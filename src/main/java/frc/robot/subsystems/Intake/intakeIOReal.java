@@ -14,6 +14,17 @@ public class intakeIOReal implements IntakeIO{
     private final SparkMax intakeExtensionMotor;
     private final RelativeEncoder extensionEncoder;
 
+
+    public intakeIOReal(int intakeExtensionMotorID){
+        intakeExtensionMotor = new SparkMax(intakeExtensionMotorID, MotorType.kBrushless);
+        extensionEncoder = intakeExtensionMotor.getEncoder();
+        SparkMaxConfig intakeConfigure = new SparkMaxConfig();
+
+        intakeConfigure.idleMode(IdleMode.kCoast);
+
+        intakeExtensionMotor.configure(intakeConfigure, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+    }
+
     @Override
     public double getPosition() {
         return extensionEncoder.getPosition();
@@ -31,17 +42,4 @@ public class intakeIOReal implements IntakeIO{
     @Override
     public void update() {
     }
-
-    public intakeIOReal(int intakeExtensionMotorID){
-        intakeExtensionMotor = new SparkMax(intakeExtensionMotorID, MotorType.kBrushless);
-        extensionEncoder = intakeExtensionMotor.getEncoder();
-        SparkMaxConfig intakeConfigure = new SparkMaxConfig();
-
-        intakeConfigure.idleMode(IdleMode.kCoast);
-
-        intakeExtensionMotor.configure(intakeConfigure, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    }
-
-
-
 }

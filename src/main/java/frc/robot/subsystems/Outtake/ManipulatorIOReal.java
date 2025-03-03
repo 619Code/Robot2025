@@ -94,11 +94,13 @@ public class ManipulatorIOReal implements ManipulatorIO {
   @Override
   public void updateInputs(OuttakeIOInputs inputs){
     inputs.hasCoral = hasCoral();
+
+
+    periodic();
   }
 
 
-  @Override
-  public void ioPeriodic() {
+  private void periodic() {
 
     currentDislodgerSetpoint = dislodgerTrapezoidProfile.calculate(Constants.WristConstants.kDt, currentDislodgerSetpoint, currentDislodgerGoal);
 

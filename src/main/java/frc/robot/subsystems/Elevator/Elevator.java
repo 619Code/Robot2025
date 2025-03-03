@@ -18,7 +18,7 @@ public class Elevator extends SubsystemBase {
     }
 
 
-    public void updateTowardsCurrentGoal(){
+    public void periodic(){
         if(Constants.currentMode == Mode.REPLAY){
             Logger.processInputs("RealOutputs/Elevator", inputs);
             io.updateInputs(inputs);
@@ -26,8 +26,6 @@ public class Elevator extends SubsystemBase {
             io.updateInputs(inputs);
             Logger.processInputs("RealOutputs/Elevator", inputs);
         }
-
-        io.ioPeriodic();
     }
 
     public void setTargetPosition(ElevatorHeight _height){

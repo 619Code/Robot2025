@@ -18,7 +18,7 @@ public class ElevatorHoldCurrentPositionCommand extends Command {
 
   @Override
   public void execute() {
-    elevatorSubsystem.updateTowardsCurrentGoal();
+    
   }
 
   @Override

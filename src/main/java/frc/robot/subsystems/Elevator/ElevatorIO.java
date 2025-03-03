@@ -14,8 +14,6 @@ public interface ElevatorIO {
 
     public void updateInputs(ElevatorIOInputsAutoLogged inputs);
 
-    public void ioPeriodic();
-
 
     public void setTargetAngle(ElevatorHeight elevatorHeight);
 

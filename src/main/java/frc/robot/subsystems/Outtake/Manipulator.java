@@ -20,7 +20,6 @@ public class Manipulator extends SubsystemBase {
 
   @Override
   public void periodic() {
-
       if(Constants.currentMode == Mode.REPLAY){
           Logger.processInputs("RealOutputs/Manipulator", inputs);
           io.updateInputs(inputs);
@@ -28,9 +27,6 @@ public class Manipulator extends SubsystemBase {
           io.updateInputs(inputs);
           Logger.processInputs("RealOutputs/Manipulator", inputs);
       }
-
-      io.ioPeriodic();
-
   }
 
   public boolean isDetectingCoral(){

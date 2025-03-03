@@ -77,15 +77,15 @@ public class Climb extends SubsystemBase{
     @Override
     public void periodic(){
         climbPID.setP(kpClimbEntry.get());
-    climbPID.setI(kiClimbEntry.get());
-    climbPID.setD(kdClimbEntry.get());
-    climbPID.setConstraints(new TrapezoidProfile.Constraints(maxVelocityConstraint.get(), maxAccConstraint.get()));
+        climbPID.setI(kiClimbEntry.get());
+        climbPID.setD(kdClimbEntry.get());
+        climbPID.setConstraints(new TrapezoidProfile.Constraints(maxVelocityConstraint.get(), maxAccConstraint.get()));
 
-    double pidVoltage = climbPID.calculate(climbIO.getPosition(), climbTargetPositionEntry.get());
-    pidVoltage = Math.min(Math.max(pidVoltage, -12.0), 12.0);
+        double pidVoltage = climbPID.calculate(climbIO.getPosition(), climbTargetPositionEntry.get());
+        pidVoltage = Math.min(Math.max(pidVoltage, -12.0), 12.0);
 
-    climbMeasured.set(climbIO.getPosition());
-    climbVoltage.set(pidVoltage);
+        climbMeasured.set(climbIO.getPosition());
+        climbVoltage.set(pidVoltage);
     }
 
     public void goToPosition(double position){

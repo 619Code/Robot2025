@@ -11,8 +11,6 @@ public interface ManipulatorIO  {
 
     public void updateInputs(OuttakeIOInputs inputs);
 
-    public void ioPeriodic();
-
     //  Outtake
     public void runOuttakeOut();
     public void runOuttakeIn();

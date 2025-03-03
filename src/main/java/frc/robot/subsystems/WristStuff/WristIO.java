@@ -16,8 +16,6 @@ public interface WristIO {
 
     public void updateInputs(WristIOInputs inputs);
 
-    public void ioPeriodic();
-
 
     public void setTargetAngle(double _angleRad);
 

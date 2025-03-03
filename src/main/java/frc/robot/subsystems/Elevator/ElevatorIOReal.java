@@ -60,26 +60,6 @@ public class ElevatorIOReal implements ElevatorIO {
     }
 
 
-
-    @Override
-    public void ioPeriodic() {
-
-        double voltage = controller.calculate(elevatorEncoder.getPosition());
-        double gravityFeedforward = 0.0;  //  PUT A VALUE IN HERE
-
-
-        voltage += gravityFeedforward;
-
-        voltage = Math.min(voltage, Constants.ElevatorConstants.maxVoltage);
-        voltage = Math.max(voltage, -Constants.ElevatorConstants.maxVoltage);
-
-        leftMotorLeader.setVoltage(voltage);
-
-    }
-
-
-
-
     private SparkFlexConfig createLeftMotorConfig(){
 
         SparkFlexConfig config = new SparkFlexConfig();
@@ -141,5 +121,24 @@ public class ElevatorIOReal implements ElevatorIO {
     public void updateInputs(ElevatorIOInputsAutoLogged inputs) {
         inputs.elevatorPosition = elevatorEncoder.getPosition();
         inputs.elevatorSetpointPosition = controller.getSetpoint().position;
+
+
+        periodic();
+    }
+
+
+    private void periodic() {
+
+        double voltage = controller.calculate(elevatorEncoder.getPosition());
+        double gravityFeedforward = 0.0;  //  PUT A VALUE IN HERE
+
+
+        voltage += gravityFeedforward;
+
+        voltage = Math.min(voltage, Constants.ElevatorConstants.maxVoltage);
+        voltage = Math.max(voltage, -Constants.ElevatorConstants.maxVoltage);
+
+        leftMotorLeader.setVoltage(voltage);
+
     }
 }
