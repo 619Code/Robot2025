@@ -3,11 +3,12 @@ package frc.robot.subsystems.Elevator;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
-import frc.robot.util.NTProfiledPIDF;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
+import frc.robot.util.NTProfiledPIDF;
 
 public class Elevator extends SubsystemBase {
 
@@ -15,25 +16,26 @@ public class Elevator extends SubsystemBase {
 
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
-    // private NTProfiledPIDF elevatorController;
+    private NTProfiledPIDF elevatorController;
 
-
-    // private final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
-    //         Constants.ElevatorConstants.maxVelocity,
-    //         Constants.ElevatorConstants.maxAcceleration
-    //     );
+    private final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
+            Constants.ElevatorConstants.maxVelocity,
+            Constants.ElevatorConstants.maxAcceleration
+        );
 
     public Elevator(ElevatorIO _io){
         io = _io;
 
-        // elevatorController = new NTProfiledPIDF(
-        //     "ElevatorSim",
-        //     Constants.ElevatorConstants.kpElevatorSim,
-        //     Constants.ElevatorConstants.kiElevatorSim,
-        //     Constants.ElevatorConstants.kdElevatorSim,
-        //     Constants.ElevatorConstants.ksFeedforwardSim,
-        //     Constants.ElevatorConstants.kvFeedforwardSim,
-        //     constraints);
+        elevatorController = new NTProfiledPIDF(
+            "Elevator",
+            Constants.ElevatorConstants.kpElevator,
+            Constants.ElevatorConstants.kiElevator,
+            Constants.ElevatorConstants.kdElevator,
+            Constants.ElevatorConstants.ksFeedforward,
+            Constants.ElevatorConstants.kvFeedforward,
+            constraints);
+
+        elevatorController.setGoal(new State(getPositionMeters(), 0));
     }
 
     public void periodic(){
@@ -45,24 +47,32 @@ public class Elevator extends SubsystemBase {
             Logger.processInputs("RealOutputs/Elevator", inputs);
         }
 
-        // double voltage = elevatorController.calculate(inputs.elevatorPosition);
-        // double gravityFeedforward = 0.0;  //  PUT A VALUE IN HERE
+        double voltage = elevatorController.calculate(inputs.elevatorPosition);
+        double gravityFeedforward = 0.5;  //  PUT A VALUE IN HERE
 
 
-        // voltage += gravityFeedforward;
+        voltage += gravityFeedforward;
 
-        // voltage = Math.min(voltage, Constants.ElevatorConstants.maxVoltage);
-        // voltage = Math.max(voltage, -Constants.ElevatorConstants.maxVoltage);
+        voltage = Math.min(voltage, Constants.ElevatorConstants.maxVoltage);
+        voltage = Math.max(voltage, -Constants.ElevatorConstants.maxVoltage);
 
 
-        io.ioPeriodic();
+        io.ioPeriodic(voltage);
+        inputs.elevatorSetpointPosition = elevatorController.getSetpoint().position;
+        System.out.println("Voltage: " + voltage);
+        System.out.println("Position: " + inputs.elevatorPosition);
+    }
+
+    public double getPositionMeters(){
+        return inputs.elevatorPosition;
     }
 
     public void setTargetPosition(ElevatorHeight _height){
-        io.setTargetAngle(_height);
+        //io.setTargetAngle(_height);
+        elevatorController.setGoal(new State(_height.heightMeters, 0));
     }
 
     public boolean hasReachedGoal(){
-        return io.hasReachedGoal();
+        return elevatorController.atGoal();
     }
 }

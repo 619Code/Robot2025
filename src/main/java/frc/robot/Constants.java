@@ -13,7 +13,6 @@
 
 package frc.robot;
 
-import static edu.wpi.first.units.Units.Radians;
 
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.ModuleConfig;
@@ -202,15 +201,15 @@ public final class Constants {
     public static final double elevatorEncoderConversionFactor = 1.0; // Use this to make the encoder natively in meters
 
 
-    public static final double maxVelocity = Math.PI * 2; // Arbitrary
-    public static final double maxAcceleration = Math.PI * 4;
+    public static final double maxVelocity = 2; // Arbitrary
+    public static final double maxAcceleration = 2;
 
     public static final double minHeightMeters = 0;
     public static final double maxHeightMeters = 1;
 
     public static final double encoderZeroOffsetRotations = 0;
 
-    public static final double kpElevator = 0.0;
+    public static final double kpElevator = 0.1;
     public static final double kiElevator = 0.0;
     public static final double kdElevator = 0.0;
 
@@ -294,6 +293,8 @@ public final class Constants {
   public static final class PassthroughConstants {
 
     public static double passthroughMotorVoltage = 6;
+
+    public static double kDt = 0.02;
   }
 
   public static final class WristConstants{
@@ -325,7 +326,7 @@ public final class Constants {
 
       }
 
-      
+
       public static double ksFeedforward = 0.15;
       public static double kvFeedforward = 0.6;
 
