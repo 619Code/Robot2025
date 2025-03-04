@@ -10,16 +10,15 @@ public interface ManipulatorIO  {
     }
 
     public void updateInputs(OuttakeIOInputs inputs);
-    public void periodic();
 
     //  Outtake
-    public void runOuttakeOut();
-    public void runOuttakeIn();
-    public void stopDislodger();
+    public void runOuttakeVoltage(double voltage);
+    public void stopOuttake();
 
     //  Dislodger
-    public void runDislodger(boolean invert);
-    public void stopOuttake();
+    public void setDislodgerVoltage(double voltage);
+    //  There is no stopDislodger() right here because it is profiled. It profiles to a stop.
+
 
     //  Proximity sensor
 //    public boolean hasCoral();

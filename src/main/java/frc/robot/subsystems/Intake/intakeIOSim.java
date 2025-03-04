@@ -4,12 +4,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
-public class intakeIOSim implements IntakeIO{
+public class IntakeIOSim implements IntakeIO{
+
+
     private final SingleJointedArmSim armSim;
-    private double position;
 
 
-    public intakeIOSim(){
+    public IntakeIOSim(){
         DCMotor motor = DCMotor.getNEO(1);
         armSim = new SingleJointedArmSim(motor,
         105,
@@ -34,14 +35,19 @@ public class intakeIOSim implements IntakeIO{
     }
 
     @Override
-    public void setVoltage(double voltage){
+    public void setExtensionMotorVoltage(double voltage){
         armSim.setInputVoltage(voltage);
     }
 
-    @Override
-    public void update(){
-        armSim.update(0.02);
+    // @Override
+    // public void updateInputs(IntakeIOInputsAutoLogged inputs){
+    //     inputs.position = Rotation2d.fromRadians(armSim.getAngleRads()).getDegrees();
 
-        position = Rotation2d.fromRadians(armSim.getAngleRads()).getDegrees();
+    //     armSim.update(0.02);
+    // }
+
+    @Override
+    public void setIntakeMotorVoltage(double voltage) {
+        throw new UnsupportedOperationException();
     }
 }

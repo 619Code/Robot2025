@@ -6,8 +6,8 @@ public interface PassthroughIO {
 
     @AutoLog
     public static class PassthroughIOInputs {
-        //  This is useless, I'm just setting this stuff up now so I don't have to later. 
-        //  We do not need the voltage in here. 
+        //  This is useless, I'm just setting this stuff up now so I don't have to later.
+        //  We do not need the voltage in here.
         public double motorVoltage;
     }
 
@@ -15,7 +15,5 @@ public interface PassthroughIO {
 
     public void setVoltage(double voltage);
     public void stopMotors();
-
-    public void periodic();
 
 }

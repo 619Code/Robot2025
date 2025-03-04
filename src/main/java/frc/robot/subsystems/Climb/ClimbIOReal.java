@@ -29,11 +29,6 @@ public class ClimbIOReal implements ClimbIO{
         climbMotor.setVoltage(voltage);
     }
 
-    @Override
-    public void update(){
-
-    }
-
     public ClimbIOReal(int climbMotorID){
         climbMotor = new SparkMax(climbMotorID, MotorType.kBrushless);
         climbEncoder = climbMotor.getEncoder();

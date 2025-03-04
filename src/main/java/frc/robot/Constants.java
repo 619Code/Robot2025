@@ -245,6 +245,9 @@ public final class Constants {
 
     // NOTICE: None of these value have been tested as well.
 
+    public static int intakeMotorId = -1;
+    public static int extensionMotorId = -1;
+
     public static final double extendedPosition = 100.0;
     public static final double retractedPosition = 0.0;
     public static final double extensionTolerance = 5.0;

@@ -37,15 +37,10 @@ public class PassthroughIOReal implements PassthroughIO{
         passthroughMotorL.stopMotor();
     }
 
-    
+
 
     @Override
     public void updateInputs(PassthroughIOInputsAutoLogged inputs) {
         inputs.motorVoltage = passthroughMotorL.getBusVoltage();
-    }
-
-    @Override
-    public void periodic() {
-        
     }
 }

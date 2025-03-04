@@ -3,6 +3,8 @@ package frc.robot.subsystems.Outtake;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
@@ -13,8 +15,21 @@ public class Manipulator extends SubsystemBase {
 
   private final OuttakeIOInputsAutoLogged inputs = new OuttakeIOInputsAutoLogged();
 
+
+
+  private final TrapezoidProfile dislodgerTrapezoidProfile;
+
+  private State currentDislodgerSetpoint;
+  private State currentDislodgerGoal;
+
   public Manipulator(ManipulatorIO _io){
     io = _io;
+
+    TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(15, 30);
+    dislodgerTrapezoidProfile = new TrapezoidProfile(constraints);
+
+    currentDislodgerSetpoint = new State(0, 0);
+    currentDislodgerGoal = new State(0, 0);
   }
 
 
@@ -28,7 +43,14 @@ public class Manipulator extends SubsystemBase {
           Logger.processInputs("RealOutputs/Manipulator", inputs);
       }
 
-      io.periodic();
+
+
+      currentDislodgerSetpoint = dislodgerTrapezoidProfile.calculate(Constants.WristConstants.kDt, currentDislodgerSetpoint, currentDislodgerGoal);
+
+      double voltage = currentDislodgerSetpoint.position;
+
+      io.setDislodgerVoltage(voltage);
+
   }
 
   public boolean isDetectingCoral(){
@@ -38,20 +60,23 @@ public class Manipulator extends SubsystemBase {
 
   //  Outtake
   public void runOuttakeOut(){
-    io.runOuttakeOut();
+    io.runOuttakeVoltage(Constants.OuttakeConstants.outtakeVoltage);
   }
   public void runOuttakeIn(){
-    io.runOuttakeIn();
+    io.runOuttakeVoltage(Constants.OuttakeConstants.intakeVoltage);
   }
   public void stopOuttake(){
     io.stopOuttake();
   }
 
   //  Dislodger
-  public void runDislodger(boolean invert){
-    io.runDislodger(invert);
+  public void startDislodger(boolean invert){
+    currentDislodgerGoal = new State(
+      Constants.OuttakeConstants.dislodgerVoltage * (invert ? -1 : 1),
+       0
+    );
   }
   public void stopDislodger(){
-    io.stopDislodger();
+    currentDislodgerGoal = new State(0, 0);
   }
 }

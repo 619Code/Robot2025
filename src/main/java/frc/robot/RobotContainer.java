@@ -289,10 +289,10 @@ public class RobotContainer {
     //  INTAKE INSTANTIATION
 
     private Intake instantiateRealIntake(){
-        return new Intake(100, 101, 102);
+        return new Intake();
     }
     private Intake instantiateSimIntake(){
-        return new Intake(103, 104, 105);
+        return new Intake();
     }
     private Intake instantiateIntakeReplayed(){
         return null;

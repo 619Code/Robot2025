@@ -37,9 +37,6 @@ public class Passthrough extends SubsystemBase {
           io.updateInputs(inputs);
           Logger.processInputs("RealOutputs/Passthrough", inputs);
       }
-
-      io.periodic();
-      
   }
 
   //  The below two functions may not need to be public (can decide when we know the sensor

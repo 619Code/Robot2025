@@ -30,10 +30,7 @@ public class PassthroughIOSim implements PassthroughIO {
     @Override
     public void updateInputs(PassthroughIOInputsAutoLogged inputs) {
         passthroughMotorL.getInputVoltage();
-    }
 
-    @Override
-    public void periodic(){
         passthroughMotorL.update(Constants.PassthroughConstants.kDt);
     }
 }

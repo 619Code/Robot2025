@@ -25,7 +25,7 @@ public class DislodgeAlgaeCommand extends Command {
 
   @Override
   public void initialize() {
-    manipulator.runDislodger(invert);
+    manipulator.startDislodger(invert);
   }
 
   @Override
