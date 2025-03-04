@@ -19,10 +19,10 @@ public class ElevatorIOReal implements ElevatorIO {
 
     private final AbsoluteEncoder elevatorEncoder;
 
-    public ElevatorIOReal(){
+    public ElevatorIOReal(int leftMotorId, int rightMotorId){
 
-        leftMotorLeader = new SparkFlex(Constants.ElevatorConstants.leftMotorID, MotorType.kBrushless);
-        rightMotorFollower = new SparkFlex(Constants.ElevatorConstants.rightMotorID, MotorType.kBrushless);
+        leftMotorLeader = new SparkFlex(leftMotorId, MotorType.kBrushless);
+        rightMotorFollower = new SparkFlex(rightMotorId, MotorType.kBrushless);
 
         //  Left motor config
         SparkFlexConfig leftMotorConfig = createLeftMotorConfig();

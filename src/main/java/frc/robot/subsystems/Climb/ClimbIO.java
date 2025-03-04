@@ -11,8 +11,6 @@ public interface ClimbIO {
 
     public void updateInputs(ClimbIOInputsAutoLogged inputs);
 
-
-    public double getPosition();
     public void stopMotor();
     public void setVoltage(double voltage);
 }

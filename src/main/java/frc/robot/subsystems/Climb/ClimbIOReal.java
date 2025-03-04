@@ -36,12 +36,6 @@ public class ClimbIOReal implements ClimbIO{
 
     }
 
-
-    @Override
-    public double getPosition(){
-        return climbEncoder.getPosition();
-    }
-
     @Override
     public void stopMotor(){
         climbMotor.stopMotor();
@@ -54,6 +48,6 @@ public class ClimbIOReal implements ClimbIO{
 
     @Override
     public void updateInputs(ClimbIOInputsAutoLogged inputs) {
-        inputs.climbPosition = getPosition();
+        inputs.climbPosition = climbEncoder.getPosition();
     }
 }

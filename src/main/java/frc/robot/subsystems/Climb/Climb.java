@@ -41,8 +41,10 @@ public class Climb extends SubsystemBase{
             constraints);
 
 
+        //  Calling this here so that we have a value for the initial setGoal 
+        climbIO.updateInputs(inputs);
             //  Possibly need to change this later. Don't know if the climb will always start where we want it.
-        climbPID.setGoal(new State(climbIO.getPosition(), 0));
+        climbPID.setGoal(new State(inputs.climbPosition, 0));
 
     }
 
@@ -56,7 +58,7 @@ public class Climb extends SubsystemBase{
             Logger.processInputs("RealOutputs/Climb", inputs);
         }
 
-        double voltage = climbPID.calculate(climbIO.getPosition());
+        double voltage = climbPID.calculate(inputs.climbPosition);
         voltage = Math.min(Math.max(voltage, -Constants.ClimbConstants.maxVoltage), Constants.ClimbConstants.maxVoltage);
 
         climbIO.setVoltage(voltage);

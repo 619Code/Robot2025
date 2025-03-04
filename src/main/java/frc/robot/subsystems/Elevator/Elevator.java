@@ -7,12 +7,15 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.Robot;
+import frc.robot.subsystems.Climb.ClimbIOReal;
+import frc.robot.subsystems.Climb.ClimbIOSim;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.util.NTProfiledPIDF;
 
 public class Elevator extends SubsystemBase {
 
-    private final ElevatorIO io;
+    private final ElevatorIO elevatorIO;
 
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
@@ -23,8 +26,16 @@ public class Elevator extends SubsystemBase {
             Constants.ElevatorConstants.maxAcceleration
         );
 
-    public Elevator(ElevatorIO _io){
-        io = _io;
+    public Elevator(){
+        if(Robot.isReal()){
+            elevatorIO = new ElevatorIOReal(
+                Constants.ElevatorConstants.leftMotorID, 
+                Constants.ElevatorConstants.rightMotorID
+            );
+        }
+        else{
+            elevatorIO = new ElevatorIOSim();
+        }
 
         elevatorController = new NTProfiledPIDF(
             "Elevator",
@@ -42,9 +53,9 @@ public class Elevator extends SubsystemBase {
         //  Figure out a better way to do this elevatorSetpointPosition thing
         if(Constants.currentMode == Mode.REPLAY){
             Logger.processInputs("RealOutputs/Elevator", inputs);
-            io.updateInputs(inputs);
+            elevatorIO.updateInputs(inputs);
         }else{
-            io.updateInputs(inputs);
+            elevatorIO.updateInputs(inputs);
             inputs.elevatorSetpointPosition = elevatorController.getSetpoint().position;
             Logger.processInputs("RealOutputs/Elevator", inputs);
         }
@@ -59,7 +70,7 @@ public class Elevator extends SubsystemBase {
         voltage = Math.max(voltage, -Constants.ElevatorConstants.maxVoltage);
 
 
-        io.runVoltage(voltage);
+        elevatorIO.runVoltage(voltage);
 
     }
 
