@@ -39,11 +39,13 @@ public class Elevator extends SubsystemBase {
     }
 
     public void periodic(){
+        //  Figure out a better way to do this elevatorSetpointPosition thing
         if(Constants.currentMode == Mode.REPLAY){
             Logger.processInputs("RealOutputs/Elevator", inputs);
             io.updateInputs(inputs);
         }else{
             io.updateInputs(inputs);
+            inputs.elevatorSetpointPosition = elevatorController.getSetpoint().position;
             Logger.processInputs("RealOutputs/Elevator", inputs);
         }
 
@@ -57,10 +59,8 @@ public class Elevator extends SubsystemBase {
         voltage = Math.max(voltage, -Constants.ElevatorConstants.maxVoltage);
 
 
-        io.ioPeriodic(voltage);
-        inputs.elevatorSetpointPosition = elevatorController.getSetpoint().position;
-        System.out.println("Voltage: " + voltage);
-        System.out.println("Position: " + inputs.elevatorPosition);
+        io.runVoltage(voltage);
+
     }
 
     public double getPositionMeters(){
@@ -68,7 +68,6 @@ public class Elevator extends SubsystemBase {
     }
 
     public void setTargetPosition(ElevatorHeight _height){
-        //io.setTargetAngle(_height);
         elevatorController.setGoal(new State(_height.heightMeters, 0));
     }
 

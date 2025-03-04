@@ -28,9 +28,6 @@ public class PassthroughIOReal implements PassthroughIO{
     }
 
     @Override
-    public void ioPeriodic(){}
-
-    @Override
     public void setVoltage(double voltage) {
         passthroughMotorL.setVoltage(voltage);
     }
@@ -38,5 +35,17 @@ public class PassthroughIOReal implements PassthroughIO{
     @Override
     public void stopMotors() {
         passthroughMotorL.stopMotor();
+    }
+
+    
+
+    @Override
+    public void updateInputs(PassthroughIOInputsAutoLogged inputs) {
+        inputs.motorVoltage = passthroughMotorL.getBusVoltage();
+    }
+
+    @Override
+    public void periodic() {
+        
     }
 }

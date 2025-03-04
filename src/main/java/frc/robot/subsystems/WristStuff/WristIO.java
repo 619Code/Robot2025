@@ -18,6 +18,8 @@ public interface WristIO {
 
 
     public void setTargetAngle(double _angleRad);
+    
+    public void periodic();
 
     //  NOTICE: Eventually this should definitely be changed.
     //  I see no way this would work with the replay feature as it is now

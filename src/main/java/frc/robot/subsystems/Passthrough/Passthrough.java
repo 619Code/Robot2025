@@ -1,14 +1,20 @@
 package frc.robot.subsystems.Passthrough;
 
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 import frc.robot.Robot;
 
 
 public class Passthrough extends SubsystemBase {
 
   private PassthroughIO io;
+
+
+  private PassthroughIOInputsAutoLogged inputs = new PassthroughIOInputsAutoLogged();
 
 
   public Passthrough(int passthroughMotorID_L, int passthroughMotorID_R) {
@@ -24,7 +30,16 @@ public class Passthrough extends SubsystemBase {
 
   @Override
   public void periodic(){
-    io.ioPeriodic();
+    if(Constants.currentMode == Mode.REPLAY){
+          Logger.processInputs("RealOutputs/Passthrough", inputs);
+          io.updateInputs(inputs);
+      }else{
+          io.updateInputs(inputs);
+          Logger.processInputs("RealOutputs/Passthrough", inputs);
+      }
+
+      io.periodic();
+      
   }
 
   //  The below two functions may not need to be public (can decide when we know the sensor

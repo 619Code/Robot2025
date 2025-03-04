@@ -125,20 +125,12 @@ public class RobotContainer {
                 break;
         }
 
-        // if(driveEnabled){
-        //     driveConstructorStuff();
-        //     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-        //     AutoBuilder.buildAutoChooser();
-        // }else{
-        //     autoChooser = null;
-        // }
-
         constructorThings();
 
+        //  Should the constructor and auto chooser/builder stuff be called in this order?
         if(driveEnabled){
             driveConstructorStuff();
             autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-            AutoBuilder.buildAutoChooser();
         }else{
             autoChooser = null;
         }
@@ -439,7 +431,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     }
-    
+
     private void configureIntakeBindings() {
         Trigger mainTrigger = new JoystickButton(flightStick, 1);
         mainTrigger.whileTrue(Commands.runOnce(() -> {intake.goToExtendedPosition();}, intake));

@@ -10,6 +10,7 @@ public interface ManipulatorIO  {
     }
 
     public void updateInputs(OuttakeIOInputs inputs);
+    public void periodic();
 
     //  Outtake
     public void runOuttakeOut();

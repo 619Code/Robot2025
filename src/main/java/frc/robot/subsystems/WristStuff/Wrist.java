@@ -26,6 +26,9 @@ public class Wrist extends SubsystemBase {
             io.updateInputs(inputs);
             Logger.processInputs("RealOutputs/Wrist", inputs);
         }
+
+        io.periodic();
+        
     }
 
 

@@ -16,11 +16,6 @@ public class PassthroughIOSim implements PassthroughIO {
     }
 
     @Override
-    public void ioPeriodic(){
-        passthroughMotorL.update(Constants.PassthroughConstants.kDt);
-    }
-
-    @Override
     public void setVoltage(double voltage){
         passthroughMotorL.setInputVoltage(voltage);
         passthroughMotorR.setInputVoltage(voltage);
@@ -30,5 +25,15 @@ public class PassthroughIOSim implements PassthroughIO {
     public void stopMotors(){
         passthroughMotorL.setInputVoltage(0);
         passthroughMotorR.setInputVoltage(0);
+    }
+
+    @Override
+    public void updateInputs(PassthroughIOInputsAutoLogged inputs) {
+        passthroughMotorL.getInputVoltage();
+    }
+
+    @Override
+    public void periodic(){
+        passthroughMotorL.update(Constants.PassthroughConstants.kDt);
     }
 }

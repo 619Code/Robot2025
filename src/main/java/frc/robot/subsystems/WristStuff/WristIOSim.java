@@ -48,8 +48,8 @@ public class WristIOSim implements WristIO {
 
     }
 
-
-    private void periodic() {
+    @Override
+    public void periodic() {
 
         double voltage = wristController.calculate(wristMotor.getAngularPositionRad());
 
@@ -79,7 +79,5 @@ public class WristIOSim implements WristIO {
     public void updateInputs(WristIOInputs inputs){
         inputs.wristPosition = wristMotor.getAngularPositionRad();
         inputs.wristSetpointPosition = wristController.getSetpoint().position;
-
-        periodic();
     }
 }

@@ -27,6 +27,8 @@ public class Manipulator extends SubsystemBase {
           io.updateInputs(inputs);
           Logger.processInputs("RealOutputs/Manipulator", inputs);
       }
+
+      io.periodic();
   }
 
   public boolean isDetectingCoral(){

@@ -144,8 +144,8 @@ public class WristIOReal implements WristIO {
 
     }
 
-
-    private void periodic() {
+    @Override
+    public void periodic() {
 
         double voltage = controller.calculate(wristEncoder.getPosition());
         double gravityFeedforward = 0.4 * Math.cos(controller.getSetpoint().position + Math.PI);
@@ -192,8 +192,5 @@ public class WristIOReal implements WristIO {
     public void updateInputs(WristIOInputs inputs){
         ifOk(wristFlex, wristEncoder::getPosition, (value) -> inputs.wristPosition = value);
         inputs.wristSetpointPosition = controller.getSetpoint().position;
-
-
-        periodic();
     }
 }
