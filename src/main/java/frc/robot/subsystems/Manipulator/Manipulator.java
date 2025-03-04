@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Outtake;
+package frc.robot.subsystems.Manipulator;
 
 
 import org.littletonrobotics.junction.Logger;
@@ -8,6 +8,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.subsystems.Outtake.OuttakeIOInputsAutoLogged;
 import frc.robot.Robot;
 
 public class Manipulator extends SubsystemBase {
