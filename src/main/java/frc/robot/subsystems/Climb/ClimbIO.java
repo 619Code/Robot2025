@@ -1,8 +1,15 @@
 package frc.robot.subsystems.Climb;
 
+import org.littletonrobotics.junction.AutoLog;
+
 public interface ClimbIO {
 
-    // CONTINUE HERE WITH CREATING THE AUTO LOGGED INPUTS STUFF
+    @AutoLog
+    public static class ClimbIOInputs {
+        public double climbPosition = 0.0;
+    }
+
+    public void updateInputs(ClimbIOInputsAutoLogged inputs);
 
 
     public double getPosition();

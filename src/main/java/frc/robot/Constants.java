@@ -260,6 +260,20 @@ public final class Constants {
   public static final class ClimbConstants{
     // This values have not been tested.
 
+    public static final int motorId = -1;  //  Don't know yet
+
+    public static final double maxVelocity = 0;
+    public static final double maxAcceleration = 0;
+    public static final double maxVoltage = 1.0;
+
+    public static final double kpWrist = 0.0;
+    public static final double kiWrist = 0.0;
+    public static final double kdWrist = 0.0;
+
+    public static final double ksFeedforward = 0.0;
+    public static final double kvFeedforward = 0.0;
+
+
     public static  final double climbOutPosition = 90;
     public static final double climbInPosition = 0;
 

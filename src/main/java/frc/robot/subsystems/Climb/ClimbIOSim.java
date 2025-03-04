@@ -29,7 +29,7 @@ public class ClimbIOSim implements ClimbIO{
     //     armSim.update(0.02);
     // }
 
-    public ClimbIOSim(int climbMotorID) {
+    public ClimbIOSim() {
         DCMotor motor = DCMotor.getNEO(1);
         armSim = new SingleJointedArmSim(
             motor,
@@ -42,5 +42,13 @@ public class ClimbIOSim implements ClimbIO{
             Rotation2d.fromDegrees(90).getRadians()
         );
         armSim.setState(Rotation2d.fromDegrees(90).getRadians(), 0);
+    }
+
+    @Override
+    public void updateInputs(ClimbIOInputsAutoLogged inputs) {
+
+        inputs.climbPosition = getPosition();
+
+        armSim.update(0.02);
     }
 }
