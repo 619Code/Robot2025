@@ -369,33 +369,6 @@ public class RobotContainer {
 
     private void driveConstructorStuff() {
 
-        //Set up SysId routines
-        // autoChooser.addOption(
-        //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-        // autoChooser.addOption(
-        //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-        // autoChooser.addOption(
-        //     "Drive SysId (Quasistatic Forward)",
-        //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        // autoChooser.addOption(
-        //     "Drive SysId (Quasistatic Reverse)",
-        //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        // autoChooser.addOption(
-        //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        // autoChooser.addOption(
-        //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
-
-
-        // autoChooser.addOption("Pathfinding with apriltag test",
-        //     Commands.sequence(
-        //         Commands.runOnce(() -> {
-        //             drive.setPose(new Pose2d(1, 1, new Rotation2d(Math.PI)));
-        //         }, drive),
-        //         Commands.defer(() -> {
-        //             return AutoFactoryGen2.PathfindRelativeToAprilTag(new Pose2d(0.7, 0, new Rotation2d()), drive);
-        //         }, Set.of(drive))
-        //     )
-        // );
     }
 
     private void intakeConstructorStuff() {
@@ -466,7 +439,7 @@ public class RobotContainer {
                     drive)
                 .ignoringDisable(true));
     }
-    //  NOTICE: The below function should be edited to use a command
+    
     private void configureIntakeBindings() {
         Trigger mainTrigger = new JoystickButton(flightStick, 1);
         mainTrigger.whileTrue(Commands.runOnce(() -> {intake.goToExtendedPosition();}, intake));

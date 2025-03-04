@@ -8,6 +8,21 @@ public class intakeIOSim implements IntakeIO{
     private final SingleJointedArmSim armSim;
     private double position;
 
+
+    public intakeIOSim(){
+        DCMotor motor = DCMotor.getNEO(1);
+        armSim = new SingleJointedArmSim(motor,
+        105,
+        SingleJointedArmSim.estimateMOI(0.5, 6.0),
+        0.5,
+        Rotation2d.fromDegrees(-20).getRadians(),
+        Rotation2d.fromDegrees(110).getRadians(),
+        true,
+        Rotation2d.fromDegrees(90).getRadians()
+        );
+        armSim.setState(Rotation2d.fromDegrees(90).getRadians(), 0);
+    }
+
     @Override
     public double getPosition() {
         return Rotation2d.fromRadians(armSim.getAngleRads()).getDegrees();
@@ -28,19 +43,5 @@ public class intakeIOSim implements IntakeIO{
         armSim.update(0.02);
 
         position = Rotation2d.fromRadians(armSim.getAngleRads()).getDegrees();
-    }
-
-    intakeIOSim(){
-        DCMotor motor = DCMotor.getNEO(1);
-        armSim = new SingleJointedArmSim(motor,
-        105,
-        SingleJointedArmSim.estimateMOI(0.5, 6.0),
-        0.5,
-        Rotation2d.fromDegrees(-20).getRadians(),
-        Rotation2d.fromDegrees(110).getRadians(),
-        true,
-        Rotation2d.fromDegrees(90).getRadians()
-        );
-        armSim.setState(Rotation2d.fromDegrees(90).getRadians(), 0);
     }
 }
