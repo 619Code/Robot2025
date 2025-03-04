@@ -46,6 +46,9 @@ public class Elevator extends SubsystemBase {
             Constants.ElevatorConstants.kvFeedforward,
             constraints);
 
+        
+        //  This needs to be called before the line below it
+        elevatorIO.updateInputs(inputs);
         elevatorController.setGoal(new State(getPositionMeters(), 0));
     }
 

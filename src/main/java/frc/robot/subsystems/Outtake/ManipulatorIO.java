@@ -19,8 +19,4 @@ public interface ManipulatorIO  {
     public void setDislodgerVoltage(double voltage);
     //  There is no stopDislodger() right here because it is profiled. It profiles to a stop.
 
-
-    //  Proximity sensor
-//    public boolean hasCoral();
-
 }

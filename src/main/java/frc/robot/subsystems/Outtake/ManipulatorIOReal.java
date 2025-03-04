@@ -19,15 +19,15 @@ public class ManipulatorIOReal implements ManipulatorIO {
 
   private final DigitalInput intakeProximitySensor;
 
-  public ManipulatorIOReal() {
+  public ManipulatorIOReal(int _outtakeMotorID, int _dislodgerMotorId) {
 
     SparkFlexConfig config = new SparkFlexConfig();
     config.smartCurrentLimit(10);
 
-    outMax = new SparkMax(Constants.OuttakeConstants.outtakeMotorId, MotorType.kBrushless);
+    outMax = new SparkMax(_outtakeMotorID, MotorType.kBrushless);
 
 
-    dislodgeMax = new SparkMax(Constants.OuttakeConstants.dislodgerMotorId, MotorType.kBrushless);
+    dislodgeMax = new SparkMax(_dislodgerMotorId, MotorType.kBrushless);
 
 
     intakeProximitySensor = new DigitalInput(Constants.OuttakeConstants.kIntakeSensorPort);

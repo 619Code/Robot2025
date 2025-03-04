@@ -8,25 +8,37 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.Robot;
 
 public class Manipulator extends SubsystemBase {
 
-  private final ManipulatorIO io;
+  private final ManipulatorIO manipulatorIO;
 
   private final OuttakeIOInputsAutoLogged inputs = new OuttakeIOInputsAutoLogged();
 
 
 
-  private final TrapezoidProfile dislodgerTrapezoidProfile;
+  private final TrapezoidProfile dislodgerVoltageTrapezoidProfile;
 
   private State currentDislodgerSetpoint;
   private State currentDislodgerGoal;
 
-  public Manipulator(ManipulatorIO _io){
-    io = _io;
+  public Manipulator(){
+    if(Robot.isReal()){
+      manipulatorIO = new ManipulatorIOReal(
+        Constants.OuttakeConstants.outtakeMotorId, 
+        Constants.OuttakeConstants.dislodgerMotorId
+      );
+    }
+    else{
+      for(int i = 0; i < 100; i++){
+        System.out.println("NEED TO CREATE THE MANIPULATOR SIMULATION");
+      }
+      manipulatorIO = null;
+    }
 
     TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(15, 30);
-    dislodgerTrapezoidProfile = new TrapezoidProfile(constraints);
+    dislodgerVoltageTrapezoidProfile = new TrapezoidProfile(constraints);
 
     currentDislodgerSetpoint = new State(0, 0);
     currentDislodgerGoal = new State(0, 0);
@@ -37,19 +49,19 @@ public class Manipulator extends SubsystemBase {
   public void periodic() {
       if(Constants.currentMode == Mode.REPLAY){
           Logger.processInputs("RealOutputs/Manipulator", inputs);
-          io.updateInputs(inputs);
+          manipulatorIO.updateInputs(inputs);
       }else{
-          io.updateInputs(inputs);
+          manipulatorIO.updateInputs(inputs);
           Logger.processInputs("RealOutputs/Manipulator", inputs);
       }
 
 
 
-      currentDislodgerSetpoint = dislodgerTrapezoidProfile.calculate(Constants.WristConstants.kDt, currentDislodgerSetpoint, currentDislodgerGoal);
+      currentDislodgerSetpoint = dislodgerVoltageTrapezoidProfile.calculate(0.02, currentDislodgerSetpoint, currentDislodgerGoal);
 
       double voltage = currentDislodgerSetpoint.position;
 
-      io.setDislodgerVoltage(voltage);
+      manipulatorIO.setDislodgerVoltage(voltage);
 
   }
 
@@ -60,13 +72,13 @@ public class Manipulator extends SubsystemBase {
 
   //  Outtake
   public void runOuttakeOut(){
-    io.runOuttakeVoltage(Constants.OuttakeConstants.outtakeVoltage);
+    manipulatorIO.runOuttakeVoltage(Constants.OuttakeConstants.outtakeVoltage);
   }
   public void runOuttakeIn(){
-    io.runOuttakeVoltage(Constants.OuttakeConstants.intakeVoltage);
+    manipulatorIO.runOuttakeVoltage(Constants.OuttakeConstants.intakeVoltage);
   }
   public void stopOuttake(){
-    io.stopOuttake();
+    manipulatorIO.stopOuttake();
   }
 
   //  Dislodger
