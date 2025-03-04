@@ -9,17 +9,14 @@ import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
-import frc.robot.util.NTProfiledPIDF;
 
 public class ElevatorIOReal implements ElevatorIO {
 
     private final SparkFlex leftMotorLeader;
     private final SparkFlex rightMotorFollower;
-    private final NTProfiledPIDF controller;
+    //private final NTProfiledPIDF controller;
 
 
     private final AbsoluteEncoder elevatorEncoder;
@@ -41,23 +38,43 @@ public class ElevatorIOReal implements ElevatorIO {
         elevatorEncoder = leftMotorLeader.getAbsoluteEncoder();
 
 
-        TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
-                Constants.ElevatorConstants.maxVelocity,
-                Constants.ElevatorConstants.maxAcceleration);
+        // TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
+        //         Constants.ElevatorConstants.maxVelocity,
+        //         Constants.ElevatorConstants.maxAcceleration);
 
-        controller = new NTProfiledPIDF(
-            "Elevator",
-            Constants.ElevatorConstants.kpElevator,
-            Constants.ElevatorConstants.kiElevator,
-            Constants.ElevatorConstants.kiElevator,
-            Constants.ElevatorConstants.ksFeedforward,
-            Constants.ElevatorConstants.kvFeedforward,
-            constraints
-        );
+        // controller = new NTProfiledPIDF(
+        //     "Elevator",
+        //     Constants.ElevatorConstants.kpElevator,
+        //     Constants.ElevatorConstants.kiElevator,
+        //     Constants.ElevatorConstants.kiElevator,
+        //     Constants.ElevatorConstants.ksFeedforward,
+        //     Constants.ElevatorConstants.kvFeedforward,
+        //     constraints
+        // );
 
-        controller.setGoal(new State(elevatorEncoder.getPosition(), 0));
+        // controller.setGoal(new State(elevatorEncoder.getPosition(), 0));
 
     }
+
+
+
+    @Override
+    public void ioPeriodic(double voltage) {
+
+        // double voltage = controller.calculate(elevatorEncoder.getPosition());
+        // double gravityFeedforward = 0.0;  //  PUT A VALUE IN HERE
+
+
+        // voltage += gravityFeedforward;
+
+        // voltage = Math.min(voltage, Constants.ElevatorConstants.maxVoltage);
+        // voltage = Math.max(voltage, -Constants.ElevatorConstants.maxVoltage);
+
+        leftMotorLeader.setVoltage(voltage);
+
+    }
+
+
 
 
     private SparkFlexConfig createLeftMotorConfig(){
@@ -102,17 +119,17 @@ public class ElevatorIOReal implements ElevatorIO {
     }
 
 
-
     @Override
     public void setTargetAngle(ElevatorHeight _height) {
-        controller.setGoal(new State(_height.heightMeters, 0));
+        //controller.setGoal(new State(_height.heightMeters, 0));
     }
 
 
 
     @Override
     public boolean hasReachedGoal() {
-        return controller.atGoal();
+        //return controller.atGoal();
+        return true;
     }
 
 
@@ -120,25 +137,6 @@ public class ElevatorIOReal implements ElevatorIO {
     @Override
     public void updateInputs(ElevatorIOInputsAutoLogged inputs) {
         inputs.elevatorPosition = elevatorEncoder.getPosition();
-        inputs.elevatorSetpointPosition = controller.getSetpoint().position;
-
-
-        periodic();
-    }
-
-
-    private void periodic() {
-
-        double voltage = controller.calculate(elevatorEncoder.getPosition());
-        double gravityFeedforward = 0.0;  //  PUT A VALUE IN HERE
-
-
-        voltage += gravityFeedforward;
-
-        voltage = Math.min(voltage, Constants.ElevatorConstants.maxVoltage);
-        voltage = Math.max(voltage, -Constants.ElevatorConstants.maxVoltage);
-
-        leftMotorLeader.setVoltage(voltage);
-
+        //inputs.elevatorSetpointPosition = controller.getSetpoint().position;
     }
 }

@@ -29,6 +29,9 @@ public class Wrist extends SubsystemBase {
     }
 
 
+    public double getPosition() {
+        return inputs.wristPosition;
+    }
     public void setTargetAngle(double _angleRad){
         io.setTargetAngle(_angleRad);
     }

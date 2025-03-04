@@ -27,6 +27,7 @@ import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
+import frc.robot.commands.ServoGoToAngleCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorGoToPositionPositionCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorHoldCurrentPositionCommand;
 import frc.robot.commands.WristCommands.WristGoToPositionCommand;
@@ -34,9 +35,11 @@ import frc.robot.commands.WristCommands.WristHoldCurrentPositionCommand;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Elevator.ElevatorIOReal;
 import frc.robot.subsystems.Elevator.ElevatorIOSim;
+import frc.robot.subsystems.FunnelCollapser.ServoSubsystem;
 import frc.robot.subsystems.Intake.Intake;
 import frc.robot.subsystems.Outtake.Manipulator;
 import frc.robot.subsystems.Outtake.ManipulatorIOReal;
+import frc.robot.subsystems.Passthrough.Passthrough;
 import frc.robot.subsystems.WristStuff.Wrist;
 import frc.robot.subsystems.WristStuff.WristIOReal;
 import frc.robot.subsystems.WristStuff.WristIOSim;
@@ -61,14 +64,18 @@ public class RobotContainer {
     private final Intake intake;
     private final Wrist wrist;
     private final Manipulator manipulator;
+    private final Passthrough passthrough;
     private final Elevator elevator;
+    private final ServoSubsystem servo;
 
 
     private final boolean driveEnabled = true;
-    private final boolean wristEnabled = false;
+    private final boolean wristEnabled = true;
     private final boolean manipulatorEnabled = false;
     private final boolean intakeEnabled = false;
+    private final boolean passthroughEnabled = false;
     private final boolean elevatorEnabled = true;
+    private final boolean servoEnabled = false;
 
 
     // Controller
@@ -87,7 +94,9 @@ public class RobotContainer {
                 intake = intakeEnabled   ? instantiateRealIntake()  : null;
                 wrist = wristEnabled     ? instantiateRealWrist()   : null;
                 manipulator = manipulatorEnabled ? instantiateRealManipulator() : null;
+                passthrough = passthroughEnabled ? instantiateRealPassthrough() : null;
                 elevator = elevatorEnabled ? instantiateRealElevator() : null;
+                servo = servoEnabled ? instantiateRealServo() : null;
 
                 break;
 
@@ -97,7 +106,9 @@ public class RobotContainer {
                 intake = intakeEnabled ? instantiateSimIntake() : null;
                 wrist = wristEnabled   ? instantiateSimWrist()  : null;
                 manipulator = manipulatorEnabled ? instantiateSimManipulator() : null;
+                passthrough = passthroughEnabled ? instantiateSimPassthrough() : null;
                 elevator = elevatorEnabled ? instantiateSimElevator() : null;
+                servo = servoEnabled ? instantiateSimServo() : null;
 
                 break;
 
@@ -107,20 +118,30 @@ public class RobotContainer {
                 intake = intakeEnabled ? instantiateIntakeReplayed() : null;
                 wrist = wristEnabled   ? instantiateWristReplayed()  : null;
                 manipulator = manipulatorEnabled ? instantiateManipulatorReplayed() : null;
+                passthrough = passthroughEnabled ? instantiateReplayedPassthrough() : null;
                 elevator = elevatorEnabled ? instantiateElevatorReplayed() : null;
+                servo = servoEnabled ? instantiateReplayedServo() : null;
 
                 break;
         }
 
+        // if(driveEnabled){
+        //     driveConstructorStuff();
+        //     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+        //     AutoBuilder.buildAutoChooser();
+        // }else{
+        //     autoChooser = null;
+        // }
+
+        constructorThings();
+
         if(driveEnabled){
-            autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
             driveConstructorStuff();
+            autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
             AutoBuilder.buildAutoChooser();
         }else{
             autoChooser = null;
         }
-
-        constructorThings();
 
         configureButtonBindings();
     }
@@ -166,6 +187,10 @@ public class RobotContainer {
 
         if(elevatorEnabled){
             configureElevatorBindings();
+        }
+
+        if(servoEnabled){
+            configureServoBindings();
         }
     }
 
@@ -305,8 +330,19 @@ public class RobotContainer {
         throw new UnsupportedOperationException("NOT IMPLEMENTED");
     }
 
-    //  ELEVATOR INSTANTIATION
+    //PASSTHROUGH INSTANTIATION
+    private Passthrough instantiateRealPassthrough(){
+    //TODO: Change these
+        return new Passthrough(-1, -1);
+    }
+    private Passthrough instantiateSimPassthrough(){
+        return new Passthrough(-1, -1);
+    }
+    private Passthrough instantiateReplayedPassthrough(){
+            throw new UnsupportedOperationException("NOT IMPLEMENTED");
+        }
 
+    //  ELEVATOR INSTANTIATION
     private Elevator instantiateRealElevator(){
         return new Elevator(new ElevatorIOReal());
     }
@@ -317,21 +353,21 @@ public class RobotContainer {
         return null;
     }
 
+    //SERVO INSTANTIATION
+    private ServoSubsystem instantiateRealServo() {
+        return new ServoSubsystem(0);
+    }
+    private ServoSubsystem instantiateSimServo() {
+        throw new UnsupportedOperationException("NOT IMPLEMENTED");
+    }
+    private ServoSubsystem instantiateReplayedServo() {
+        throw new UnsupportedOperationException("NOT IMPLEMENTED");
+    }
+
 
     // ============= Constructor Stuff =============
 
     private void driveConstructorStuff() {
-
-        NamedCommands.registerCommand("ElevatorToPassthrough",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.PASSTHROUGH));
-        NamedCommands.registerCommand("ElevatorToL1",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L1));
-        NamedCommands.registerCommand("ElevatorToL2",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2));
-        NamedCommands.registerCommand("ElevatorToL3",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L3));
-        NamedCommands.registerCommand("ElevatorToL4",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4));
 
         //Set up SysId routines
         // autoChooser.addOption(
@@ -368,14 +404,39 @@ public class RobotContainer {
 
     private void wristConstructorStuff() {
         wrist.setDefaultCommand(new WristHoldCurrentPositionCommand(wrist));
+        NamedCommands.registerCommand("SetWristAnglePassthrough",
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.PASSTHROUGH));
+        NamedCommands.registerCommand("SetWristAngleL1",
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
+        NamedCommands.registerCommand("SetWristAngleL2L3",
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3));
+        NamedCommands.registerCommand("SetWristAngleL4",
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4));
     }
 
     private void manipulatorConstructorStuff(){
-        // ...
+        NamedCommands.registerCommand("IntakeCoral",
+            new IntakeCoralCommand(manipulator, passthrough));
+        NamedCommands.registerCommand("OuttakeCoral",
+            new OuttakeCoralCommand(manipulator));
+        NamedCommands.registerCommand("DislodgeAlageDownward",
+            new DislodgeAlgaeCommand(manipulator, false));
+        NamedCommands.registerCommand("DislodgeAlageUpward",
+            new DislodgeAlgaeCommand(manipulator, true));
     }
 
     private void elevatorConstructorStuff(){
         elevator.setDefaultCommand(new ElevatorHoldCurrentPositionCommand(elevator));
+        NamedCommands.registerCommand("ElevatorToPassthrough",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.PASSTHROUGH));
+        NamedCommands.registerCommand("ElevatorToL1",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L1));
+        NamedCommands.registerCommand("ElevatorToL2",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2));
+        NamedCommands.registerCommand("ElevatorToL3",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L3));
+        NamedCommands.registerCommand("ElevatorToL4",
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4));
     }
 
 
@@ -412,12 +473,6 @@ public class RobotContainer {
         mainTrigger.whileFalse(Commands.runOnce(() -> {intake.goToRetractedPosition();}, intake));
     }
 
-    public enum WristAngle {
-        PASSTHROUGH,
-        L1,
-        L2L3,
-        L4
-    }
 
     public enum INTAKE_POSITION{
         INTAKE,
@@ -431,21 +486,24 @@ public class RobotContainer {
     private void configureWristBindings() {
 
         Trigger aPressedTrigger = operatorController.a();
-        aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, WristAngle.PASSTHROUGH));
+        aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.PASSTHROUGH));
 
         Trigger bPressedTrigger = operatorController.b();
-        bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, WristAngle.L1));
+        bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
 
         Trigger xPressedTrigger = operatorController.x();
-        xPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, WristAngle.L2L3));
+        xPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3));
 
         Trigger yPressedTrigger = operatorController.y();
-        yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, WristAngle.L4));
+        yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4));
     }
 
     private void configureManipulatorBindings(){
         Trigger intakeCoralTrigger = operatorController.leftBumper();
-        intakeCoralTrigger.whileTrue(new IntakeCoralCommand(manipulator));
+        if (elevator.getPositionMeters() == Constants.ElevatorConstants.ElevatorHeight.PASSTHROUGH.heightMeters
+        && wrist.getPosition() == Constants.WristConstants.WristAngleRad.PASSTHROUGH.positionRad) {
+        intakeCoralTrigger.whileTrue(new IntakeCoralCommand(manipulator, passthrough));
+        }
 
         Trigger outtakeCoralTrigger = operatorController.rightBumper();
         outtakeCoralTrigger.whileTrue(new OuttakeCoralCommand(manipulator));
@@ -469,5 +527,16 @@ public class RobotContainer {
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2)
         );
 
+    }
+
+    private void configureServoBindings(){
+
+        Trigger servoTrigger = operatorController.rightTrigger();
+        servoTrigger.whileTrue(
+            new ServoGoToAngleCommand(servo, 120));
+
+        Trigger servoTrigger2 = operatorController.leftTrigger();
+        servoTrigger2.whileTrue(
+            new ServoGoToAngleCommand(servo, 0));
     }
 }

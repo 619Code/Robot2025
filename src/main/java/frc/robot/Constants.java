@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
@@ -200,15 +201,15 @@ public final class Constants {
     public static final double elevatorEncoderConversionFactor = 1.0; // Use this to make the encoder natively in meters
 
 
-    public static final double maxVelocity = Math.PI * 2; // Arbitrary
-    public static final double maxAcceleration = Math.PI * 4;
+    public static final double maxVelocity = 2; // Arbitrary
+    public static final double maxAcceleration = 2;
 
     public static final double minHeightMeters = 0;
     public static final double maxHeightMeters = 1;
 
     public static final double encoderZeroOffsetRotations = 0;
 
-    public static final double kpElevator = 0.0;
+    public static final double kpElevator = 0.1;
     public static final double kiElevator = 0.0;
     public static final double kdElevator = 0.0;
 
@@ -292,6 +293,8 @@ public final class Constants {
   public static final class PassthroughConstants {
 
     public static double passthroughMotorVoltage = 6;
+
+    public static double kDt = 0.02;
   }
 
   public static final class WristConstants{
@@ -308,12 +311,21 @@ public final class Constants {
 
       public static double zeroOffset = 1.0 - ((5.05128918995 - (Math.PI / 2.0)) / (2.0 * Math.PI));
 
-      public static double freeHangAngle = Math.PI / 2.0;
+      public static double freeHangAngle = 90;
 
-      public static double passthroughPositionRad = freeHangAngle;
-      public static double L1PositionRad = Math.PI * 2.0 / 3.0;
-      public static double L2L3PositionRad = Math.PI;
-      public static double L4PositionRad = Math.PI * 2.8 / 2.0;
+      public static enum WristAngleRad {
+        PASSTHROUGH(Units.degreesToRadians(freeHangAngle)),
+        L1(Units.degreesToRadians(120)),
+        L2L3(Units.degreesToRadians(180)),
+        L4(Units.degreesToRadians(252));
+
+        public final double positionRad;
+        WristAngleRad(double _positionRad){
+            positionRad = _positionRad;
+        }
+
+      }
+
 
       public static double ksFeedforward = 0.15;
       public static double kvFeedforward = 0.6;
