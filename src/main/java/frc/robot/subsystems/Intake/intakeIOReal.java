@@ -9,12 +9,14 @@ import frc.robot.Constants;
 import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 
 public class IntakeIOReal implements IntakeIO{
 
     private final SparkMax intakeMotor;
+    private final RelativeEncoder intakeEncoder;
 
     private final SparkMax intakeExtensionMotor;
     private final AbsoluteEncoder extensionEncoder;
@@ -28,6 +30,7 @@ public class IntakeIOReal implements IntakeIO{
         intakeExtensionMotor = new SparkMax(intakeExtensionMotorID, MotorType.kBrushless);
 
         extensionEncoder = intakeExtensionMotor.getAbsoluteEncoder();
+        intakeEncoder = intakeMotor.getEncoder();
 
 
         SparkMaxConfig intakeMotor1Config = new SparkMaxConfig();
@@ -37,8 +40,8 @@ public class IntakeIOReal implements IntakeIO{
         config_3.idleMode(IdleMode.kBrake);
 
         SoftLimitConfig limitConfig = new SoftLimitConfig();
-        limitConfig.forwardSoftLimit(Constants.IntakeConstants.intakeSoftUpperBound);
-        limitConfig.reverseSoftLimit(Constants.IntakeConstants.intakeSoftLowerBound);
+        limitConfig.forwardSoftLimit(Constants.IntakeConstants.ExtensionMechanism.extensionSoftUpperBound);
+        limitConfig.reverseSoftLimit(Constants.IntakeConstants.ExtensionMechanism.extensionSoftLowerBound);
         config_3.softLimit.apply(limitConfig);
 
         intakeMotor.configure(intakeMotor1Config, null, PersistMode.kPersistParameters);
@@ -64,6 +67,7 @@ public class IntakeIOReal implements IntakeIO{
 
     @Override
     public void updateInputs(IntakeIOInputsAutoLogged inputs) {
-        inputs.intakePosition = extensionEncoder.getPosition();
+        inputs.intakeExtensionPosition = extensionEncoder.getPosition();
+        inputs.intakeMotorSpeedRadSec = intakeEncoder.getVelocity() * Math.PI * 2.0;
     }
 }

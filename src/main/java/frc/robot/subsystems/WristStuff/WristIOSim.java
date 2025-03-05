@@ -7,7 +7,7 @@ import frc.robot.Constants;
 public class WristIOSim implements WristIO {
 
 
-    private DCMotorSim wristMotor;
+    private final DCMotorSim wristMotor;
 
 
     public WristIOSim(){

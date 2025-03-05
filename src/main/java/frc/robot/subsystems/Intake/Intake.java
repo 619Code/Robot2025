@@ -20,7 +20,10 @@ public class Intake extends SubsystemBase {
 
   public Intake() {
     if(Robot.isReal()){
-      intakeIO = new IntakeIOReal(Constants.IntakeConstants.intakeMotorId, Constants.IntakeConstants.extensionMotorId);
+      intakeIO = new IntakeIOReal(
+        Constants.IntakeConstants.Intake.intakeMotorId, 
+        Constants.IntakeConstants.ExtensionMechanism.extensionMotorId
+      );
     }
     else{
       intakeIO = new IntakeIOSim();
@@ -29,12 +32,15 @@ public class Intake extends SubsystemBase {
    
     extensionPID = new NTProfiledPIDF(
       "Intake",
-      Constants.IntakeConstants.kpIntakeExtension,
-      Constants.IntakeConstants.kiIntakeExtension,
-      Constants.IntakeConstants.kdIntakeExtension,
-      Constants.IntakeConstants.ksFeedforward,
-      Constants.IntakeConstants.kvFeedforward,
-      new Constraints(Constants.IntakeConstants.maxVelocity, Constants.IntakeConstants.maxAcceleration)
+      Constants.IntakeConstants.ExtensionMechanism.kpIntakeExtension,
+      Constants.IntakeConstants.ExtensionMechanism.kiIntakeExtension,
+      Constants.IntakeConstants.ExtensionMechanism.kdIntakeExtension,
+      Constants.IntakeConstants.ExtensionMechanism.ksFeedforward,
+      Constants.IntakeConstants.ExtensionMechanism.kvFeedforward,
+      new Constraints(
+            Constants.IntakeConstants.ExtensionMechanism.maxExtensionVelocity, 
+            Constants.IntakeConstants.ExtensionMechanism.maxExtensionAcceleration
+      )
     );
 
   }
@@ -49,9 +55,12 @@ public class Intake extends SubsystemBase {
         Logger.processInputs("RealOutputs/Climb", inputs);
     }
 
-    double voltage = extensionPID.calculate(inputs.intakePosition);
+    double voltage = extensionPID.calculate(inputs.intakeExtensionPosition);
 
-    voltage = Math.min(Math.max(voltage, -Constants.IntakeConstants.maxVoltage), Constants.IntakeConstants.maxVoltage);
+    voltage = Math.min(
+                Math.max(voltage, -Constants.IntakeConstants.ExtensionMechanism.maxExtensionVoltage), 
+                Constants.IntakeConstants.ExtensionMechanism.maxExtensionVoltage
+              );
 
     intakeIO.setExtensionMotorVoltage(voltage);
 
@@ -62,11 +71,18 @@ public class Intake extends SubsystemBase {
   }
 
   public void goToExtendedPosition() {
-    goToPosition(Constants.IntakeConstants.extendedPosition);
+    goToPosition(Constants.IntakeConstants.ExtensionMechanism.extendedPosition);
   }
 
   public void goToRetractedPosition() {
-    goToPosition(Constants.IntakeConstants.retractedPosition);
+    goToPosition(Constants.IntakeConstants.ExtensionMechanism.retractedPosition);
   }
 
+  public void runIntake(){
+    intakeIO.setIntakeMotorVoltage(Constants.IntakeConstants.Intake.intakingVoltage);
+  }
+
+  public void stopIntake(){
+    intakeIO.setIntakeMotorVoltage(0);
+  }
 }

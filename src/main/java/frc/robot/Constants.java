@@ -245,28 +245,44 @@ public final class Constants {
 
     // NOTICE: None of these value have been tested as well.
 
-    public static int intakeMotorId = -1;
-    public static int extensionMotorId = -1;
 
-    public static final double extendedPosition = 100.0;
-    public static final double retractedPosition = 0.0;
-    public static final double extensionTolerance = 5.0;
-    public static final double climbPosition = 90.0;
+    public static final class ExtensionMechanism{
 
-    public static final double maxVoltage = 1.0;
+      public static int extensionMotorId = -1;
 
-    public static final double maxVelocity = 0;
-    public static final double maxAcceleration = 0;
 
-    public static final double intakeSoftLowerBound = 0;
-    public static final double intakeSoftUpperBound = 200;
+      public static final double extendedPosition = 100.0;
+      public static final double retractedPosition = 0.0;
+      public static final double extensionTolerance = 5.0;
+      public static final double climbPosition = 90.0;
 
-    public static final double kpIntakeExtension = 0.0;
-    public static final double kiIntakeExtension = 0.0;
-    public static final double kdIntakeExtension = 0.0;
+      public static final double maxExtensionVoltage = 1.0;
 
-    public static final double ksFeedforward = 0.0;
-    public static final double kvFeedforward = 0.0;
+      public static final double maxExtensionVelocity = 0;
+      public static final double maxExtensionAcceleration = 0;
+
+      public static final double extensionSoftLowerBound = 0;
+      public static final double extensionSoftUpperBound = 200;
+
+      public static final double kpIntakeExtension = 0.0;
+      public static final double kiIntakeExtension = 0.0;
+      public static final double kdIntakeExtension = 0.0;
+
+      public static final double ksFeedforward = 0.0;
+      public static final double kvFeedforward = 0.0;
+
+      public static final double intakeMotorReduction = 7.3;  // ARBITRARY
+      public static final DCMotor intakeGearbox = DCMotor.getNeoVortex(1);
+
+    }
+
+    public static final class Intake{
+
+      public static int intakeMotorId = -1;
+    
+      public static final double intakingVoltage = 2.0;
+      
+    }
   }
 
   public static final class ClimbConstants{

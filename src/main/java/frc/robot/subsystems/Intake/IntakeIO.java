@@ -6,7 +6,8 @@ public interface IntakeIO {
 
     @AutoLog
     public static class IntakeIOInputs{
-        public double intakePosition;
+        public double intakeExtensionPosition;
+        public double intakeMotorSpeedRadSec;
     }
 
     public void updateInputs(IntakeIOInputsAutoLogged inputs);

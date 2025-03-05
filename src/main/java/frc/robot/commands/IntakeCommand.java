@@ -23,13 +23,13 @@ public class IntakeCommand extends Command {
   public void initialize() {
     switch (position) {
       case INTAKE:
-        intakeSub.goToPosition(Constants.IntakeConstants.extendedPosition);
+        intakeSub.goToPosition(Constants.IntakeConstants.ExtensionMechanism.extendedPosition);
         break;
       case CLIMB:
-        intakeSub.goToPosition(Constants.IntakeConstants.climbPosition);
+        intakeSub.goToPosition(Constants.IntakeConstants.ExtensionMechanism.climbPosition);
         break;
       case STORE:
-        intakeSub.goToPosition(Constants.IntakeConstants.retractedPosition);
+        intakeSub.goToPosition(Constants.IntakeConstants.ExtensionMechanism.retractedPosition);
         break;
       default:
         end(true);
