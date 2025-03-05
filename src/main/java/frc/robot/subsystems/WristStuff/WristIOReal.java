@@ -42,8 +42,8 @@ public class WristIOReal implements WristIO {
 
 
         SoftLimitConfig softLimits = new SoftLimitConfig();
-        softLimits.forwardSoftLimit(Constants.WristConstants.softUpperLimitRadians);
-        softLimits.reverseSoftLimit(Constants.WristConstants.softLowerLimitRadians);
+        softLimits.forwardSoftLimit(Constants.WristConstants.Constraints.softUpperLimitRadians);
+        softLimits.reverseSoftLimit(Constants.WristConstants.Constraints.softLowerLimitRadians);
         softLimits.forwardSoftLimitEnabled(true);
         softLimits.reverseSoftLimitEnabled(true);
         config.softLimit.apply(softLimits);

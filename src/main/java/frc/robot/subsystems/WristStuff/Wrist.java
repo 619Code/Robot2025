@@ -55,16 +55,16 @@ public class Wrist extends SubsystemBase {
 
         //  Set constraints
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
-                Constants.WristConstants.maxVelocity,
-                Constants.WristConstants.maxAcceleration);
+                Constants.WristConstants.Constraints.maxVelocity,
+                Constants.WristConstants.Constraints.maxAcceleration);
 
         controller = new NTProfiledPIDF(
             "Wrist",
-            Constants.WristConstants.kpWrist,
-            Constants.WristConstants.kiWrist,
-            Constants.WristConstants.kiWrist,
-            Constants.WristConstants.ksFeedforward,
-            Constants.WristConstants.kvFeedforward,
+            Constants.WristConstants.Control.kpWrist,
+            Constants.WristConstants.Control.kiWrist,
+            Constants.WristConstants.Control.kiWrist,
+            Constants.WristConstants.Control.ksFeedforward,
+            Constants.WristConstants.Control.kvFeedforward,
             constraints);
 
         controller.setGoal(new State(getPosition(), 0));

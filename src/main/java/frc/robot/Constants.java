@@ -369,31 +369,25 @@ public final class Constants {
         WristAngleRad(double _positionRad){
             positionRad = _positionRad;
         }
-
       }
 
 
-      public static double ksFeedforward = 0.15;
-      public static double kvFeedforward = 0.6;
+      public static final class Control{
+        public static double ksFeedforward = 0.15;
+        public static double kvFeedforward = 0.6;
 
-      public static double kpWrist = 3.0;
-      public static double kiWrist = 0;
-      public static double kdWrist = 0;
+        public static double kpWrist = 3.0;
+        public static double kiWrist = 0;
+        public static double kdWrist = 0;
+      }
 
-      public static double ksFeedforwardSim = 0;
-      public static double kvFeedforwardSim = 0;
+      public static final class Constraints{
+        public static final double softUpperLimitRadians = 4.51; // ~ 2pi * 0.7
+        public static final double softLowerLimitRadians = Math.PI / 4.0;
 
-      public static double kpWristSim = 1;
-      public static double kiWristSim = 0;
-      public static double kdWristSim = 0;
-
-      public static double maxVelocity = Math.PI * 3.5;
-      public static double maxAcceleration = Math.PI * 2.25;
-
-
-      public static final double softUpperLimitRadians = 4.51; // ~ 2pi * 0.7
-      public static final double softLowerLimitRadians = Math.PI / 4.0;
-
+        public static double maxVelocity = Math.PI * 3.5;
+        public static double maxAcceleration = Math.PI * 2.25;
+      }
   }
 
 }
