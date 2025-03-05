@@ -3,6 +3,7 @@ package frc.robot.subsystems.Climb;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import frc.robot.Constants;
 
 public class ClimbIOSim implements ClimbIO{
     private final SingleJointedArmSim armSim;
@@ -38,7 +39,7 @@ public class ClimbIOSim implements ClimbIO{
 
         inputs.climbPosition = Rotation2d.fromRadians(armSim.getAngleRads()).getDegrees();
 
-        armSim.update(0.02);
+        armSim.update(Constants.kDt);
 
     }
 }

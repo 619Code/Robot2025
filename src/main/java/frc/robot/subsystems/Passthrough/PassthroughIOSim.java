@@ -1,6 +1,7 @@
 package frc.robot.subsystems.Passthrough;
 
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import frc.robot.Constants;
 
 public class PassthroughIOSim implements PassthroughIO {
 
@@ -30,6 +31,6 @@ public class PassthroughIOSim implements PassthroughIO {
     public void updateInputs(PassthroughIOInputsAutoLogged inputs) {
         passthroughMotorL.getInputVoltage();
 
-        passthroughMotorL.update(0.02);
+        passthroughMotorL.update(Constants.kDt);
     }
 }

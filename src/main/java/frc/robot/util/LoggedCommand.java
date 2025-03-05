@@ -44,6 +44,9 @@ public class LoggedCommand extends Command {
     }
 
     double timestamp = Logger.getTimestamp();
+
+    //  If something breaks in the most unexpected way when using logged commands,
+    //  then it is maybe possible that we need to change this 0.02 to whatever Constants.kDt is
     if (Math.abs(timestamp - lastTimestamp) <= 0.02 && lastEntry != null) {
       // We've already logged something in this time slice.
       // We need to append to the string instead of replacing it.

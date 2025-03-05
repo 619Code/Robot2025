@@ -17,9 +17,12 @@ public class Passthrough extends SubsystemBase {
   private PassthroughIOInputsAutoLogged inputs = new PassthroughIOInputsAutoLogged();
 
 
-  public Passthrough(int passthroughMotorID_L, int passthroughMotorID_R) {
+  public Passthrough() {
     if(Robot.isReal()){
-      passthroughIO = new PassthroughIOReal(passthroughMotorID_L, passthroughMotorID_R);
+      passthroughIO = new PassthroughIOReal(
+        Constants.PassthroughConstants.leftMotorId,
+        Constants.PassthroughConstants.rightMotorId
+      );
     }
     else{
       passthroughIO = new PassthroughIOSim();

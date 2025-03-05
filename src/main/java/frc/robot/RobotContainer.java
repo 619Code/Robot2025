@@ -320,10 +320,10 @@ public class RobotContainer {
     //PASSTHROUGH INSTANTIATION
     private Passthrough instantiateRealPassthrough(){
     //TODO: Change these
-        return new Passthrough(-1, -1);
+        return new Passthrough();
     }
     private Passthrough instantiateSimPassthrough(){
-        return new Passthrough(-1, -1);
+        return new Passthrough();
     }
     private Passthrough instantiateReplayedPassthrough(){
             throw new UnsupportedOperationException("NOT IMPLEMENTED");

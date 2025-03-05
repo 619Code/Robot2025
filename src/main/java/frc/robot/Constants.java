@@ -32,6 +32,8 @@ public final class Constants {
   public static final Mode simMode = Mode.SIM;
   public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
 
+  public static final double kDt = 0.02;
+
   public static enum Mode {
     /** Running on a real robot. */
     REAL,
@@ -337,9 +339,10 @@ public final class Constants {
 
   public static final class PassthroughConstants {
 
-    public static double passthroughMotorVoltage = 6;
+    public static int leftMotorId = -1;
+    public static int rightMotorId = -1;
 
-    public static double kDt = 0.02;
+    public static double passthroughMotorVoltage = 6;
   }
 
   public static final class WristConstants{
@@ -351,8 +354,6 @@ public final class Constants {
       public static final DCMotor wristGearbox = DCMotor.getNeoVortex(1);
       public static final double wristMotorReduction = 7.3; //  This number is arbitrary as freak
 
-
-      public static double kDt = 0.02;
 
       public static double zeroOffset = 1.0 - ((5.05128918995 - (Math.PI / 2.0)) / (2.0 * Math.PI));
 

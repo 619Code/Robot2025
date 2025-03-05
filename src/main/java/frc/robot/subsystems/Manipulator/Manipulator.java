@@ -57,7 +57,7 @@ public class Manipulator extends SubsystemBase {
 
 
 
-      currentDislodgerSetpoint = dislodgerVoltageTrapezoidProfile.calculate(0.02, currentDislodgerSetpoint, currentDislodgerGoal);
+      currentDislodgerSetpoint = dislodgerVoltageTrapezoidProfile.calculate(Constants.kDt, currentDislodgerSetpoint, currentDislodgerGoal);
 
       double voltage = currentDislodgerSetpoint.position;
 

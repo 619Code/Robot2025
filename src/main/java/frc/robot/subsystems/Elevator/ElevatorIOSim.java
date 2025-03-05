@@ -39,7 +39,7 @@ public class ElevatorIOSim implements ElevatorIO {
 
         elevator.setInputVoltage(voltage);
 
-        elevator.update(Constants.WristConstants.kDt);
+        elevator.update(Constants.kDt);
 
     }
 
