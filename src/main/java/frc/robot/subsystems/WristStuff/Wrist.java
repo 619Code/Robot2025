@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.Robot;
-import frc.robot.subsystems.Manipulator.ManipulatorIOReal;
 import frc.robot.util.NTProfiledPIDF;
 
 public class Wrist extends SubsystemBase {

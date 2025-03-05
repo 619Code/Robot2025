@@ -8,8 +8,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.Robot;
-import frc.robot.subsystems.Climb.ClimbIOReal;
-import frc.robot.subsystems.Climb.ClimbIOSim;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.util.NTProfiledPIDF;
 
@@ -29,7 +27,7 @@ public class Elevator extends SubsystemBase {
     public Elevator(){
         if(Robot.isReal()){
             elevatorIO = new ElevatorIOReal(
-                Constants.ElevatorConstants.leftMotorID, 
+                Constants.ElevatorConstants.leftMotorID,
                 Constants.ElevatorConstants.rightMotorID
             );
         }
@@ -46,7 +44,7 @@ public class Elevator extends SubsystemBase {
             Constants.ElevatorConstants.kvFeedforward,
             constraints);
 
-        
+
         //  This needs to be called before the line below it
         elevatorIO.updateInputs(inputs);
         elevatorController.setGoal(new State(getPositionMeters(), 0));

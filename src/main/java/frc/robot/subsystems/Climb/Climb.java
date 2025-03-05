@@ -41,7 +41,7 @@ public class Climb extends SubsystemBase{
             constraints);
 
 
-        //  Calling this here so that we have a value for the initial setGoal 
+        //  Calling this here so that we have a value for the initial setGoal
         climbIO.updateInputs(inputs);
             //  Possibly need to change this later. Don't know if the climb will always start where we want it.
         climbPID.setGoal(new State(inputs.climbPosition, 0));

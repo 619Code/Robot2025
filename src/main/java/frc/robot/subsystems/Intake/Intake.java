@@ -21,7 +21,7 @@ public class Intake extends SubsystemBase {
   public Intake() {
     if(Robot.isReal()){
       intakeIO = new IntakeIOReal(
-        Constants.IntakeConstants.Intake.intakeMotorId, 
+        Constants.IntakeConstants.Intake.intakeMotorId,
         Constants.IntakeConstants.ExtensionMechanism.extensionMotorId
       );
     }
@@ -29,7 +29,7 @@ public class Intake extends SubsystemBase {
       intakeIO = new IntakeIOSim();
     }
 
-   
+
     extensionPID = new NTProfiledPIDF(
       "Intake",
       Constants.IntakeConstants.ExtensionMechanism.kpIntakeExtension,
@@ -38,7 +38,7 @@ public class Intake extends SubsystemBase {
       Constants.IntakeConstants.ExtensionMechanism.ksFeedforward,
       Constants.IntakeConstants.ExtensionMechanism.kvFeedforward,
       new Constraints(
-            Constants.IntakeConstants.ExtensionMechanism.maxExtensionVelocity, 
+            Constants.IntakeConstants.ExtensionMechanism.maxExtensionVelocity,
             Constants.IntakeConstants.ExtensionMechanism.maxExtensionAcceleration
       )
     );
@@ -58,7 +58,7 @@ public class Intake extends SubsystemBase {
     double voltage = extensionPID.calculate(inputs.intakeExtensionPosition);
 
     voltage = Math.min(
-                Math.max(voltage, -Constants.IntakeConstants.ExtensionMechanism.maxExtensionVoltage), 
+                Math.max(voltage, -Constants.IntakeConstants.ExtensionMechanism.maxExtensionVoltage),
                 Constants.IntakeConstants.ExtensionMechanism.maxExtensionVoltage
               );
 

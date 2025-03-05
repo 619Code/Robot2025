@@ -53,7 +53,7 @@ public class IntakeIOSim implements IntakeIO{
     public void updateInputs(IntakeIOInputsAutoLogged inputs){
         inputs.intakeExtensionPosition = Rotation2d.fromRadians(extensionMotor.getAngleRads()).getDegrees();
         inputs.intakeMotorSpeedRadSec = intakeMotor.getAngularVelocityRadPerSec();
-        
+
 
         extensionMotor.update(0.02);
         intakeMotor.update(0.02);

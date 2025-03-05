@@ -279,9 +279,9 @@ public final class Constants {
     public static final class Intake{
 
       public static int intakeMotorId = -1;
-    
+
       public static final double intakingVoltage = 2.0;
-      
+
     }
   }
 
