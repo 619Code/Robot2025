@@ -83,42 +83,15 @@ public class RobotContainer {
 
     public RobotContainer() {
 
-        switch (Constants.currentMode) {
-            case REAL:
-                drive = driveEnabled     ? instantiateRealDrive()   : null;
-                intake = intakeEnabled   ? instantiateRealIntake()  : null;
-                wrist = wristEnabled     ? instantiateRealWrist()   : null;
-                manipulator = manipulatorEnabled ? instantiateRealManipulator() : null;
-                passthrough = passthroughEnabled ? instantiateRealPassthrough() : null;
-                elevator = elevatorEnabled ? instantiateRealElevator() : null;
-                servo = servoEnabled ? instantiateRealServo() : null;
+        drive = driveEnabled                ? instantiateRealDrive()   : null;
+        intake = intakeEnabled              ? new Intake()  : null;
+        wrist = wristEnabled                ? new Wrist()   : null;
+        manipulator = manipulatorEnabled    ? new Manipulator() : null;
+        passthrough = passthroughEnabled    ? new Passthrough() : null;
+        elevator = elevatorEnabled          ? new Elevator() : null;
+        servo = servoEnabled                ? instantiateRealServo() : null;
 
-                break;
 
-            case SIM:
-                // Sim robot, instantiate physics sim IO implementations
-                drive = driveEnabled   ? instantiateSimDrive()  : null;
-                intake = intakeEnabled ? instantiateSimIntake() : null;
-                wrist = wristEnabled   ? instantiateSimWrist()  : null;
-                manipulator = manipulatorEnabled ? instantiateSimManipulator() : null;
-                passthrough = passthroughEnabled ? instantiateSimPassthrough() : null;
-                elevator = elevatorEnabled ? instantiateSimElevator() : null;
-                servo = servoEnabled ? instantiateSimServo() : null;
-
-                break;
-
-            default:
-                // Replayed robot, disable IO implementations
-                drive = driveEnabled   ? instantiateDriveReplayed()  : null;
-                intake = intakeEnabled ? instantiateIntakeReplayed() : null;
-                wrist = wristEnabled   ? instantiateWristReplayed()  : null;
-                manipulator = manipulatorEnabled ? instantiateManipulatorReplayed() : null;
-                passthrough = passthroughEnabled ? instantiateReplayedPassthrough() : null;
-                elevator = elevatorEnabled ? instantiateElevatorReplayed() : null;
-                servo = servoEnabled ? instantiateReplayedServo() : null;
-
-                break;
-        }
 
         constructorThings();
 
@@ -281,65 +254,6 @@ public class RobotContainer {
         );
     }
 
-    //  INTAKE INSTANTIATION
-
-    private Intake instantiateRealIntake(){
-        return new Intake();
-    }
-    private Intake instantiateSimIntake(){
-        return new Intake();
-    }
-    private Intake instantiateIntakeReplayed(){
-        return null;
-    }
-
-    //  WRIST INSTANTIATION
-
-    private Wrist instantiateRealWrist(){
-        return new Wrist();
-    }
-    private Wrist instantiateSimWrist(){
-        return new Wrist();
-    }
-    private Wrist instantiateWristReplayed(){
-        return new Wrist();
-    }
-
-    //  MANIPULATOR INSTANTIATION
-
-    private Manipulator instantiateRealManipulator(){
-        return new Manipulator();
-    }
-    private Manipulator instantiateSimManipulator(){
-        throw new UnsupportedOperationException("NOT IMPLEMENTED");
-    }
-    private Manipulator instantiateManipulatorReplayed(){
-        throw new UnsupportedOperationException("NOT IMPLEMENTED");
-    }
-
-    //PASSTHROUGH INSTANTIATION
-    private Passthrough instantiateRealPassthrough(){
-    //TODO: Change these
-        return new Passthrough();
-    }
-    private Passthrough instantiateSimPassthrough(){
-        return new Passthrough();
-    }
-    private Passthrough instantiateReplayedPassthrough(){
-            throw new UnsupportedOperationException("NOT IMPLEMENTED");
-        }
-
-    //  ELEVATOR INSTANTIATION
-    private Elevator instantiateRealElevator(){
-        return new Elevator();
-    }
-    private Elevator instantiateSimElevator(){
-        return new Elevator();
-    }
-    private Elevator instantiateElevatorReplayed(){
-        return null;
-    }
-
     //SERVO INSTANTIATION
     private ServoSubsystem instantiateRealServo() {
         return new ServoSubsystem(0);
@@ -350,6 +264,7 @@ public class RobotContainer {
     private ServoSubsystem instantiateReplayedServo() {
         throw new UnsupportedOperationException("NOT IMPLEMENTED");
     }
+
 
 
     // ============= Constructor Stuff =============
