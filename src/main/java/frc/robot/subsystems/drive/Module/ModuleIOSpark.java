@@ -304,7 +304,7 @@ public class ModuleIOSpark implements ModuleIO {
     ifOk(turnSpark, turnSpark::getOutputCurrent, (value) -> inputs.turnCurrentAmps = value);
     inputs.turnConnected = turnConnectedDebounce.calculate(!sparkStickyFault);
 
-    // TODO: This breaks convention
+    //
     // We are updating the feedback and setting the motor output.
     // This is because this is the only function we can rely on being called periodically.
     turnSpark.set(turnController.calculate(GetAbsoluteTurnEncoderPositionRad()));

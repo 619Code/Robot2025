@@ -2,38 +2,88 @@ package frc.robot.subsystems.Elevator;
 
 import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.Robot;
+import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
+import frc.robot.util.Help;
+import frc.robot.util.NTProfiledPIDF;
 
 public class Elevator extends SubsystemBase {
 
-    private final ElevatorIO io;
+    private final ElevatorIO elevatorIO;
 
     private final ElevatorIOInputsAutoLogged inputs = new ElevatorIOInputsAutoLogged();
 
-    public Elevator(ElevatorIO _io){
-        io = _io;
+    private NTProfiledPIDF elevatorController;
+
+    private final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
+            Constants.ElevatorConstants.maxVelocity,
+            Constants.ElevatorConstants.maxAcceleration
+        );
+
+    public Elevator(){
+        if(Robot.isReal()){
+            elevatorIO = new ElevatorIOReal(
+                Constants.ElevatorConstants.leftMotorID,
+                Constants.ElevatorConstants.rightMotorID
+            );
+        }
+        else{
+            elevatorIO = new ElevatorIOSim();
+        }
+
+        elevatorController = new NTProfiledPIDF(
+            "Elevator",
+            Constants.ElevatorConstants.kpElevator,
+            Constants.ElevatorConstants.kiElevator,
+            Constants.ElevatorConstants.kdElevator,
+            Constants.ElevatorConstants.ksFeedforward,
+            Constants.ElevatorConstants.kvFeedforward,
+            constraints);
+
+
+        //  This needs to be called before the line below it
+        elevatorIO.updateInputs(inputs);
+        elevatorController.setGoal(new State(getPositionMeters(), 0));
     }
 
-
-    public void updateTowardsCurrentGoal(){
+    public void periodic(){
+        //  Figure out a better way to do this elevatorSetpointPosition thing
         if(Constants.currentMode == Mode.REPLAY){
             Logger.processInputs("RealOutputs/Elevator", inputs);
-            io.updateInputs(inputs);
+            elevatorIO.updateInputs(inputs);
         }else{
-            io.updateInputs(inputs);
+            elevatorIO.updateInputs(inputs);
+            inputs.elevatorSetpointPosition = elevatorController.getSetpoint().position;
             Logger.processInputs("RealOutputs/Elevator", inputs);
         }
 
-        io.ioPeriodic();
+        double voltage = elevatorController.calculate(inputs.elevatorPosition);
+        double gravityFeedforward = 0.5;  //  PUT A VALUE IN HERE
+
+
+        voltage += gravityFeedforward;
+
+        voltage = Help.clamp(voltage, -Constants.ElevatorConstants.maxVoltage, Constants.ElevatorConstants.maxVoltage);
+
+
+        elevatorIO.runVoltage(voltage);
+
     }
 
-    public void setTargetPosition(double _positionRad){
-        io.setTargetAngle(_positionRad);
+    public double getPositionMeters(){
+        return inputs.elevatorPosition;
+    }
+
+    public void setTargetPosition(ElevatorHeight _height){
+        elevatorController.setGoal(new State(_height.heightMeters, 0));
     }
 
     public boolean hasReachedGoal(){
-        return io.hasReachedGoal();
+        return elevatorController.atGoal();
     }
 }

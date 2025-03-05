@@ -3,14 +3,14 @@ package frc.robot.subsystems.Climb;
 import org.littletonrobotics.junction.AutoLog;
 
 public interface ClimbIO {
-    
+
     @AutoLog
-    public static class ClimbIOInputs{
-        public double ClimbPosition = 0.0;
-        public double ClimbSetpointPosition = 0.0;
+    public static class ClimbIOInputs {
+        public double climbPosition = 0.0;
     }
 
-    public void updateInputs(ClimbIOInputs inputs);
+    public void updateInputs(ClimbIOInputsAutoLogged inputs);
 
-    public void ioPeriodic(double voltage);
+    public void stopMotor();
+    public void setVoltage(double voltage);
 }

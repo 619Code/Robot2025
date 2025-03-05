@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
@@ -197,27 +198,18 @@ public final class Constants {
     public static final int maxVoltage = 1;
 
     public static final double wristMotorReduction = 1.0;
+    public static final double elevatorEncoderConversionFactor = 1.0; // Use this to make the encoder natively in meters
 
 
-    public static final double maxVelocity = Math.PI * 2; // Arbitrary
-    public static final double maxAcceleration = Math.PI * 4;
+    public static final double maxVelocity = 2; // Arbitrary
+    public static final double maxAcceleration = 2;
 
-    public static final double minHeight = 0;
-    public static final double maxHeight = Math.PI * 6;
+    public static final double minHeightMeters = 0;
+    public static final double maxHeightMeters = 1;
 
-    public static final double passthroughPositionRad = 0;
-    public static final double l1PositionRad = Math.PI / 2.0;
-    public static final double l2PositionRad = Math.PI;
-    public static final double l3PositionRad = Math.PI * 1.5;
-    public static final double l4PositionRad = Math.PI * 2.0;
+    public static final double encoderZeroOffsetRotations = 0;
 
-    public static final double encoderOffsetRotations = 0;
-
-    public static final double softUpperLimitRotations = 5;
-    public static final double softLowerLimitRotations = 0;
-
-
-    public static final double kpElevator = 0.0;
+    public static final double kpElevator = 0.1;
     public static final double kiElevator = 0.0;
     public static final double kdElevator = 0.0;
 
@@ -234,36 +226,74 @@ public final class Constants {
 
     public static final DCMotor elevatorGearbox = DCMotor.getNeoVortex(2);
 
+
+    public enum ElevatorHeight{
+        PASSTHROUGH(0),
+        L1(0.2),
+        L2(0.4),
+        L3(0.6),
+        L4(0.8);
+
+        public final double heightMeters;
+        ElevatorHeight(double _heightMeters){
+            heightMeters = _heightMeters;
+        }
+    }
   }
 
   public static final class IntakeConstants {
 
     // NOTICE: None of these value have been tested as well.
 
-    public static final double extendedPosition = 0.0;
-    public static final double retractedPosition = 110.0;
-    public static final double extensionTolerance = 5.0;
-    public static final double climbPosition = 90.0;
 
-    public static final double intakeSoftLowerBound = 0;
-    public static final double intakeSoftUpperBound = 200;
+    public static final class ExtensionMechanism{
 
-    public static final double kp = 1.0;
-    public static final double ki = 0.0;
-    public static final double kd = 0.0;
+      public static int extensionMotorId = -1;
 
-    public static final double ksFeedforward = 0.0;
-    public static final double kvFeedforward = 0.0;
 
-    public static final double maxVelocity = 20.0;
-    public static final double maxAcceleration = 10.0;
+      public static final double extendedPosition = 100.0;
+      public static final double retractedPosition = 0.0;
+      public static final double extensionTolerance = 5.0;
+      public static final double climbPosition = 90.0;
 
-    public static final double maxVoltage = 12.0;
+      public static final double maxExtensionVoltage = 1.0;
+
+      public static final double maxExtensionVelocity = 0;
+      public static final double maxExtensionAcceleration = 0;
+
+      public static final double extensionSoftLowerBound = 0;
+      public static final double extensionSoftUpperBound = 200;
+
+      public static final double kpIntakeExtension = 0.0;
+      public static final double kiIntakeExtension = 0.0;
+      public static final double kdIntakeExtension = 0.0;
+
+      public static final double ksFeedforward = 0.0;
+      public static final double kvFeedforward = 0.0;
+
+      public static final double intakeMotorReduction = 7.3;  // ARBITRARY
+      public static final DCMotor intakeGearbox = DCMotor.getNeoVortex(1);
+
+    }
+
+    public static final class Intake{
+
+      public static int intakeMotorId = -1;
+
+      public static final double intakingVoltage = 2.0;
+
+    }
   }
 
   public static final class ClimbConstants{
+    // This values have not been tested.
 
-    // These values have not been tested.
+    public static final int motorId = -1;  //  Don't know yet
+
+    public static final double kpWrist = 0.0;
+    public static final double kiWrist = 0.0;
+    public static final double kdWrist = 0.0;
+
 
     public static final double climbOutPosition = 0;
     public static final double climbInPosition = 180;
@@ -283,6 +313,7 @@ public final class Constants {
 
     public static final double maxVoltage = 12.0;
   }
+
   public static final class AlgaeDislodgerConstants{
 
     public static final int motorId = 52;
@@ -312,6 +343,8 @@ public final class Constants {
   public static final class PassthroughConstants {
 
     public static double passthroughMotorVoltage = 6;
+
+    public static double kDt = 0.02;
   }
 
   public static final class WristConstants{
@@ -328,12 +361,21 @@ public final class Constants {
 
       public static double zeroOffset = 1.0 - ((5.05128918995 - (Math.PI / 2.0)) / (2.0 * Math.PI));
 
-      public static double freeHangAngle = Math.PI / 2.0;
+      public static double freeHangAngle = 90;
 
-      public static double passthroughPositionRad = freeHangAngle;
-      public static double L1PositionRad = Math.PI * 2.0 / 3.0;
-      public static double L2L3PositionRad = Math.PI;
-      public static double L4PositionRad = Math.PI * 2.8 / 2.0;
+      public static enum WristAngleRad {
+        PASSTHROUGH(Units.degreesToRadians(freeHangAngle)),
+        L1(Units.degreesToRadians(120)),
+        L2L3(Units.degreesToRadians(180)),
+        L4(Units.degreesToRadians(252));
+
+        public final double positionRad;
+        WristAngleRad(double _positionRad){
+            positionRad = _positionRad;
+        }
+
+      }
+
 
       public static double ksFeedforward = 0.15;
       public static double kvFeedforward = 0.6;

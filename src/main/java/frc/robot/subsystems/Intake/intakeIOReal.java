@@ -2,43 +2,72 @@ package frc.robot.subsystems.Intake;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import frc.robot.Constants;
+
+import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 
-public class intakeIOReal implements IntakeIO{
+public class IntakeIOReal implements IntakeIO{
+
     private final SparkMax intakeMotor;
     private final RelativeEncoder intakeEncoder;
 
-    // Intake Inputs
+    private final SparkMax intakeExtensionMotor;
+    private final AbsoluteEncoder extensionEncoder;
 
-    public static class IntakeIOInputs {
-        public double position = 0.0;
-        public double setpointPosition = 0.0;
-    }
 
-    // Initialization of Real Motor
+    public IntakeIOReal(int intakeMotorID_1, int intakeExtensionMotorID){
 
-    public intakeIOReal(int intakeMotorID){
-        intakeMotor = new SparkMax(intakeMotorID, MotorType.kBrushless);
+
+        intakeMotor = new SparkMax(intakeMotorID_1, MotorType.kBrushless);
+
+        intakeExtensionMotor = new SparkMax(intakeExtensionMotorID, MotorType.kBrushless);
+
+        extensionEncoder = intakeExtensionMotor.getAbsoluteEncoder();
         intakeEncoder = intakeMotor.getEncoder();
-        SparkMaxConfig config = new SparkMaxConfig();
-        config.idleMode(IdleMode.kCoast);
-        intakeMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+
+
+        SparkMaxConfig intakeMotor1Config = new SparkMaxConfig();
+        intakeMotor1Config.idleMode(IdleMode.kBrake);
+
+        SparkMaxConfig config_3 = new SparkMaxConfig();
+        config_3.idleMode(IdleMode.kBrake);
+
+        SoftLimitConfig limitConfig = new SoftLimitConfig();
+        limitConfig.forwardSoftLimit(Constants.IntakeConstants.ExtensionMechanism.extensionSoftUpperBound);
+        limitConfig.reverseSoftLimit(Constants.IntakeConstants.ExtensionMechanism.extensionSoftLowerBound);
+        config_3.softLimit.apply(limitConfig);
+
+        intakeMotor.configure(intakeMotor1Config, null, PersistMode.kPersistParameters);
+        intakeExtensionMotor.configure(config_3, null, PersistMode.kPersistParameters);
+
+
+
     }
 
-    // Update System Inputs
-
-    public void updateInputs(IntakeIO.IntakeIOInputs inputs){
-        inputs.intakePosition = intakeEncoder.getPosition();
+    @Override
+    public void stopExtensionMotor() {
+        intakeExtensionMotor.stopMotor();
     }
 
-    // Set voltage
+    @Override
+    public void setExtensionMotorVoltage(double voltage){
+        intakeExtensionMotor.setVoltage(voltage);
+    }
 
-    public void ioPeriodic(double voltage){
+    public void setIntakeMotorVoltage(double voltage){
         intakeMotor.setVoltage(voltage);
+    }
+
+    @Override
+    public void updateInputs(IntakeIOInputsAutoLogged inputs) {
+        inputs.intakeExtensionPosition = extensionEncoder.getPosition();
+        inputs.intakeMotorSpeedRadSec = intakeEncoder.getVelocity() * Math.PI * 2.0;
     }
 }

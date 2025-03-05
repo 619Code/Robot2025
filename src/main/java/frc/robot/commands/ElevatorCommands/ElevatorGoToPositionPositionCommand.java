@@ -1,30 +1,31 @@
 package frc.robot.commands.ElevatorCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.subsystems.Elevator.Elevator;
 
 public class ElevatorGoToPositionPositionCommand extends Command {
 
   private final Elevator elevatorSubsystem;
 
-  private final double targetAngle;
+  private final ElevatorHeight targetHeight;
 
-  public ElevatorGoToPositionPositionCommand(Elevator _sub, double _angleRad) {
+  public ElevatorGoToPositionPositionCommand(Elevator _sub, ElevatorHeight _targetHeight) {
     elevatorSubsystem = _sub;
 
-    targetAngle = _angleRad;
+    targetHeight = _targetHeight;
 
     addRequirements(elevatorSubsystem);
   }
 
   @Override
   public void initialize() {
-    elevatorSubsystem.setTargetPosition(targetAngle);
+    elevatorSubsystem.setTargetPosition(targetHeight);
   }
 
   @Override
   public void execute() {
-    elevatorSubsystem.updateTowardsCurrentGoal();
+
   }
 
   @Override

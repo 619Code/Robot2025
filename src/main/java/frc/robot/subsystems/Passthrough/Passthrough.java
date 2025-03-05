@@ -1,44 +1,50 @@
 package frc.robot.subsystems.Passthrough;
 
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
+
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Mode;
+import frc.robot.Robot;
+
 
 public class Passthrough extends SubsystemBase {
 
-  private final SparkMax passthroughMotorL;
-  private final SparkMax passthroughMotorR;
+  private PassthroughIO passthroughIO;
 
-  private final double passthroughMotorSpeed = 0.5;
+
+  private PassthroughIOInputsAutoLogged inputs = new PassthroughIOInputsAutoLogged();
+
 
   public Passthrough(int passthroughMotorID_L, int passthroughMotorID_R) {
-
-    passthroughMotorL = new SparkMax(passthroughMotorID_L, MotorType.kBrushless);
-    passthroughMotorR = new SparkMax(passthroughMotorID_R, MotorType.kBrushless);
-
-    SparkMaxConfig config_L = new SparkMaxConfig();
-    config_L.idleMode(IdleMode.kBrake);
-
-    SparkMaxConfig config_R = new SparkMaxConfig();
-    config_R.idleMode(IdleMode.kBrake);
-    config_R.follow(passthroughMotorL, false);
-
-    passthroughMotorL.configure(config_L, null, PersistMode.kPersistParameters);
-    passthroughMotorR.configure(config_R, null, PersistMode.kPersistParameters);
+    if(Robot.isReal()){
+      passthroughIO = new PassthroughIOReal(passthroughMotorID_L, passthroughMotorID_R);
+    }
+    else{
+      passthroughIO = new PassthroughIOSim();
+    }
   }
   // Need to connect to Intake Start and Outake Sensor.
+
+  @Override
+  public void periodic(){
+    if(Constants.currentMode == Mode.REPLAY){
+          Logger.processInputs("RealOutputs/Passthrough", inputs);
+          passthroughIO.updateInputs(inputs);
+      }else{
+          passthroughIO.updateInputs(inputs);
+          Logger.processInputs("RealOutputs/Passthrough", inputs);
+      }
+  }
 
   //  The below two functions may not need to be public (can decide when we know the sensor
   // situation)
   public void RunPassthrough() {
-    passthroughMotorL.setVoltage(Constants.PassthroughConstants.passthroughMotorVoltage);
+    passthroughIO.setVoltage(Constants.PassthroughConstants.passthroughMotorVoltage);
   }
 
   public void HaltPassthrough() {
-    passthroughMotorL.stopMotor();
+    passthroughIO.stopMotors();
   }
 }

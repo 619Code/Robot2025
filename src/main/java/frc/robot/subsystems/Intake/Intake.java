@@ -1,137 +1,94 @@
 package frc.robot.subsystems.Intake;
 
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SoftLimitConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 import frc.robot.Robot;
+import frc.robot.util.Help;
 import frc.robot.util.NTProfiledPIDF;
 
 public class Intake extends SubsystemBase {
 
-  private final SparkMax intakeMotor1;
-  private final SparkMax intakeMotor2;
-  private final SparkMax intakeExtensionMotor;
-
   private final NTProfiledPIDF extensionPID;
   private IntakeIO intakeIO;
 
-  DoubleEntry kpextensionPIDEntry;
-  DoubleEntry kiextensionPIDEntry;
-  DoubleEntry kdextensionPIDEntry;
-  DoubleEntry intakeExtensionTargetInDegreesEntry;
-  DoublePublisher intakeExtensionMeasured;
-  DoublePublisher intakeExtensionVoltage;
 
-  DoubleEntry maxVelocityConstraint;
-  DoubleEntry maxAccConstraint;
+  private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
-  public Intake(int intakeMotorID_1, int intakeMotorID_2, int intakeExtensionMotorID) {
+  public Intake() {
     if(Robot.isReal()){
-      intakeIO = new intakeIOReal(intakeExtensionMotorID);
+      intakeIO = new IntakeIOReal(
+        Constants.IntakeConstants.Intake.intakeMotorId,
+        Constants.IntakeConstants.ExtensionMechanism.extensionMotorId
+      );
     }
     else{
-      intakeIO = new intakeIOSim();
+      intakeIO = new IntakeIOSim();
     }
 
     // Motor Initialization and Configuration
 
-    intakeMotor1 = new SparkMax(intakeMotorID_1, MotorType.kBrushless);
-    intakeMotor2 = new SparkMax(intakeMotorID_2, MotorType.kBrushless);
-    intakeExtensionMotor = new SparkMax(intakeExtensionMotorID, MotorType.kBrushless);
 
-    SparkMaxConfig config_1 = new SparkMaxConfig();
-    config_1.idleMode(IdleMode.kBrake);
+    extensionPID = new NTProfiledPIDF(
+      "Intake",
+      Constants.IntakeConstants.ExtensionMechanism.kpIntakeExtension,
+      Constants.IntakeConstants.ExtensionMechanism.kiIntakeExtension,
+      Constants.IntakeConstants.ExtensionMechanism.kdIntakeExtension,
+      Constants.IntakeConstants.ExtensionMechanism.ksFeedforward,
+      Constants.IntakeConstants.ExtensionMechanism.kvFeedforward,
+      new Constraints(
+            Constants.IntakeConstants.ExtensionMechanism.maxExtensionVelocity,
+            Constants.IntakeConstants.ExtensionMechanism.maxExtensionAcceleration
+      )
+    );
 
-    SparkMaxConfig config_2 = new SparkMaxConfig();
-    config_2.idleMode(IdleMode.kBrake);
-    config_2.follow(intakeMotor1, false);
-
-    SparkMaxConfig config_3 = new SparkMaxConfig();
-    config_3.idleMode(IdleMode.kBrake);
-
-    SoftLimitConfig limitConfig = new SoftLimitConfig();
-    limitConfig.forwardSoftLimit(Constants.IntakeConstants.intakeSoftUpperBound);
-    limitConfig.reverseSoftLimit(Constants.IntakeConstants.intakeSoftLowerBound);
-    config_3.softLimit.apply(limitConfig);
-
-    intakeMotor1.configure(config_1, null, PersistMode.kPersistParameters);
-    intakeMotor2.configure(config_2, null, PersistMode.kPersistParameters);
-    intakeExtensionMotor.configure(config_3, null, PersistMode.kPersistParameters);
-
-    // PID Constraints and Initialization
-
-    TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
-      Constants.IntakeConstants.maxVelocity,
-      Constants.IntakeConstants.maxAcceleration);
-
-    extensionPID = new NTProfiledPIDF("Intake",
-    Constants.IntakeConstants.kp,
-    Constants.IntakeConstants.ki,
-    Constants.IntakeConstants.kd,
-    Constants.IntakeConstants.ksFeedforward,
-    Constants.IntakeConstants.kvFeedforward,
-    constraints);
-
-    // Initialization of NetworkTables
-
-    intakeExtensionTargetInDegreesEntry = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionTargetInDegrees").getEntry(110);
-    intakeExtensionMeasured = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionMeasured").getEntry(2);
-    intakeExtensionVoltage = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionVoltage").getEntry(1);
-
-    maxVelocityConstraint = NetworkTableInstance.getDefault().getDoubleTopic("maxVelocityConstraint").getEntry(20.0);
-    maxAccConstraint = NetworkTableInstance.getDefault().getDoubleTopic("maxAccConstraint").getEntry(10.0);
-
-    // Default Values
-
-    intakeExtensionTargetInDegreesEntry.set(110);
-    maxVelocityConstraint.set(20);
-    maxAccConstraint.set(10);
   }
 
   @Override
   public void periodic() {
+    if(Constants.currentMode == Mode.REPLAY){
+        Logger.processInputs("RealOutputs/Climb", inputs);
+        intakeIO.updateInputs(inputs);
+    }else{
+      intakeIO.updateInputs(inputs);
+        Logger.processInputs("RealOutputs/Climb", inputs);
+    }
 
-    // Get targetPosition and set PID goal
+    double voltage = extensionPID.calculate(inputs.intakeExtensionPosition);
 
-    double targetPosition = intakeExtensionTargetInDegreesEntry.get();
-    extensionPID.setGoal(new State(targetPosition, 0));
+    voltage = Help.clamp(
+      voltage,
+      -Constants.IntakeConstants.ExtensionMechanism.maxExtensionVoltage,
+      Constants.IntakeConstants.ExtensionMechanism.maxExtensionVoltage
+    );
 
-    // IntakeIO current position
+    intakeIO.setExtensionMotorVoltage(voltage);
 
-    IntakeIO.IntakeIOInputs inputs = new IntakeIO.IntakeIOInputs();
-    intakeIO.updateInputs(inputs);
-    double currentPosition = inputs.intakePosition;
-
-    // Voltage
-
-    double voltage = extensionPID.calculate(currentPosition);
-    voltage = Math.min(Math.max(voltage, -12.0), 12.0);
-
-    intakeExtensionVoltage.set(voltage);
-    intakeIO.ioPeriodic(voltage);
-    intakeExtensionMeasured.set(inputs.intakePosition);
   }
 
   // Methods for specific positions
 
   public void goToPosition(double degrees){
     extensionPID.setGoal(new State(degrees, 0));
-    intakeExtensionTargetInDegreesEntry.set(degrees);
   }
 
-  // Check if Intake reached targetPosition
+  public void goToExtendedPosition() {
+    goToPosition(Constants.IntakeConstants.ExtensionMechanism.extendedPosition);
+  }
 
-  public boolean hasReachedGoal(){
-    return false; //extensionPID.hasReachedGoal();
+  public void goToRetractedPosition() {
+    goToPosition(Constants.IntakeConstants.ExtensionMechanism.retractedPosition);
+  }
+
+  public void runIntake(){
+    intakeIO.setIntakeMotorVoltage(Constants.IntakeConstants.Intake.intakingVoltage);
+  }
+
+  public void stopIntake(){
+    intakeIO.setIntakeMotorVoltage(0);
   }
 }

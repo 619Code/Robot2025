@@ -1,39 +1,27 @@
 package frc.robot.subsystems.Climb;
 
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SoftLimitConfig;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 import frc.robot.Robot;
+import frc.robot.util.Help;
 import frc.robot.util.NTProfiledPIDF;
 
 public class Climb extends SubsystemBase{
 
-    private final SparkMax climbMotor;
-    private final NTProfiledPIDF climbPID;
     private ClimbIO climbIO;
 
-    DoubleEntry kpClimbEntry;
-    DoubleEntry kiClimbEntry;
-    DoubleEntry kdClimbEntry;
-    DoubleEntry climbTargetPositionEntry;
-    DoublePublisher climbMeasured;
-    DoublePublisher climbVoltage;
+    private final NTProfiledPIDF climbPID;
 
-    DoubleEntry maxVelocityConstraint;
-    DoubleEntry maxAccConstraint;
+    private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
 
-    public Climb(int climbMotorID){
+    public Climb(){
         if(Robot.isReal()){
-            climbIO = new ClimbIOReal(climbMotorID);
+            climbIO = new ClimbIOReal(Constants.ClimbConstants.motorId);
         }
         else{
             climbIO = new ClimbIOSim();
@@ -41,83 +29,57 @@ public class Climb extends SubsystemBase{
 
         // Motor Initialization and Configuration
 
-        climbMotor = new SparkMax(climbMotorID, MotorType.kBrushless);
-
-        SparkMaxConfig config = new SparkMaxConfig();
-        config.idleMode(IdleMode.kBrake);
-
-        SoftLimitConfig limitConfig = new SoftLimitConfig();
-        limitConfig.forwardSoftLimit(Constants.ClimbConstants.climbSoftUpperBound);
-        limitConfig.reverseSoftLimit(Constants.ClimbConstants.climbSoftLowerBound);
-        config.softLimit.apply(limitConfig);
-
-        climbMotor.configure(config, null, null);
-
-        // PID Constraints and Initialization
-
+        //  Set constraints
         TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
-            Constants.ClimbConstants.maxVelocity,
-            Constants.ClimbConstants.maxAcceleration);
+                Constants.ClimbConstants.maxVelocity,
+                Constants.ClimbConstants.maxAcceleration);
 
-            climbPID = new NTProfiledPIDF("Intake",
-            Constants.ClimbConstants.kp,
-            Constants.ClimbConstants.ki,
-            Constants.ClimbConstants.kd,
+        climbPID = new NTProfiledPIDF(
+            "Climb",
+            Constants.ClimbConstants.kpWrist,
+            Constants.ClimbConstants.kiWrist,
+            Constants.ClimbConstants.kiWrist,
             Constants.ClimbConstants.ksFeedforward,
             Constants.ClimbConstants.kvFeedforward,
             constraints);
 
-        // Initialization of NetworkTables
 
-        climbTargetPositionEntry = NetworkTableInstance.getDefault().getDoubleTopic("climbTargetPosition").getEntry(180);
-        climbMeasured = NetworkTableInstance.getDefault().getDoubleTopic("climbMeasured").getEntry(2);
-        climbVoltage = NetworkTableInstance.getDefault().getDoubleTopic("climbVoltage").getEntry(1);
+        //  Calling this here so that we have a value for the initial setGoal
+        climbIO.updateInputs(inputs);
+            //  Possibly need to change this later. Don't know if the climb will always start where we want it.
+        climbPID.setGoal(new State(inputs.climbPosition, 0));
 
-        maxVelocityConstraint = NetworkTableInstance.getDefault().getDoubleTopic("climbMaxVelocity").getEntry(20.0);
-        maxAccConstraint = NetworkTableInstance.getDefault().getDoubleTopic("climbMaxAcc").getEntry(10.0);
-
-        // Default Values
-
-        climbTargetPositionEntry.set(Constants.ClimbConstants.climbInPosition);
-        maxVelocityConstraint.set(20);
-        maxAccConstraint.set(10);
     }
 
     @Override
     public void periodic(){
-    
-    // Get targetPosition and set PID goal
-        
-    double targetPosition = climbTargetPositionEntry.get();
-    climbPID.setGoal(new State(targetPosition, 0));
-    
-    // ClimbIO Current Position
+        if(Constants.currentMode == Mode.REPLAY){
+            Logger.processInputs("RealOutputs/Climb", inputs);
+            climbIO.updateInputs(inputs);
+        }else{
+            climbIO.updateInputs(inputs);
+            Logger.processInputs("RealOutputs/Climb", inputs);
+        }
 
-    ClimbIO.ClimbIOInputs inputs = new ClimbIO.ClimbIOInputs();
-    climbIO.updateInputs(inputs);
-    double currentPosition = inputs.ClimbPosition;
+        double voltage = climbPID.calculate(inputs.climbPosition);
+        voltage = Help.clamp(voltage, -Constants.ClimbConstants.maxVoltage, Constants.ClimbConstants.maxVoltage);
 
-    // Voltage
+        climbIO.setVoltage(voltage);
 
-    double voltage = climbPID.calculate(currentPosition);
-    voltage = Math.min(Math.max(voltage, -12.0), 12.0);
-
-    climbVoltage.set(voltage);
-    climbIO.ioPeriodic(voltage);
-    climbMeasured.set(inputs.ClimbPosition);
     }
 
     // Method for specific position
 
-    public void goToPosition(double degrees){
-        climbPID.setGoal(new State(degrees, 0));
-        climbTargetPositionEntry.set(degrees);
+    public void goToPosition(double position){
+        climbPID.setGoal(new State(position, 0));
     }
 
-    // Check if Climb reached targetPosition
+    public void goToClimbOut(){
+        goToPosition(Constants.ClimbConstants.climbOutPosition);
+    }
 
-    public boolean hasReachedGoal(){
-        return false;
+    public void goToClimbIn(){
+        goToPosition(Constants.ClimbConstants.climbInPosition);
     }
 
 }

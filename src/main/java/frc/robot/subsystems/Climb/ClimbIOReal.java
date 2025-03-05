@@ -2,43 +2,51 @@ package frc.robot.subsystems.Climb;
 
 
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import frc.robot.Constants;
 
 public class ClimbIOReal implements ClimbIO{
     private final SparkMax climbMotor;
     private final RelativeEncoder climbEncoder;
 
-    // Climb Inputs
-    
-    public static class ClimbIOInputs{
-        public double position = 0.0;
-        public double setpointPosition = 0.0;
-    }
 
-    // Initialization of Real Motor
 
     public ClimbIOReal(int climbMotorID){
+
         climbMotor = new SparkMax(climbMotorID, MotorType.kBrushless);
-        climbEncoder = climbMotor.getEncoder();
+
         SparkMaxConfig config = new SparkMaxConfig();
-        config.idleMode(IdleMode.kCoast);
-        climbMotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        config.idleMode(IdleMode.kBrake);
+
+        SoftLimitConfig limitConfig = new SoftLimitConfig();
+        limitConfig.forwardSoftLimit(Constants.ClimbConstants.climbSoftUpperBound);
+        limitConfig.reverseSoftLimit(Constants.ClimbConstants.climbSoftLowerBound);
+        config.softLimit.apply(limitConfig);
+
+        climbMotor.configure(config, null, PersistMode.kPersistParameters);
+
+        climbEncoder = climbMotor.getEncoder();
+
     }
 
-    // Update System Inputs
-
-    public void updateInputs(ClimbIO.ClimbIOInputs inputs){
-        inputs.ClimbPosition = climbEncoder.getPosition();
+    @Override
+    public void stopMotor(){
+        climbMotor.stopMotor();
     }
 
-    // Set voltage
-
-    public void ioPeriodic(double voltage){
+    @Override
+    public void setVoltage(double voltage){
         climbMotor.setVoltage(voltage);
+    }
+
+    @Override
+    public void updateInputs(ClimbIOInputsAutoLogged inputs) {
+        inputs.climbPosition = climbEncoder.getPosition();
     }
 }

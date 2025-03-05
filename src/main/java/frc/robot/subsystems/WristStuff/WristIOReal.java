@@ -12,38 +12,17 @@ import com.revrobotics.spark.config.SoftLimitConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.Constants;
-import frc.robot.util.NTProfiledPIDF;
 
 public class WristIOReal implements WristIO {
 
     private final SparkFlex wristFlex;
-    private final NTProfiledPIDF controller;
  //   private final ArmFeedforward deviousClown;
 
     private final AbsoluteEncoder wristEncoder;
 
 
-    private final DoublePublisher currentGoalPosPub;
-    private final DoublePublisher currentVelocity;
-    private final DoublePublisher desiredVelocity;
-    private final DoublePublisher desiredPosition;
-    private final DoublePublisher currentVoltage;
-
-
-    private final DoublePublisher feedforwardVoltage;
-    private final DoublePublisher pidVoltage;
-    private final DoublePublisher positionalError;
-
-    private final BooleanPublisher voltageClamped;
-
-
-    public WristIOReal() {
+    public WristIOReal(int _wristMotorId) {
 
         //  This should be able to be default. PID values get set in the constructor fo NTProfiledFlex
         SparkFlexConfig config = new SparkFlexConfig();
@@ -89,15 +68,9 @@ public class WristIOReal implements WristIO {
         // config.signals.primaryEncoderVelocityPeriodMs(16);
         // config.signals.warningsPeriodMs(17);
 
-
-        //  Set constraints
-        TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
-                Constants.WristConstants.maxVelocity,
-                Constants.WristConstants.maxAcceleration);
-
         //  Create motor
         wristFlex = new SparkFlex(
-            Constants.WristConstants.wristMotorID,
+            _wristMotorId,
             MotorType.kBrushless
         );
 
@@ -105,93 +78,19 @@ public class WristIOReal implements WristIO {
 
         wristFlex.configure(config, null, PersistMode.kPersistParameters);
 
-
-
-        controller = new NTProfiledPIDF(
-            "Wrist",
-            Constants.WristConstants.kpWrist,
-            Constants.WristConstants.kiWrist,
-            Constants.WristConstants.kiWrist,
-            Constants.WristConstants.ksFeedforward,
-            Constants.WristConstants.kvFeedforward,
-            constraints);
-
-
         wristEncoder = wristFlex.getAbsoluteEncoder();
 
-        controller.setGoal(new State(wristEncoder.getPosition(), 0));
-
-
-        currentGoalPosPub = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/goal pos").publish();
-        currentVelocity = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/current velocity").publish();
-        desiredVelocity = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/desired velocity").publish();
-        desiredPosition = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/desired position").publish();
-        currentVoltage = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/current voltage").publish();
-        feedforwardVoltage = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/feedforward voltage").publish();
-        pidVoltage = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/pid voltage").publish();
-        positionalError = NetworkTableInstance.getDefault().getDoubleTopic("WristFlex/position error").publish();
-        voltageClamped = NetworkTableInstance.getDefault().getBooleanTopic("WristFlex/voltage clamped").publish();
-
-        currentGoalPosPub.set(0);
-        currentVelocity.set(0);
-        desiredVelocity.set(0);
-        desiredPosition.set(0);
-        currentVoltage.set(0);
-        feedforwardVoltage.set(0);
-        pidVoltage.set(0);
-        positionalError.set(0);
-        voltageClamped.set(false);
-
     }
 
-
     @Override
-    public void ioPeriodic() {
-
-        double voltage = controller.calculate(wristEncoder.getPosition());
-        double gravityFeedforward = 0.4 * Math.cos(controller.getSetpoint().position + Math.PI);
-
-        //  Logging
-        feedforwardVoltage.set(gravityFeedforward);
-        pidVoltage.set(voltage);
-        //
-
-        voltage += gravityFeedforward;
-
-        voltageClamped.set(Math.abs(voltage) >= Constants.WristConstants.maxVoltage);
-
-        voltage = Math.min(voltage, Constants.WristConstants.maxVoltage);
-        voltage = Math.max(voltage, -Constants.WristConstants.maxVoltage);
-
+    public void setVoltage(double voltage){
         wristFlex.setVoltage(voltage);
-
-
-        currentVelocity.set(wristEncoder.getVelocity());
-        desiredVelocity.set(controller.getSetpoint().velocity);
-        desiredPosition.set(controller.getSetpoint().position);
-        positionalError.set(controller.getSetpoint().position - wristEncoder.getPosition());
-        currentVoltage.set(voltage);
-
-      //  The encoder value should natively be in radians now
-  //    System.out.println("Wrist encoder position radians: " + wristEncoder.getPosition());
-
-    }
-
-    @Override
-    public void setTargetAngle(double _angleRad){
-        controller.setGoal(new State(_angleRad, 0));
-        currentGoalPosPub.set(_angleRad);
-    }
-
-    @Override
-    public boolean hasReachedGoal(){
-         return controller.atGoal();
     }
 
 
     @Override
     public void updateInputs(WristIOInputs inputs){
         ifOk(wristFlex, wristEncoder::getPosition, (value) -> inputs.wristPosition = value);
-        inputs.wristSetpointPosition = controller.getSetpoint().position;
+        ifOk(wristFlex, wristEncoder::getVelocity, (value) -> inputs.wristVelocity = value);
     }
 }

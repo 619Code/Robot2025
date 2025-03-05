@@ -1,4 +1,4 @@
-package frc.robot.subsystems.Outtake;
+package frc.robot.subsystems.Manipulator;
 
 import org.littletonrobotics.junction.AutoLog;
 
@@ -11,18 +11,12 @@ public interface ManipulatorIO  {
 
     public void updateInputs(OuttakeIOInputs inputs);
 
-    public void ioPeriodic();
-
     //  Outtake
-    public void runOuttakeOut();
-    public void runOuttakeIn();
-    public void stopDislodger();
-
-    //  Dislodger
-    public void runDislodger(boolean invert);
+    public void runOuttakeVoltage(double voltage);
     public void stopOuttake();
 
-    //  Proximity sensor
-//    public boolean hasCoral();
+    //  Dislodger
+    public void setDislodgerVoltage(double voltage);
+    //  There is no stopDislodger() right here because it is profiled. It profiles to a stop.
 
 }

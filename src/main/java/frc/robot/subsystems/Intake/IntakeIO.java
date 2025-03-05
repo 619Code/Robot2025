@@ -5,12 +5,16 @@ import org.littletonrobotics.junction.AutoLog;
 public interface IntakeIO {
 
     @AutoLog
-    public static class IntakeIOInputs {
-        public double intakePosition = 0.0;
-        public double intakeSetpointPosition = 0.0;
+    public static class IntakeIOInputs{
+        public double intakeExtensionPosition;
+        public double intakeMotorSpeedRadSec;
     }
 
-    public void updateInputs(IntakeIOInputs inputs);
+    public void updateInputs(IntakeIOInputsAutoLogged inputs);
 
-    public void ioPeriodic(double voltage);
+    public void stopExtensionMotor();
+
+    public void setExtensionMotorVoltage(double voltage);
+    public void setIntakeMotorVoltage(double voltage);
+
 }

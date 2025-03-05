@@ -10,24 +10,13 @@ public interface WristIO {
     @AutoLog
     public static class WristIOInputs {
         public double wristPosition = 0.0;
+        public double wristVelocity = 0.0;
         public double wristSetpointPosition = 0.0;
     }
 
 
-    public default void updateInputs(WristIOInputs inputs) {}
+    public void updateInputs(WristIOInputs inputs);
 
-    public default void ioPeriodic(){}
+    public void setVoltage(double _angleRad);
 
-
-    public default void setTargetAngle(double _angleRad) {}
-
-    public default void goToL1Angle() {}
-
-    public default void goToL2L3Angle() {}
-
-    public default void goToL4Angle() {}
-
-    //  NOTICE: Eventually this should definitely be changed.
-    //  I see no way this would work with the replay feature as it is now
-    public default boolean hasReachedGoal() {return false;}
 }

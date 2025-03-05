@@ -12,10 +12,5 @@ public interface ElevatorIO {
 
     public void updateInputs(ElevatorIOInputsAutoLogged inputs);
 
-    public void ioPeriodic();
-
-
-    public void setTargetAngle(double _positionRad);
-
-    public boolean hasReachedGoal();
+    public void runVoltage(double voltage);
 }

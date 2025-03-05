@@ -6,9 +6,17 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
 public class ClimbIOSim implements ClimbIO{
     private final SingleJointedArmSim armSim;
-    //private double targetPosition;
 
-    // Simulated Motor Initialization
+
+    @Override
+    public void stopMotor(){
+        armSim.setInputVoltage(0);
+    }
+
+    @Override
+    public void setVoltage(double voltage){
+        armSim.setInputVoltage(voltage);
+    }
 
     public ClimbIOSim() {
         DCMotor motor = DCMotor.getNEO(1);
@@ -22,24 +30,15 @@ public class ClimbIOSim implements ClimbIO{
             true,
             Rotation2d.fromDegrees(180).getRadians()
         );
-
-        // Arm State
-
-        armSim.setState(Rotation2d.fromDegrees(180).getRadians(), 0);
+        armSim.setState(Rotation2d.fromDegrees(90).getRadians(), 0);
     }
 
-    // Update Climb Position
-
     @Override
-    public void updateInputs(ClimbIO.ClimbIOInputs inputs){
-        inputs.ClimbPosition = Rotation2d.fromRadians(armSim.getAngleRads()).getDegrees();
-    }
+    public void updateInputs(ClimbIOInputsAutoLogged inputs) {
 
-    // Set voltage and update time
+        inputs.climbPosition = Rotation2d.fromRadians(armSim.getAngleRads()).getDegrees();
 
-    @Override
-    public void ioPeriodic(double voltage){
-        armSim.setInputVoltage(voltage);
         armSim.update(0.02);
+
     }
 }
