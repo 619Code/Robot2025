@@ -26,8 +26,8 @@ public class Manipulator extends SubsystemBase {
   public Manipulator(){
     if(Robot.isReal()){
       manipulatorIO = new ManipulatorIOReal(
-        Constants.OuttakeConstants.outtakeMotorId,
-        Constants.OuttakeConstants.dislodgerMotorId
+        Constants.ManipulatorConstants.outtakeMotorId,
+        Constants.ManipulatorConstants.dislodgerMotorId
       );
     }
     else{
@@ -72,10 +72,10 @@ public class Manipulator extends SubsystemBase {
 
   //  Outtake
   public void runOuttakeOut(){
-    manipulatorIO.runOuttakeVoltage(Constants.OuttakeConstants.outtakeVoltage);
+    manipulatorIO.runOuttakeVoltage(Constants.ManipulatorConstants.outtakeVoltage);
   }
   public void runOuttakeIn(){
-    manipulatorIO.runOuttakeVoltage(Constants.OuttakeConstants.intakeVoltage);
+    manipulatorIO.runOuttakeVoltage(Constants.ManipulatorConstants.intakeVoltage);
   }
   public void stopOuttake(){
     manipulatorIO.stopOuttake();
@@ -84,7 +84,7 @@ public class Manipulator extends SubsystemBase {
   //  Dislodger
   public void startDislodger(boolean invert){
     currentDislodgerGoal = new State(
-      Constants.OuttakeConstants.dislodgerVoltage * (invert ? -1 : 1),
+      Constants.ManipulatorConstants.dislodgerVoltage * (invert ? -1 : 1),
        0
     );
   }

@@ -187,7 +187,7 @@ public final class Constants {
                 1),
             moduleTranslations);
 
-  }
+  } //  End drive
 
 
     //  NOTICE: None of these values have been tested. They are all arbitrary
@@ -241,7 +241,7 @@ public final class Constants {
             heightMeters = _heightMeters;
         }
     }
-  }
+  } //  End elevator
 
   public static final class IntakeConstants {
 
@@ -285,7 +285,7 @@ public final class Constants {
       public static final double intakingVoltage = 2.0;
 
     }
-  }
+  } //  End intake
 
   public static final class ClimbConstants{
     // This values have not been tested.
@@ -309,15 +309,9 @@ public final class Constants {
 
     public static final double climbSoftLowerBound = 0;
     public static final double climbSoftUpperBound = 200;
-  }
+  } //  End climb
 
-  public static final class AlgaeDislodgerConstants{
-
-    public static final int motorId = 52;
-
-  }
-
-  public static final class OuttakeConstants {
+  public static final class ManipulatorConstants {
 
     public static final int outtakeMotorId = 51;
     public static final int dislodgerMotorId = 52;
@@ -330,12 +324,12 @@ public final class Constants {
     public static final double intakeVoltage = -2;
     public static final double dislodgerVoltage = 3;
 
-  }
+  } //  End manipulator
 
   public static final class LEDConstants {
     public static final int CANdleID = 40;
     public static final int ledCount = 200;
-  }
+  } //  End LED
 
   public static final class PassthroughConstants {
 
@@ -343,7 +337,7 @@ public final class Constants {
     public static int rightMotorId = -1;
 
     public static double passthroughMotorVoltage = 6;
-  }
+  } //  End passthrough
 
   public static final class WristConstants{
 
@@ -388,6 +382,6 @@ public final class Constants {
         public static double maxVelocity = Math.PI * 3.5;
         public static double maxAcceleration = Math.PI * 2.25;
       }
-  }
+  } //  End wrist
 
 }

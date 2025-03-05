@@ -30,7 +30,7 @@ public class ManipulatorIOReal implements ManipulatorIO {
     dislodgeMax = new SparkMax(_dislodgerMotorId, MotorType.kBrushless);
 
 
-    intakeProximitySensor = new DigitalInput(Constants.OuttakeConstants.kIntakeSensorPort);
+    intakeProximitySensor = new DigitalInput(Constants.ManipulatorConstants.kIntakeSensorPort);
   }
 
 
