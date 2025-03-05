@@ -255,8 +255,18 @@ public final class Constants {
 
     public static final double maxVoltage = 1.0;
 
+    public static final double maxVelocity = 0;
+    public static final double maxAcceleration = 0;
+
     public static final double intakeSoftLowerBound = 0;
     public static final double intakeSoftUpperBound = 200;
+
+    public static final double kpIntakeExtension = 0.0;
+    public static final double kiIntakeExtension = 0.0;
+    public static final double kdIntakeExtension = 0.0;
+
+    public static final double ksFeedforward = 0.0;
+    public static final double kvFeedforward = 0.0;
   }
 
   public static final class ClimbConstants{

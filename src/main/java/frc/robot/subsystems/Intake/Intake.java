@@ -29,12 +29,12 @@ public class Intake extends SubsystemBase {
    
     extensionPID = new NTProfiledPIDF(
       "Intake",
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      new Constraints(-1, -1)
+      Constants.IntakeConstants.kpIntakeExtension,
+      Constants.IntakeConstants.kiIntakeExtension,
+      Constants.IntakeConstants.kdIntakeExtension,
+      Constants.IntakeConstants.ksFeedforward,
+      Constants.IntakeConstants.kvFeedforward,
+      new Constraints(Constants.IntakeConstants.maxVelocity, Constants.IntakeConstants.maxAcceleration)
     );
 
   }
