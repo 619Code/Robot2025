@@ -100,22 +100,22 @@ public final class Constants {
 
     //  Encoder data
     public static final int frontLeftDriveAbsoluteEncoderPort = 33;
-    public static final double frontLeftDriveAbsoluteEncoderOffsetDeg = -.230225;
+    public static final double frontLeftDriveAbsoluteEncoderOffsetRots = -.230225;
     public static final SensorDirectionValue frontLeftEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
 
     public static final int frontRightDriveAbsoluteEncoderPort = 30;
-    public static final double frontRightDriveAbsoluteEncoderOffsetDeg = -0.261475;
+    public static final double frontRightDriveAbsoluteEncoderOffsetRots = -0.261475;
     public static final SensorDirectionValue frontRightEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
 
     public static final int backLeftDriveAbsoluteEncoderPort = 32;
-    public static final double backLeftDriveAbsoluteEncoderOffsetDeg = -0.394287;
+    public static final double backLeftDriveAbsoluteEncoderOffsetRots = -0.394287;
     public static final SensorDirectionValue backLeftEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
 
     public static final int backRightDriveAbsoluteEncoderPort = 31;
-    public static final double backRightDriveAbsoluteEncoderOffsetDeg = 0.397461;
+    public static final double backRightDriveAbsoluteEncoderOffsetRots = 0.397461;
     public static final SensorDirectionValue backRightEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
 

@@ -65,11 +65,11 @@ public class RobotContainer {
 
 
     private final boolean driveEnabled = true;
-    private final boolean wristEnabled = true;
+    private final boolean wristEnabled = false;
     private final boolean manipulatorEnabled = false;
     private final boolean intakeEnabled = false;
     private final boolean passthroughEnabled = false;
-    private final boolean elevatorEnabled = true;
+    private final boolean elevatorEnabled = false;
     private final boolean servoEnabled = false;
 
 
@@ -208,7 +208,7 @@ public class RobotContainer {
                 Constants.DriveConstants.frontLeftTurnMotorInverted,
                 Constants.DriveConstants.frontLeftTurnEncoderInverted,
                 Constants.DriveConstants.frontLeftDriveAbsoluteEncoderPort,
-                Constants.DriveConstants.frontLeftDriveAbsoluteEncoderOffsetDeg,
+                Constants.DriveConstants.frontLeftDriveAbsoluteEncoderOffsetRots,
                 Constants.DriveConstants.frontLeftEncoderPositiveDirection), // FRONT LEFT
             new ModuleIOSpark(
                 1,
@@ -216,7 +216,7 @@ public class RobotContainer {
                 Constants.DriveConstants.frontRightTurnMotorInverted,
                 Constants.DriveConstants.frontRightTurnEncoderInverted,
                 Constants.DriveConstants.frontRightDriveAbsoluteEncoderPort,
-                Constants.DriveConstants.frontRightDriveAbsoluteEncoderOffsetDeg,
+                Constants.DriveConstants.frontRightDriveAbsoluteEncoderOffsetRots,
                 Constants.DriveConstants.frontRightEncoderPositiveDirection), // FRONT RIGHT
             new ModuleIOSpark(
                 2,
@@ -224,7 +224,7 @@ public class RobotContainer {
                 Constants.DriveConstants.backLeftTurnMotorInverted,
                 Constants.DriveConstants.backLeftTurnEncoderInverted,
                 Constants.DriveConstants.backLeftDriveAbsoluteEncoderPort,
-                Constants.DriveConstants.backLeftDriveAbsoluteEncoderOffsetDeg,
+                Constants.DriveConstants.backLeftDriveAbsoluteEncoderOffsetRots,
                 Constants.DriveConstants.backLeftEncoderPositiveDirection), // BACK LEFT
             new ModuleIOSpark(
                 3,
@@ -232,7 +232,7 @@ public class RobotContainer {
                 Constants.DriveConstants.backRightTurnMotorInverted,
                 Constants.DriveConstants.backRightTurnEncoderInverted,
                 Constants.DriveConstants.backRightDriveAbsoluteEncoderPort,
-                Constants.DriveConstants.backRightDriveAbsoluteEncoderOffsetDeg,
+                Constants.DriveConstants.backRightDriveAbsoluteEncoderOffsetRots,
                 Constants.DriveConstants.backRightEncoderPositiveDirection)); // BACK RIGHT
     }
     private Drive instantiateSimDrive() {
