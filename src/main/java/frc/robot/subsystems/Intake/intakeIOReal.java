@@ -49,13 +49,8 @@ public class IntakeIOReal implements IntakeIO{
     }
 
     @Override
-    public double getPosition() {
-        return extensionEncoder.getPosition();
-    }
-
-    @Override
-    public void stopMotor() {
-    intakeExtensionMotor.stopMotor();
+    public void stopExtensionMotor() {
+        intakeExtensionMotor.stopMotor();
     }
 
     @Override
@@ -67,8 +62,8 @@ public class IntakeIOReal implements IntakeIO{
         intakeMotor.setVoltage(voltage);
     }
 
-    // @Override
-    // public void updateInputs(IntakeIOInputsAutoLogged inputs) {
-    //     throw new UnsupportedOperationException("NOT IMPLEMENTED");
-    // }
+    @Override
+    public void updateInputs(IntakeIOInputsAutoLogged inputs) {
+        inputs.intakePosition = extensionEncoder.getPosition();
+    }
 }

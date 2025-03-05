@@ -6,13 +6,12 @@ public interface IntakeIO {
 
     @AutoLog
     public static class IntakeIOInputs{
-        public double position;
+        public double intakePosition;
     }
 
-  //  public void updateInputs(IntakeIOInputsAutoLogged inputs);
+    public void updateInputs(IntakeIOInputsAutoLogged inputs);
 
-    public double getPosition();
-    public void stopMotor();
+    public void stopExtensionMotor();
 
     public void setExtensionMotorVoltage(double voltage);
     public void setIntakeMotorVoltage(double voltage);

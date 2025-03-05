@@ -25,12 +25,7 @@ public class IntakeIOSim implements IntakeIO{
     }
 
     @Override
-    public double getPosition() {
-        return Rotation2d.fromRadians(armSim.getAngleRads()).getDegrees();
-    }
-
-    @Override
-    public void stopMotor() {
+    public void stopExtensionMotor() {
         armSim.setInputVoltage(0);
     }
 
@@ -39,12 +34,12 @@ public class IntakeIOSim implements IntakeIO{
         armSim.setInputVoltage(voltage);
     }
 
-    // @Override
-    // public void updateInputs(IntakeIOInputsAutoLogged inputs){
-    //     inputs.position = Rotation2d.fromRadians(armSim.getAngleRads()).getDegrees();
+    @Override
+    public void updateInputs(IntakeIOInputsAutoLogged inputs){
+        inputs.intakePosition = Rotation2d.fromRadians(armSim.getAngleRads()).getDegrees();
 
-    //     armSim.update(0.02);
-    // }
+        armSim.update(0.02);
+    }
 
     @Override
     public void setIntakeMotorVoltage(double voltage) {

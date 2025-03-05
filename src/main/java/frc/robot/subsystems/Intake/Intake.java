@@ -1,12 +1,12 @@
 package frc.robot.subsystems.Intake;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.networktables.DoubleEntry;
-import edu.wpi.first.networktables.DoublePublisher;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Mode;
 import frc.robot.Robot;
 import frc.robot.util.NTProfiledPIDF;
 
@@ -15,9 +15,8 @@ public class Intake extends SubsystemBase {
   private final NTProfiledPIDF extensionPID;
   private IntakeIO intakeIO;
 
-  DoubleEntry intakeExtensionTargetInDegreesEntry;
-  DoublePublisher intakeExtensionMeasured;
-  DoublePublisher intakeExtensionVoltage;
+
+  private final IntakeIOInputsAutoLogged inputs = new IntakeIOInputsAutoLogged();
 
   public Intake() {
     if(Robot.isReal()){
@@ -27,13 +26,7 @@ public class Intake extends SubsystemBase {
       intakeIO = new IntakeIOSim();
     }
 
-    intakeExtensionTargetInDegreesEntry = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionTargetInDegrees").getEntry(0);
-    intakeExtensionMeasured = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionMeasured").getEntry(2);
-    intakeExtensionVoltage = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionVoltage").getEntry(1);
-
-    intakeExtensionMeasured = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionMeasured").publish();
-    intakeExtensionVoltage = NetworkTableInstance.getDefault().getDoubleTopic("intakeExtensionVoltage").publish();
-
+   
     extensionPID = new NTProfiledPIDF(
       "Intake",
       0.0,
@@ -44,28 +37,28 @@ public class Intake extends SubsystemBase {
       new Constraints(-1, -1)
     );
 
-    intakeExtensionTargetInDegreesEntry.set(0);
   }
 
   @Override
   public void periodic() {
+    if(Constants.currentMode == Mode.REPLAY){
+        Logger.processInputs("RealOutputs/Climb", inputs);
+        intakeIO.updateInputs(inputs);
+    }else{
+      intakeIO.updateInputs(inputs);
+        Logger.processInputs("RealOutputs/Climb", inputs);
+    }
 
-    double targetPosition = intakeExtensionTargetInDegreesEntry.get();
-    extensionPID.setGoal(new State(targetPosition, 0));
+    double voltage = extensionPID.calculate(inputs.intakePosition);
 
-    double voltage = extensionPID.calculate(intakeIO.getPosition());
-
-    voltage = Math.min(Math.max(voltage, -12.0), 12.0);
+    voltage = Math.min(Math.max(voltage, -Constants.IntakeConstants.maxVoltage), Constants.IntakeConstants.maxVoltage);
 
     intakeIO.setExtensionMotorVoltage(voltage);
 
-    // Log some stuff
-    intakeExtensionMeasured.set(intakeIO.getPosition());
-    intakeExtensionVoltage.set(voltage);
   }
 
   public void goToPosition(double degrees){
-    intakeExtensionTargetInDegreesEntry.set(degrees);
+    extensionPID.setGoal(new State(degrees, 0));
   }
 
   public void goToExtendedPosition() {

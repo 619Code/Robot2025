@@ -253,6 +253,8 @@ public final class Constants {
     public static final double extensionTolerance = 5.0;
     public static final double climbPosition = 90.0;
 
+    public static final double maxVoltage = 1.0;
+
     public static final double intakeSoftLowerBound = 0;
     public static final double intakeSoftUpperBound = 200;
   }
