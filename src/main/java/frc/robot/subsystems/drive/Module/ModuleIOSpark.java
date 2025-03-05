@@ -82,7 +82,7 @@ public class ModuleIOSpark implements ModuleIO {
       boolean turnMotorInverted,
       boolean turnEncoderInverted,
       int absoluteEncoderCANId,
-      double absoluteEncoderOffset,
+      double absoluteEncoderOffsetRots,
       SensorDirectionValue positiveDirection) {
 
     zeroRotation =
@@ -135,7 +135,7 @@ public class ModuleIOSpark implements ModuleIO {
     //  Initialize absolute turn encoder
     absoluteTurnEncoder = new CANcoder(absoluteEncoderCANId);
     CANcoderConfiguration canCoderConfiguration = new CANcoderConfiguration();
-    canCoderConfiguration.MagnetSensor.MagnetOffset = absoluteEncoderOffset;
+    canCoderConfiguration.MagnetSensor.MagnetOffset = absoluteEncoderOffsetRots;
     canCoderConfiguration.MagnetSensor.SensorDirection = positiveDirection;
     canCoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
     // canCoderConfiguration.primaryEncoderPositionPeriodMs

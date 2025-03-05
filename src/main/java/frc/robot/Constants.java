@@ -76,10 +76,10 @@ public final class Constants {
     // Device CAN IDs
     public static final int pigeonCanId = 9;
 
-    public static final int frontLeftDriveCanId = 51;
-    public static final int backLeftDriveCanId = 55;
-    public static final int frontRightDriveCanId = 58;
-    public static final int backRightDriveCanId = 62;
+    public static final int frontLeftDriveCanId = 22;
+    public static final int backLeftDriveCanId = 21;
+    public static final int frontRightDriveCanId = 23;
+    public static final int backRightDriveCanId = 20;
 
     public static final int frontLeftTurnCanId = 50;
     public static final int backLeftTurnCanId = 56;
@@ -94,28 +94,28 @@ public final class Constants {
 
     //  Individual drive motor inversions
     public static final boolean frontLeftDriveMotorInverted = false;
-    public static final boolean frontRightDriveMotorInverted = true;
+    public static final boolean frontRightDriveMotorInverted = false;
     public static final boolean backLeftDriveMotorInverted = false;
-    public static final boolean backRightDriveMotorInverted = true;
+    public static final boolean backRightDriveMotorInverted = false;
 
     //  Encoder data
-    public static final int frontLeftDriveAbsoluteEncoderPort = 33;
-    public static final double frontLeftDriveAbsoluteEncoderOffsetRots = -.230225;
+    public static final int frontLeftDriveAbsoluteEncoderPort = 32;
+    public static final double frontLeftDriveAbsoluteEncoderOffsetRots = -0.607910;
     public static final SensorDirectionValue frontLeftEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
 
-    public static final int frontRightDriveAbsoluteEncoderPort = 30;
-    public static final double frontRightDriveAbsoluteEncoderOffsetRots = -0.261475;
+    public static final int frontRightDriveAbsoluteEncoderPort = 33;
+    public static final double frontRightDriveAbsoluteEncoderOffsetRots = -0.27050;
     public static final SensorDirectionValue frontRightEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
 
-    public static final int backLeftDriveAbsoluteEncoderPort = 32;
-    public static final double backLeftDriveAbsoluteEncoderOffsetRots = -0.394287;
+    public static final int backLeftDriveAbsoluteEncoderPort = 31;
+    public static final double backLeftDriveAbsoluteEncoderOffsetRots = -0.02758;
     public static final SensorDirectionValue backLeftEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
 
-    public static final int backRightDriveAbsoluteEncoderPort = 31;
-    public static final double backRightDriveAbsoluteEncoderOffsetRots = 0.397461;
+    public static final int backRightDriveAbsoluteEncoderPort = 30;
+    public static final double backRightDriveAbsoluteEncoderOffsetRots = -0.13134;
     public static final SensorDirectionValue backRightEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
 
