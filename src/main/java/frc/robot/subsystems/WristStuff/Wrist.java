@@ -11,11 +11,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.Robot;
+import frc.robot.subsystems.Manipulator.ManipulatorIOReal;
 import frc.robot.util.NTProfiledPIDF;
 
 public class Wrist extends SubsystemBase {
 
-    private WristIO io;
+    private WristIO wristIO;
 
     private WristIOInputsAutoLogged inputs = new WristIOInputsAutoLogged();
 
@@ -42,8 +44,13 @@ public class Wrist extends SubsystemBase {
 
 
 
-    public Wrist(WristIO _io){
-        io = _io;
+    public Wrist(){
+        if(Robot.isReal()){
+            wristIO = new WristIOReal(Constants.WristConstants.wristMotorID);
+        }
+        else{
+            wristIO = new WristIOSim();
+        }
 
 
         //  Set constraints
@@ -90,9 +97,9 @@ public class Wrist extends SubsystemBase {
     public void updateTowardsCurrentGoal() {
         if(Constants.currentMode == Mode.REPLAY){
             Logger.processInputs("RealOutputs/Wrist", inputs);
-            io.updateInputs(inputs);
+            wristIO.updateInputs(inputs);
         }else{
-            io.updateInputs(inputs);
+            wristIO.updateInputs(inputs);
             Logger.processInputs("RealOutputs/Wrist", inputs);
         }
 
@@ -112,7 +119,7 @@ public class Wrist extends SubsystemBase {
         voltage = Math.min(voltage, Constants.WristConstants.maxVoltage);
         voltage = Math.max(voltage, -Constants.WristConstants.maxVoltage);
 
-        io.setVoltage(voltage);
+        wristIO.setVoltage(voltage);
 
 
         currentVelocity.set(getVelocity());
@@ -131,7 +138,7 @@ public class Wrist extends SubsystemBase {
     }
 
     public void setTargetAngle(double _angleRad){
-        io.setVoltage(_angleRad);
+        wristIO.setVoltage(_angleRad);
     }
 
 

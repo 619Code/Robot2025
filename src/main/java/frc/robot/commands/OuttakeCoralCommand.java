@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Outtake.Manipulator;
+import frc.robot.subsystems.Manipulator.Manipulator;
 
 public class OuttakeCoralCommand extends Command {
 

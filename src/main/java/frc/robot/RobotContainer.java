@@ -37,8 +37,8 @@ import frc.robot.subsystems.Elevator.ElevatorIOReal;
 import frc.robot.subsystems.Elevator.ElevatorIOSim;
 import frc.robot.subsystems.FunnelCollapser.ServoSubsystem;
 import frc.robot.subsystems.Intake.Intake;
-import frc.robot.subsystems.Outtake.Manipulator;
-import frc.robot.subsystems.Outtake.ManipulatorIOReal;
+import frc.robot.subsystems.Manipulator.Manipulator;
+import frc.robot.subsystems.Manipulator.ManipulatorIOReal;
 import frc.robot.subsystems.Passthrough.Passthrough;
 import frc.robot.subsystems.WristStuff.Wrist;
 import frc.robot.subsystems.WristStuff.WristIOReal;
@@ -301,19 +301,19 @@ public class RobotContainer {
     //  WRIST INSTANTIATION
 
     private Wrist instantiateRealWrist(){
-        return new Wrist(new WristIOReal());
+        return new Wrist();
     }
     private Wrist instantiateSimWrist(){
-        return new Wrist(new WristIOSim());
+        return new Wrist();
     }
     private Wrist instantiateWristReplayed(){
-        return new Wrist(new WristIOSim());
+        return new Wrist();
     }
 
     //  MANIPULATOR INSTANTIATION
 
     private Manipulator instantiateRealManipulator(){
-        return new Manipulator(new ManipulatorIOReal());
+        return new Manipulator();
     }
     private Manipulator instantiateSimManipulator(){
         throw new UnsupportedOperationException("NOT IMPLEMENTED");
@@ -336,10 +336,10 @@ public class RobotContainer {
 
     //  ELEVATOR INSTANTIATION
     private Elevator instantiateRealElevator(){
-        return new Elevator(new ElevatorIOReal());
+        return new Elevator();
     }
     private Elevator instantiateSimElevator(){
-        return new Elevator(new ElevatorIOSim());
+        return new Elevator();
     }
     private Elevator instantiateElevatorReplayed(){
         return null;

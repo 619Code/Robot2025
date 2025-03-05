@@ -11,7 +11,7 @@ import frc.robot.Robot;
 
 public class Passthrough extends SubsystemBase {
 
-  private PassthroughIO io;
+  private PassthroughIO passthroughIO;
 
 
   private PassthroughIOInputsAutoLogged inputs = new PassthroughIOInputsAutoLogged();
@@ -19,12 +19,11 @@ public class Passthrough extends SubsystemBase {
 
   public Passthrough(int passthroughMotorID_L, int passthroughMotorID_R) {
     if(Robot.isReal()){
-      io = new PassthroughIOReal(passthroughMotorID_L, passthroughMotorID_R);
+      passthroughIO = new PassthroughIOReal(passthroughMotorID_L, passthroughMotorID_R);
     }
     else{
-      io = new PassthroughIOSim();
+      passthroughIO = new PassthroughIOSim();
     }
-
   }
   // Need to connect to Intake Start and Outake Sensor.
 
@@ -32,9 +31,9 @@ public class Passthrough extends SubsystemBase {
   public void periodic(){
     if(Constants.currentMode == Mode.REPLAY){
           Logger.processInputs("RealOutputs/Passthrough", inputs);
-          io.updateInputs(inputs);
+          passthroughIO.updateInputs(inputs);
       }else{
-          io.updateInputs(inputs);
+          passthroughIO.updateInputs(inputs);
           Logger.processInputs("RealOutputs/Passthrough", inputs);
       }
   }
@@ -42,10 +41,10 @@ public class Passthrough extends SubsystemBase {
   //  The below two functions may not need to be public (can decide when we know the sensor
   // situation)
   public void RunPassthrough() {
-    io.setVoltage(Constants.PassthroughConstants.passthroughMotorVoltage);
+    passthroughIO.setVoltage(Constants.PassthroughConstants.passthroughMotorVoltage);
   }
 
   public void HaltPassthrough() {
-    io.stopMotors();
+    passthroughIO.stopMotors();
   }
 }

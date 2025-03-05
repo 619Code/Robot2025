@@ -22,7 +22,7 @@ public class WristIOReal implements WristIO {
     private final AbsoluteEncoder wristEncoder;
 
 
-    public WristIOReal() {
+    public WristIOReal(int _wristMotorId) {
 
         //  This should be able to be default. PID values get set in the constructor fo NTProfiledFlex
         SparkFlexConfig config = new SparkFlexConfig();
@@ -70,7 +70,7 @@ public class WristIOReal implements WristIO {
 
         //  Create motor
         wristFlex = new SparkFlex(
-            Constants.WristConstants.wristMotorID,
+            _wristMotorId,
             MotorType.kBrushless
         );
 
