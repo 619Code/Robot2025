@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.Robot;
+import frc.robot.util.Help;
 import frc.robot.util.NTProfiledPIDF;
 
 public class Wrist extends SubsystemBase {
@@ -115,8 +116,7 @@ public class Wrist extends SubsystemBase {
 
         voltageClamped.set(Math.abs(voltage) >= Constants.WristConstants.maxVoltage);
 
-        voltage = Math.min(voltage, Constants.WristConstants.maxVoltage);
-        voltage = Math.max(voltage, -Constants.WristConstants.maxVoltage);
+        voltage = Help.clamp(voltage, -Constants.WristConstants.maxVoltage, Constants.WristConstants.maxVoltage);
 
         wristIO.setVoltage(voltage);
 

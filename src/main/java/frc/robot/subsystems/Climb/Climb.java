@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.Robot;
+import frc.robot.util.Help;
 import frc.robot.util.NTProfiledPIDF;
 
 public class Climb extends SubsystemBase{
@@ -59,7 +60,7 @@ public class Climb extends SubsystemBase{
         }
 
         double voltage = climbPID.calculate(inputs.climbPosition);
-        voltage = Math.min(Math.max(voltage, -Constants.ClimbConstants.maxVoltage), Constants.ClimbConstants.maxVoltage);
+        voltage = Help.clamp(voltage, -Constants.ClimbConstants.maxVoltage, Constants.ClimbConstants.maxVoltage);
 
         climbIO.setVoltage(voltage);
 

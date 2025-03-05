@@ -9,6 +9,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.Robot;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
+import frc.robot.util.Help;
 import frc.robot.util.NTProfiledPIDF;
 
 public class Elevator extends SubsystemBase {
@@ -67,8 +68,7 @@ public class Elevator extends SubsystemBase {
 
         voltage += gravityFeedforward;
 
-        voltage = Math.min(voltage, Constants.ElevatorConstants.maxVoltage);
-        voltage = Math.max(voltage, -Constants.ElevatorConstants.maxVoltage);
+        voltage = Help.clamp(voltage, -Constants.ElevatorConstants.maxVoltage, Constants.ElevatorConstants.maxVoltage);
 
 
         elevatorIO.runVoltage(voltage);

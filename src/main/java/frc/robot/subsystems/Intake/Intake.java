@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.Robot;
+import frc.robot.util.Help;
 import frc.robot.util.NTProfiledPIDF;
 
 public class Intake extends SubsystemBase {
@@ -57,10 +58,11 @@ public class Intake extends SubsystemBase {
 
     double voltage = extensionPID.calculate(inputs.intakeExtensionPosition);
 
-    voltage = Math.min(
-                Math.max(voltage, -Constants.IntakeConstants.ExtensionMechanism.maxExtensionVoltage),
-                Constants.IntakeConstants.ExtensionMechanism.maxExtensionVoltage
-              );
+    voltage = Help.clamp(
+      voltage,
+      -Constants.IntakeConstants.ExtensionMechanism.maxExtensionVoltage,
+      Constants.IntakeConstants.ExtensionMechanism.maxExtensionVoltage
+    );
 
     intakeIO.setExtensionMotorVoltage(voltage);
 
