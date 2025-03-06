@@ -28,6 +28,7 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkClosedLoopController.ArbFFUnits;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
@@ -94,19 +95,8 @@ public class ModuleIOSpark implements ModuleIO {
           default -> new Rotation2d();
         };
 
-    // driveSpark =
-    //     new SparkFlex(
-    //         switch (module) {
-    //           case 0 -> frontLeftDriveCanId;
-    //           case 1 -> frontRightDriveCanId;
-    //           case 2 -> backLeftDriveCanId;
-    //           case 3 -> backRightDriveCanId;
-    //           default -> 0;
-    //         },
-    //         MotorType.kBrushless);
-
     driveSpark =
-        new SparkMax(
+        new SparkFlex(
             switch (module) {
               case 0 -> Constants.DriveConstants.frontLeftDriveCanId;
               case 1 -> Constants.DriveConstants.frontRightDriveCanId;
