@@ -12,6 +12,7 @@ public interface WristIO {
         public double wristPosition = 0.0;
         public double wristVelocity = 0.0;
         public double wristSetpointPosition = 0.0;
+        public double wristGoalPosition = 0.0;
     }
 
 

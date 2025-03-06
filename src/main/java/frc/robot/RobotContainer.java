@@ -65,7 +65,7 @@ public class RobotContainer {
 
 
     private final boolean driveEnabled = true;
-    private final boolean wristEnabled = false;
+    private final boolean wristEnabled = true;
     private final boolean manipulatorEnabled = false;
     private final boolean intakeEnabled = false;
     private final boolean passthroughEnabled = false;

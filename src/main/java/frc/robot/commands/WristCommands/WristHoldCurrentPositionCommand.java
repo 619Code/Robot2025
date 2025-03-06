@@ -22,7 +22,7 @@ public class WristHoldCurrentPositionCommand extends Command {
 
   @Override
   public void execute() {
-    wristSub.updateTowardsCurrentGoal();
+
   }
 
   @Override
