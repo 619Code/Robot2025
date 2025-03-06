@@ -1,7 +1,7 @@
 package frc.robot.subsystems.Elevator;
 
 import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
@@ -17,7 +17,7 @@ public class ElevatorIOReal implements ElevatorIO {
     private final SparkFlex rightMotorFollower;
 
 
-    private final AbsoluteEncoder elevatorEncoder;
+    private final RelativeEncoder elevatorEncoder;
 
     public ElevatorIOReal(int leftMotorId, int rightMotorId){
 
@@ -33,7 +33,7 @@ public class ElevatorIOReal implements ElevatorIO {
         leftMotorLeader.configure(leftMotorConfig, null, PersistMode.kPersistParameters);
         rightMotorFollower.configure(rightMotorConfig, null, PersistMode.kPersistParameters);
 
-        elevatorEncoder = leftMotorLeader.getAbsoluteEncoder();
+        elevatorEncoder = leftMotorLeader.getEncoder();
 
     }
 
@@ -42,7 +42,8 @@ public class ElevatorIOReal implements ElevatorIO {
     @Override
     public void runVoltage(double voltage) {
 
-        leftMotorLeader.setVoltage(voltage);
+    //    leftMotorLeader.setVoltage(voltage);
+    leftMotorLeader.setVoltage(0);
 
     }
 
@@ -52,11 +53,11 @@ public class ElevatorIOReal implements ElevatorIO {
     private SparkFlexConfig createLeftMotorConfig(){
 
         SparkFlexConfig config = new SparkFlexConfig();
-        config.closedLoop.feedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder);
+        config.closedLoop.feedbackSensor(ClosedLoopConfig.FeedbackSensor.kAlternateOrExternalEncoder);
 
-        config.absoluteEncoder.positionConversionFactor(Constants.ElevatorConstants.elevatorEncoderConversionFactor);
-        config.absoluteEncoder.zeroOffset(Constants.ElevatorConstants.encoderZeroOffsetRotations);
-        config.absoluteEncoder.inverted(false);
+        config.externalEncoder.positionConversionFactor(Constants.ElevatorConstants.elevatorEncoderConversionFactor);
+        //config.externalEncoder.zeroOffset(Constants.ElevatorConstants.encoderZeroOffsetRotations);
+        config.externalEncoder.inverted(false);
 
         config.smartCurrentLimit(60);
         config.inverted(false);

@@ -50,10 +50,10 @@ public final class Constants {
     public static final double odometryFrequency = 100.0; // Hz
 
     //  Should get overwritten in robotcontainer
-    public static double maxSpeedMetersPerSec = 5.450; //4.0; // was default
+    public static double maxSpeedMetersPerSec = 5.450;//5.450; //4.0; // was default
      public static final double angularVelocityMultiplier = 0.5;
-    public static final double trackWidth = Units.inchesToMeters(21);
-    public static final double wheelBase = Units.inchesToMeters(21);
+    public static final double trackWidth = Units.inchesToMeters(22.8);
+    public static final double wheelBase = Units.inchesToMeters(25.6);
     public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
 
 
@@ -76,21 +76,21 @@ public final class Constants {
     // Device CAN IDs
     public static final int pigeonCanId = 9;
 
-    public static final int frontLeftDriveCanId = 51;
-    public static final int backLeftDriveCanId = 55;
-    public static final int frontRightDriveCanId = 58;
-    public static final int backRightDriveCanId = 62;
+    public static final int frontLeftDriveCanId = 22;
+    public static final int backLeftDriveCanId = 21;
+    public static final int frontRightDriveCanId = 23;
+    public static final int backRightDriveCanId = 20;
 
-    public static final int frontLeftTurnCanId = 50;
-    public static final int backLeftTurnCanId = 56;
-    public static final int frontRightTurnCanId = 57;
-    public static final int backRightTurnCanId = 49;
+    public static final int frontLeftTurnCanId = 8;
+    public static final int backLeftTurnCanId = 12;
+    public static final int frontRightTurnCanId = 7;
+    public static final int backRightTurnCanId = 2;
 
     // Drive motor configuration
     public static final int driveMotorCurrentLimit = 40;
     public static final double wheelRadiusMeters = Units.inchesToMeters(2);
     public static final double driveMotorReduction = 7.3; //(45.0 * 22.0) / (14.0 * 15.0); // MAXSwerve with 14 pinion teeth and 22 spur teeth
-    public static final DCMotor driveGearbox = DCMotor.getNEO(1); // DCMotor.getNeoVortex(1);
+    public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1); // DCMotor.getNeoVortex(1);
 
     //  Individual drive motor inversions
     public static final boolean frontLeftDriveMotorInverted = false;
@@ -99,23 +99,23 @@ public final class Constants {
     public static final boolean backRightDriveMotorInverted = true;
 
     //  Encoder data
-    public static final int frontLeftDriveAbsoluteEncoderPort = 33;
-    public static final double frontLeftDriveAbsoluteEncoderOffsetRots = -.230225;
+    public static final int frontLeftDriveAbsoluteEncoderPort = 32;
+    public static final double frontLeftDriveAbsoluteEncoderOffsetRots = -0.607910;
     public static final SensorDirectionValue frontLeftEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
 
-    public static final int frontRightDriveAbsoluteEncoderPort = 30;
-    public static final double frontRightDriveAbsoluteEncoderOffsetRots = -0.261475;
+    public static final int frontRightDriveAbsoluteEncoderPort = 33;
+    public static final double frontRightDriveAbsoluteEncoderOffsetRots = -0.27050;
     public static final SensorDirectionValue frontRightEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
 
-    public static final int backLeftDriveAbsoluteEncoderPort = 32;
-    public static final double backLeftDriveAbsoluteEncoderOffsetRots = -0.394287;
+    public static final int backLeftDriveAbsoluteEncoderPort = 31;
+    public static final double backLeftDriveAbsoluteEncoderOffsetRots = -0.02758;
     public static final SensorDirectionValue backLeftEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
 
-    public static final int backRightDriveAbsoluteEncoderPort = 31;
-    public static final double backRightDriveAbsoluteEncoderOffsetRots = 0.397461;
+    public static final int backRightDriveAbsoluteEncoderPort = 30;
+    public static final double backRightDriveAbsoluteEncoderOffsetRots = -0.13134;
     public static final SensorDirectionValue backRightEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
 
@@ -171,7 +171,7 @@ public final class Constants {
 
    // public static RobotConfig robotConfig;
 
-   public static final double robotMassKg = 54.4311;
+   public static final double robotMassKg = 56.699;
     public static final double robotMOI = 6.883;
     public static final double wheelCOF = 1.2;
     public static final RobotConfig ppConfig =
@@ -193,8 +193,8 @@ public final class Constants {
     //  NOTICE: None of these values have been tested. They are all arbitrary
   public static final class ElevatorConstants {
 
-    public static final int leftMotorID = -1;
-    public static final int rightMotorID = -1;
+    public static final int leftMotorID = 54;
+    public static final int rightMotorID = 55;
 
 
     public static final int maxVoltage = 1;
@@ -250,7 +250,7 @@ public final class Constants {
 
     public static final class ExtensionMechanism{
 
-      public static int extensionMotorId = -1;
+      public static int extensionMotorId = 23;
 
 
       public static final double extendedPosition = 100.0;
@@ -280,7 +280,7 @@ public final class Constants {
 
     public static final class Intake{
 
-      public static int intakeMotorId = -1;
+      public static int intakeMotorId = 3;
 
       public static final double intakingVoltage = 2.0;
 

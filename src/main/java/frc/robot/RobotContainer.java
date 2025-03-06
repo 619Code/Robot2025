@@ -69,12 +69,13 @@ public class RobotContainer {
     private final ledSubsystem leds;
     private final Climb climb;
 
-    private final boolean driveEnabled = false;
+
+    private final boolean driveEnabled = true;
     private final boolean wristEnabled = true;
     private final boolean manipulatorEnabled = false;
     private final boolean intakeEnabled = false;
     private final boolean passthroughEnabled = false;
-    private final boolean elevatorEnabled = false;
+    private final boolean elevatorEnabled = true;
     private final boolean servoEnabled = false;
     private final boolean ledEnabled = false;
     private final boolean climbEnabled = false;
