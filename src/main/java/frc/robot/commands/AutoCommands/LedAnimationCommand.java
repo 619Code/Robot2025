@@ -20,7 +20,7 @@ public class LedAnimationCommand extends Command {
 
   @Override
   public void initialize() {
-    // Initialize LED behavior here
+    subsystem.setColor(0, 0, 255);
   }
 
   @Override
@@ -47,4 +47,3 @@ public class LedAnimationCommand extends Command {
     subsystem.TurnOffLEDs();
   }
 }
-// Need to look at this so see if correct

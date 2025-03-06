@@ -28,6 +28,7 @@ import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
 import frc.robot.commands.ServoGoToAngleCommand;
+import frc.robot.commands.AutoCommands.LedAnimationCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorGoToPositionPositionCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorHoldCurrentPositionCommand;
 import frc.robot.commands.WristCommands.WristGoToPositionCommand;
@@ -35,6 +36,7 @@ import frc.robot.commands.WristCommands.WristHoldCurrentPositionCommand;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.FunnelCollapser.ServoSubsystem;
 import frc.robot.subsystems.Intake.Intake;
+import frc.robot.subsystems.Leds.ledSubsystem;
 import frc.robot.subsystems.Manipulator.Manipulator;
 import frc.robot.subsystems.Passthrough.Passthrough;
 import frc.robot.subsystems.WristStuff.Wrist;
@@ -62,7 +64,7 @@ public class RobotContainer {
     private final Passthrough passthrough;
     private final Elevator elevator;
     private final ServoSubsystem servo;
-
+    private final ledSubsystem leds;
 
     private final boolean driveEnabled = true;
     private final boolean wristEnabled = false;
@@ -71,7 +73,7 @@ public class RobotContainer {
     private final boolean passthroughEnabled = false;
     private final boolean elevatorEnabled = false;
     private final boolean servoEnabled = false;
-
+    private final boolean ledEnabled = false;
 
     // Controller
     private final Joystick flightStick = new Joystick(0);
@@ -89,8 +91,8 @@ public class RobotContainer {
         manipulator = manipulatorEnabled    ? new Manipulator() : null;
         passthrough = passthroughEnabled    ? new Passthrough() : null;
         elevator = elevatorEnabled          ? new Elevator() : null;
-        servo = servoEnabled                ? instantiateRealServo() : null;
-
+        servo = servoEnabled                ? new ServoSubsystem(0, 1) : null;
+        leds = ledEnabled                   ? new ledSubsystem() : null;
 
 
         constructorThings();
@@ -123,6 +125,10 @@ public class RobotContainer {
         if(elevatorEnabled){
             elevatorConstructorStuff();
         }
+
+        if(ledEnabled){
+            ledConstructorStuff();
+        }
     }
 
 
@@ -151,6 +157,10 @@ public class RobotContainer {
 
         if(servoEnabled){
             configureServoBindings();
+        }
+
+        if(ledEnabled){
+            configureLedBindings();
         }
     }
 
@@ -254,19 +264,6 @@ public class RobotContainer {
         );
     }
 
-    //SERVO INSTANTIATION
-    private ServoSubsystem instantiateRealServo() {
-        return new ServoSubsystem(0);
-    }
-    private ServoSubsystem instantiateSimServo() {
-        throw new UnsupportedOperationException("NOT IMPLEMENTED");
-    }
-    private ServoSubsystem instantiateReplayedServo() {
-        throw new UnsupportedOperationException("NOT IMPLEMENTED");
-    }
-
-
-
     // ============= Constructor Stuff =============
 
     private void driveConstructorStuff() {
@@ -314,7 +311,9 @@ public class RobotContainer {
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4));
     }
 
-
+    private void ledConstructorStuff(){
+        leds.setColor(0, 0, 255);
+    }
 
 
 
@@ -413,5 +412,10 @@ public class RobotContainer {
         Trigger servoTrigger2 = operatorController.leftTrigger();
         servoTrigger2.whileTrue(
             new ServoGoToAngleCommand(servo, 0));
+    }
+
+    private void configureLedBindings(){
+        LedAnimationCommand ledCommand = new LedAnimationCommand(leds);
+        ledCommand.schedule();
     }
 }
