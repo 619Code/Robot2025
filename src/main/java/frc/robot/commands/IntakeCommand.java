@@ -25,10 +25,10 @@ public class IntakeCommand extends Command {
       case INTAKE:
         intakeSub.goToPosition(Constants.IntakeConstants.ExtensionMechanism.extendedPosition);
         break;
-      case CLIMB:
-        intakeSub.goToPosition(Constants.IntakeConstants.ExtensionMechanism.climbPosition);
+      case HALF_STOW:
+        intakeSub.goToPosition(Constants.IntakeConstants.ExtensionMechanism.half_stowPosition);
         break;
-      case STORE:
+      case STOW:
         intakeSub.goToPosition(Constants.IntakeConstants.ExtensionMechanism.retractedPosition);
         break;
       default:

@@ -256,7 +256,7 @@ public final class Constants {
       public static final double extendedPosition = 100.0;
       public static final double retractedPosition = 0.0;
       public static final double extensionTolerance = 5.0;
-      public static final double climbPosition = 90.0;
+      public static final double half_stowPosition = 90.0;
 
       public static final double maxExtensionVoltage = 1.0;
 

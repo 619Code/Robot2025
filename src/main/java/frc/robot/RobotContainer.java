@@ -367,8 +367,8 @@ public class RobotContainer {
 
     public enum INTAKE_POSITION{
         INTAKE,
-        CLIMB,
-        STORE
+        HALF_STOW,
+        STOW
     }
 
     public enum CLIMB_POSITION{
