@@ -58,11 +58,13 @@ public class Elevator extends SubsystemBase {
             elevatorIO.updateInputs(inputs);
         }else{
             elevatorIO.updateInputs(inputs);
-            inputs.elevatorSetpointPosition = elevatorController.getSetpoint().position;
             Logger.processInputs("RealOutputs/Elevator", inputs);
         }
 
         double voltage = elevatorController.calculate(inputs.elevatorPosition);
+
+        inputs.elevatorSetpointPosition = elevatorController.getSetpoint().position;
+
         double gravityFeedforward = 0.5;  //  PUT A VALUE IN HERE
 
 

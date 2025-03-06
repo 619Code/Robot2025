@@ -69,7 +69,7 @@ public class RobotContainer {
     private final boolean manipulatorEnabled = false;
     private final boolean intakeEnabled = false;
     private final boolean passthroughEnabled = false;
-    private final boolean elevatorEnabled = false;
+    private final boolean elevatorEnabled = true;
     private final boolean servoEnabled = false;
 
 
