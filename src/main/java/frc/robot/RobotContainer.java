@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCoralCommand;
@@ -33,6 +34,7 @@ import frc.robot.commands.ElevatorCommands.ElevatorGoToPositionPositionCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorHoldCurrentPositionCommand;
 import frc.robot.commands.WristCommands.WristGoToPositionCommand;
 import frc.robot.commands.WristCommands.WristHoldCurrentPositionCommand;
+import frc.robot.subsystems.Climb.Climb;
 import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.FunnelCollapser.ServoSubsystem;
 import frc.robot.subsystems.Intake.Intake;
@@ -65,15 +67,17 @@ public class RobotContainer {
     private final Elevator elevator;
     private final ServoSubsystem servo;
     private final ledSubsystem leds;
+    private final Climb climb;
 
-    private final boolean driveEnabled = true;
-    private final boolean wristEnabled = false;
+    private final boolean driveEnabled = false;
+    private final boolean wristEnabled = true;
     private final boolean manipulatorEnabled = false;
     private final boolean intakeEnabled = false;
     private final boolean passthroughEnabled = false;
     private final boolean elevatorEnabled = false;
     private final boolean servoEnabled = false;
     private final boolean ledEnabled = false;
+    private final boolean climbEnabled = false;
 
     // Controller
     private final Joystick flightStick = new Joystick(0);
@@ -93,6 +97,7 @@ public class RobotContainer {
         elevator = elevatorEnabled          ? new Elevator() : null;
         servo = servoEnabled                ? new ServoSubsystem(0, 1) : null;
         leds = ledEnabled                   ? new ledSubsystem() : null;
+        climb = climbEnabled                ? new Climb() : null;
 
 
         constructorThings();
@@ -129,6 +134,10 @@ public class RobotContainer {
         if(ledEnabled){
             ledConstructorStuff();
         }
+
+        if(climbEnabled){
+            climbConstructorStuff();
+        }
     }
 
 
@@ -161,6 +170,10 @@ public class RobotContainer {
 
         if(ledEnabled){
             configureLedBindings();
+        }
+
+        if(climbEnabled){
+            configureClimbBindings();
         }
     }
 
@@ -274,6 +287,10 @@ public class RobotContainer {
         // ...
     }
 
+    private void climbConstructorStuff(){
+        // ...
+    }
+
     private void wristConstructorStuff() {
         wrist.setDefaultCommand(new WristHoldCurrentPositionCommand(wrist));
         NamedCommands.registerCommand("SetWristAnglePassthrough",
@@ -354,6 +371,11 @@ public class RobotContainer {
         STORE
     }
 
+    public enum CLIMB_POSITION{
+        OUT,
+        IN
+    }
+
     //  Idea with wrist/elevator is that the operator will:
     //   Hold [left bumper] to enable input for carriage
     //   Then hit
@@ -417,5 +439,13 @@ public class RobotContainer {
     private void configureLedBindings(){
         LedAnimationCommand ledCommand = new LedAnimationCommand(leds);
         ledCommand.schedule();
+    }
+
+    private void configureClimbBindings(){
+        Trigger yPressedTrigger = operatorController.y();
+        yPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.OUT));
+
+        Trigger xPressedTrigger = operatorController.x();
+        xPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.IN));
     }
 }

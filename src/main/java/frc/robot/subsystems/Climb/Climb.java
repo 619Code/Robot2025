@@ -36,7 +36,7 @@ public class Climb extends SubsystemBase{
             "Climb",
             Constants.ClimbConstants.kpWrist,
             Constants.ClimbConstants.kiWrist,
-            Constants.ClimbConstants.kiWrist,
+            Constants.ClimbConstants.kdWrist,
             Constants.ClimbConstants.ksFeedforward,
             Constants.ClimbConstants.kvFeedforward,
             constraints);
