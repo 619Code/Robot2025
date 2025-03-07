@@ -282,23 +282,27 @@ public final class Constants {
 
     public static final class ExtensionMechanism{
 
-      public static int extensionMotorId = 23;
+      public static int extensionMotorId = 24;
 
 
-      public static final double extendedPosition = 100.0;
-      public static final double retractedPosition = 0.0;
+      //public static final double extendedPosition = 100.0;
+      public static final double extendedPositionEncoderValue = .969;
+      //public static final double retractedPosition = 0.0;
+      public static final double retractedPositionEncoderValue = .2799;
       public static final double extensionTolerance = 5.0;
-      public static final double half_stowPosition = 90.0;
+      //public static final double half_stowPosition = 90.0;
+      public static final double half_stowPostionEncoderValue = .2457;
+      public static final double climbPositionEncoderValue = .2009;
 
       public static final double maxExtensionVoltage = 1.0;
 
-      public static final double maxExtensionVelocity = 0;
-      public static final double maxExtensionAcceleration = 0;
+      public static final double maxExtensionVelocity = .1;
+      public static final double maxExtensionAcceleration = .1;
 
-      public static final double extensionSoftLowerBound = 0;
-      public static final double extensionSoftUpperBound = 200;
+      public static final double extensionSoftLowerBound = .0;
+      public static final double extensionSoftUpperBound = .27990;
 
-      public static final double kpIntakeExtension = 0.0;
+      public static final double kpIntakeExtension = 0.1;
       public static final double kiIntakeExtension = 0.0;
       public static final double kdIntakeExtension = 0.0;
 

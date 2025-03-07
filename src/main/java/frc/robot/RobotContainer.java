@@ -74,13 +74,13 @@ public class RobotContainer {
     private final ledSubsystem leds;
     private final Climb climb;
 
-    private final boolean compititionBindings = true;
+    private final boolean compititionBindings = false;
     private final boolean driveEnabled =            true;
-    private final boolean wristEnabled =            true;
-    private final boolean manipulatorEnabled =      true;
-    private final boolean intakeEnabled =           false;
+    private final boolean wristEnabled =            false;
+    private final boolean manipulatorEnabled =      false;
+    private final boolean intakeEnabled =           true;
     private final boolean passthroughEnabled =      false;
-    private final boolean elevatorEnabled =         true;
+    private final boolean elevatorEnabled =         false;
     private final boolean servoEnabled =            false;
     private final boolean ledEnabled =              false;
     private final boolean climbEnabled =            false;
@@ -167,33 +167,27 @@ public class RobotContainer {
         }
 
         command = command.until(() -> trigger.getAsBoolean() == false)
-                .finallyDo(() -> {
-                    new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3)
+                .andThen(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3))
                     .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
-                    .schedule();
-                });
+                .andThen(new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.PASSTHROUGH))
+                    .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
 
         return command;
     }
 
-    public Command getFunnelIntakeCommand(Trigger trigger)
+    public Command getFunnelIntakeCommand()
     {
         // Note need to make sure to set the intake at half stow position here
 
         return new SequentialCommandGroup(
             new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3),
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.FUNNEL),
-            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3),
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.FUNNEL_ANGLE),
             new IntakeCoralCommand(manipulator, passthrough))
-            .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
-            .until(
-                () -> manipulator.isDetectingCoral() || trigger.getAsBoolean() == false)
-            .finallyDo(() -> {
-                new SequentialCommandGroup(new InstantCommand( () -> manipulator.stopOuttake()),
-                new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3))
+            .andThen(
+                new SequentialCommandGroup(new InstantCommand( () -> manipulator.stopOuttake())))
+            .andThen(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3))
                 .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
-                .schedule();
-            })
             .unless(() -> manipulator.isDetectingCoral());
     }
 
@@ -209,7 +203,8 @@ public class RobotContainer {
 
             // Funnel Intake
             Trigger bPressedTrigger = operatorController.b();
-            bPressedTrigger.onTrue(this.getFunnelIntakeCommand(bPressedTrigger));
+            //bPressedTrigger.whileTrue(this.getFunnelIntakeCommand());
+            bPressedTrigger.onTrue(this.getFunnelIntakeCommand());
 
             // L1 and L2 Binding
             Trigger aPressedTrigger = operatorController.a();
@@ -230,7 +225,7 @@ public class RobotContainer {
             DoubleSupplier horizontalAxis = () -> operatorController.getRightX();
             climb.setDefaultCommand(new ManualClimbCommand(climb, horizontalAxis));
 
-            // Start button is meant to prepare for the climb.  Drops the funnel and moves the 
+            // Start button is meant to prepare for the climb.  Drops the funnel and moves the
             //  floor intake back
             Trigger startButton = operatorController.start();
 
@@ -288,36 +283,6 @@ public class RobotContainer {
             return null;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   // ============= Instantiation =============
 
@@ -466,13 +431,24 @@ public class RobotContainer {
         Trigger mainTrigger = new JoystickButton(flightStick, 1);
         mainTrigger.whileTrue(Commands.runOnce(() -> {intake.goToExtendedPosition();}, intake));
         mainTrigger.whileFalse(Commands.runOnce(() -> {intake.goToRetractedPosition();}, intake));
+
+        Trigger aButton = operatorController.a();
+        aButton.onTrue(new IntakeCommand(intake, INTAKE_POSITION.HALF_STOW));
+
+        Trigger xButton = operatorController.x();
+        xButton.onTrue(new IntakeCommand(intake, INTAKE_POSITION.STOW));
+
+        Trigger yButton = operatorController.y();
+        yButton.onTrue(new IntakeCommand(intake, INTAKE_POSITION.CLIMB));
+
     }
 
 
     public enum INTAKE_POSITION{
         INTAKE,
         HALF_STOW,
-        STOW
+        STOW,
+        CLIMB
     }
 
     public enum CLIMB_POSITION{

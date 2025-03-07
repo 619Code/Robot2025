@@ -54,7 +54,8 @@ public class Wrist extends SubsystemBase {
 
         wristIO.updateInputs(inputs);
 
-        setTargetAngle(inputs.wristPosition);
+        //setTargetAngle(inputs.wristPosition);
+        setTargetAngle(Constants.WristConstants.WristAngleRad.PASSTHROUGH.positionRad);
 
     }
 

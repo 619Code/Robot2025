@@ -23,14 +23,18 @@ public class IntakeCommand extends Command {
   public void initialize() {
     switch (position) {
       case INTAKE:
-        intakeSub.goToPosition(Constants.IntakeConstants.ExtensionMechanism.extendedPosition);
+        //intakeSub.goToPosition(Constants.IntakeConstants.ExtensionMechanism.extendedPosition);
+        // temporary just going to stow half stow position
+        intakeSub.goToPositionDirect(Constants.IntakeConstants.ExtensionMechanism.half_stowPostionEncoderValue);
         break;
       case HALF_STOW:
-        intakeSub.goToPosition(Constants.IntakeConstants.ExtensionMechanism.half_stowPosition);
+        intakeSub.goToPositionDirect(Constants.IntakeConstants.ExtensionMechanism.half_stowPostionEncoderValue);
         break;
       case STOW:
-        intakeSub.goToPosition(Constants.IntakeConstants.ExtensionMechanism.retractedPosition);
+        intakeSub.goToPositionDirect(Constants.IntakeConstants.ExtensionMechanism.retractedPositionEncoderValue);
         break;
+      case CLIMB:
+        intakeSub.goToPositionDirect(Constants.IntakeConstants.ExtensionMechanism.climbPositionEncoderValue);
       default:
         end(true);
         break;
@@ -47,6 +51,6 @@ public class IntakeCommand extends Command {
 
   @Override
   public boolean isFinished() {
-    return true;
+    return intakeSub.hasReachedGoal();
   }
 }

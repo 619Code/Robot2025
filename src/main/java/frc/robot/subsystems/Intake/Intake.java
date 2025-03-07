@@ -64,20 +64,33 @@ public class Intake extends SubsystemBase {
       Constants.IntakeConstants.ExtensionMechanism.maxExtensionVoltage
     );
 
-    intakeIO.setExtensionMotorVoltage(voltage);
+    //intakeIO.setExtensionMotorVoltage(voltage);
 
   }
 
-  public void goToPosition(double degrees){
-    extensionPID.setGoal(new State(degrees, 0));
+  // public void goToPosition(double degrees){
+  //   extensionPID.setGoal(new State(degrees, 0));
+  // }
+
+  public void goToPositionDirect(double encoderValue){
+    extensionPID.setGoal(new State(encoderValue, 0));
   }
 
   public void goToExtendedPosition() {
-    goToPosition(Constants.IntakeConstants.ExtensionMechanism.extendedPosition);
+    //goToPosition(Constants.IntakeConstants.ExtensionMechanism.extendedPosition);
+    goToPositionDirect(Constants.IntakeConstants.ExtensionMechanism.extendedPositionEncoderValue);
   }
 
   public void goToRetractedPosition() {
-    goToPosition(Constants.IntakeConstants.ExtensionMechanism.retractedPosition);
+    goToPositionDirect(Constants.IntakeConstants.ExtensionMechanism.retractedPositionEncoderValue);
+  }
+
+  public void goToHalfStowPosition() {
+    goToPositionDirect(Constants.IntakeConstants.ExtensionMechanism.half_stowPostionEncoderValue);
+  }
+
+  public void goToClimbPosition() {
+    goToPositionDirect(Constants.IntakeConstants.ExtensionMechanism.climbPositionEncoderValue);
   }
 
   public void runIntake(){
@@ -86,5 +99,9 @@ public class Intake extends SubsystemBase {
 
   public void stopIntake(){
     intakeIO.setIntakeMotorVoltage(0);
+  }
+
+  public boolean hasReachedGoal() {
+    return extensionPID.atGoal();
   }
 }
