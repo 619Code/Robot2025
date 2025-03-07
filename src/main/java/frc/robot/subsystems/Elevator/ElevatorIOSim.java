@@ -46,6 +46,6 @@ public class ElevatorIOSim implements ElevatorIO {
 
     @Override
     public void updateInputs(ElevatorIOInputsAutoLogged inputs) {
-        inputs.elevatorPosition = elevator.getPositionMeters();
+        inputs.elevatorPositionRotations = elevator.getPositionMeters();
     }
 }

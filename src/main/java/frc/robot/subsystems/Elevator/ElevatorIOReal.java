@@ -3,6 +3,7 @@ package frc.robot.subsystems.Elevator;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SoftLimitConfig;
@@ -14,7 +15,7 @@ import frc.robot.Constants;
 public class ElevatorIOReal implements ElevatorIO {
 
     private final SparkFlex leftMotorLeader;
-    private final SparkFlex rightMotorFollower;
+   private final SparkFlex rightMotorFollower;
 
 
     private final RelativeEncoder elevatorEncoder;
@@ -22,16 +23,16 @@ public class ElevatorIOReal implements ElevatorIO {
     public ElevatorIOReal(int leftMotorId, int rightMotorId){
 
         leftMotorLeader = new SparkFlex(leftMotorId, MotorType.kBrushless);
-        rightMotorFollower = new SparkFlex(rightMotorId, MotorType.kBrushless);
+       rightMotorFollower = new SparkFlex(rightMotorId, MotorType.kBrushless);
 
         //  Left motor config
         SparkFlexConfig leftMotorConfig = createLeftMotorConfig();
         //  Right motor config
-        SparkFlexConfig rightMotorConfig = createRightMotorConfig();
+       SparkFlexConfig rightMotorConfig = createRightMotorConfig();
 
 
-        leftMotorLeader.configure(leftMotorConfig, null, PersistMode.kPersistParameters);
-        rightMotorFollower.configure(rightMotorConfig, null, PersistMode.kPersistParameters);
+        leftMotorLeader.configure(leftMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+       rightMotorFollower.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         elevatorEncoder = leftMotorLeader.getEncoder();
 
@@ -42,8 +43,7 @@ public class ElevatorIOReal implements ElevatorIO {
     @Override
     public void runVoltage(double voltage) {
 
-    //    leftMotorLeader.setVoltage(voltage);
-    leftMotorLeader.setVoltage(0);
+        leftMotorLeader.setVoltage(voltage);
 
     }
 
@@ -55,18 +55,18 @@ public class ElevatorIOReal implements ElevatorIO {
         SparkFlexConfig config = new SparkFlexConfig();
         config.closedLoop.feedbackSensor(ClosedLoopConfig.FeedbackSensor.kAlternateOrExternalEncoder);
 
-        config.externalEncoder.positionConversionFactor(Constants.ElevatorConstants.elevatorEncoderConversionFactor);
+        config.externalEncoder.positionConversionFactor(1.0);
         //config.externalEncoder.zeroOffset(Constants.ElevatorConstants.encoderZeroOffsetRotations);
         config.externalEncoder.inverted(false);
 
         config.smartCurrentLimit(60);
         config.inverted(false);
-        config.idleMode(IdleMode.kCoast);
+        config.idleMode(IdleMode.kBrake);
 
 
         SoftLimitConfig softLimits = new SoftLimitConfig();
-        softLimits.forwardSoftLimit(Constants.ElevatorConstants.maxHeightMeters);
-        softLimits.reverseSoftLimit(Constants.ElevatorConstants.minHeightMeters);
+        softLimits.forwardSoftLimit(Constants.ElevatorConstants.maxHeightEncoderVal);
+        softLimits.reverseSoftLimit(Constants.ElevatorConstants.minHeightEncoderVal);
         softLimits.forwardSoftLimitEnabled(true);
         softLimits.reverseSoftLimitEnabled(true);
         config.softLimit.apply(softLimits);
@@ -84,17 +84,25 @@ public class ElevatorIOReal implements ElevatorIO {
     private SparkFlexConfig createRightMotorConfig(){
 
         SparkFlexConfig config = createLeftMotorConfig();
-        config.inverted(true);
-        config.follow(leftMotorLeader);
+        config.follow(leftMotorLeader, true);
 
         return config;
 
     }
 
 
+    private double encoderValToHeightMeters(double encoderVal){
+        return (encoderVal / Constants.ElevatorConstants.maxHeightEncoderVal) *
+        (Constants.ElevatorConstants.maxHeightMeters - Constants.ElevatorConstants.minHeightMeters)
+         + Constants.ElevatorConstants.minHeightMeters;
+    }
+
+
 
     @Override
     public void updateInputs(ElevatorIOInputsAutoLogged inputs) {
-        inputs.elevatorPosition = elevatorEncoder.getPosition();
+        inputs.elevatorPositionRotations = elevatorEncoder.getPosition();
+
+        inputs.elevatorHeightMeters = encoderValToHeightMeters(inputs.elevatorPositionRotations);
     }
 }

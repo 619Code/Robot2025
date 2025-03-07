@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
-import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCoralCommand;
@@ -382,17 +381,17 @@ public class RobotContainer {
     //   Then hit
     private void configureWristBindings() {
 
-        Trigger aPressedTrigger = operatorController.a();
-        aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.PASSTHROUGH));
+        // Trigger aPressedTrigger = operatorController.a();
+        // aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.PASSTHROUGH));
 
-        Trigger bPressedTrigger = operatorController.b();
-        bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
+        // Trigger bPressedTrigger = operatorController.b();
+        // bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
 
-        Trigger xPressedTrigger = operatorController.x();
-        xPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3));
+        // Trigger xPressedTrigger = operatorController.x();
+        // xPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3));
 
-        Trigger yPressedTrigger = operatorController.y();
-        yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4));
+        // Trigger yPressedTrigger = operatorController.y();
+        // yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4));
     }
 
     private void configureManipulatorBindings(){
@@ -419,11 +418,15 @@ public class RobotContainer {
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.PASSTHROUGH)
         );
 
-        Trigger elevatorToL2Height = operatorController.povRight();
+        Trigger elevatorToL1Height = operatorController.povRight();
+        elevatorToL1Height.whileTrue(
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L1)
+        );
+
+        Trigger elevatorToL2Height = operatorController.povLeft();
         elevatorToL2Height.whileTrue(
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2)
         );
-
     }
 
     private void configureServoBindings(){
@@ -443,10 +446,10 @@ public class RobotContainer {
     }
 
     private void configureClimbBindings(){
-        Trigger yPressedTrigger = operatorController.y();
-        yPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.OUT));
+        // Trigger yPressedTrigger = operatorController.y();
+        // yPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.OUT));
 
-        Trigger xPressedTrigger = operatorController.x();
-        xPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.IN));
+        // Trigger xPressedTrigger = operatorController.x();
+        // xPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.IN));
     }
 }

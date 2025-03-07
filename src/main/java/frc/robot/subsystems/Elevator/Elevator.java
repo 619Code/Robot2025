@@ -21,8 +21,8 @@ public class Elevator extends SubsystemBase {
     private NTProfiledPIDF elevatorController;
 
     private final TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(
-            Constants.ElevatorConstants.maxVelocity,
-            Constants.ElevatorConstants.maxAcceleration
+            Constants.ElevatorConstants.maxVelocityMetersPerSec,
+            Constants.ElevatorConstants.maxAccelerationMetersPerSecSqrd
         );
 
     public Elevator(){
@@ -49,6 +49,8 @@ public class Elevator extends SubsystemBase {
         //  This needs to be called before the line below it
         elevatorIO.updateInputs(inputs);
         elevatorController.setGoal(new State(getPositionMeters(), 0));
+        inputs.elevatorGoalMeters = elevatorController.getGoal().position;
+
     }
 
     public void periodic(){
@@ -61,27 +63,29 @@ public class Elevator extends SubsystemBase {
             Logger.processInputs("RealOutputs/Elevator", inputs);
         }
 
-        double voltage = elevatorController.calculate(inputs.elevatorPosition);
+        double voltage = elevatorController.calculate(inputs.elevatorHeightMeters);
 
-        inputs.elevatorSetpointPosition = elevatorController.getSetpoint().position;
-
-        double gravityFeedforward = 0.5;  //  PUT A VALUE IN HERE
+        inputs.elevatorSetpointPositionMeters = elevatorController.getSetpoint().position;
 
 
-        voltage += gravityFeedforward;
+        if(inputs.elevatorSetpointPositionMeters > Constants.ElevatorConstants.minHeightMeters + 0.02){
+            voltage += Constants.ElevatorConstants.feedforwardGravity;
+        }
 
         voltage = Help.clamp(voltage, -Constants.ElevatorConstants.maxVoltage, Constants.ElevatorConstants.maxVoltage);
 
 
+        inputs.elevatorVoltage = voltage;
         elevatorIO.runVoltage(voltage);
 
     }
 
     public double getPositionMeters(){
-        return inputs.elevatorPosition;
+        return inputs.elevatorHeightMeters;
     }
 
     public void setTargetPosition(ElevatorHeight _height){
+        inputs.elevatorGoalMeters = _height.heightMeters;
         elevatorController.setGoal(new State(_height.heightMeters, 0));
     }
 

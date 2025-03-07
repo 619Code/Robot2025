@@ -197,44 +197,73 @@ public final class Constants {
     public static final int rightMotorID = 55;
 
 
-    public static final int maxVoltage = 1;
+    public static final int maxVoltage = 10;
 
     public static final double wristMotorReduction = 1.0;
-    public static final double elevatorEncoderConversionFactor = 1.0; // Use this to make the encoder natively in meters
 
 
-    public static final double maxVelocity = 2; // Arbitrary
-    public static final double maxAcceleration = 2;
+    public static final double maxVelocityMetersPerSec = 0.5; // Arbitrary
+    public static final double maxAccelerationMetersPerSecSqrd = 1;
 
-    public static final double minHeightMeters = 0;
-    public static final double maxHeightMeters = 1;
+
+
+
+
+
+
+
+
+
+
+    //  Lerp thing
+
+    public static final double minHeightMeters = Units.inchesToMeters(25);
+    public static final double minHeightEncoderVal = 0;
+
+    public static final double heightAtHigherPointMeters = Units.inchesToMeters(47.5);
+    public static final double higherPointEncoderValue = 39.97153854370117;
+
+
+
+
+
+    public static final double maxHeightMeters = Units.inchesToMeters(77);
+    public static final double maxHeightEncoderVal = 68.75753021240234;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public static final double encoderZeroOffsetRotations = 0;
 
-    public static final double kpElevator = 0.1;
+    public static final double kpElevator = 0.0;
     public static final double kiElevator = 0.0;
     public static final double kdElevator = 0.0;
 
-    public static final double ksFeedforward = 0.0;
-    public static final double kvFeedforward = 0.0;
+    public static final double ksFeedforward = 0.3;
+    public static final double kvFeedforward = 4;
 
-
-    public static final double kpElevatorSim = 5.0;
-    public static final double kiElevatorSim = 0.0;
-    public static final double kdElevatorSim = 0.0;
-
-    public static final double ksFeedforwardSim = 4.0;
-    public static final double kvFeedforwardSim = 0.0;
+    public static final double feedforwardGravity = 0.45;
 
     public static final DCMotor elevatorGearbox = DCMotor.getNeoVortex(2);
 
 
     public enum ElevatorHeight{
-        PASSTHROUGH(0),
-        L1(0.2),
-        L2(0.4),
-        L3(0.6),
-        L4(0.8);
+        PASSTHROUGH(minHeightMeters),
+        L1(minHeightMeters + 0.4),
+        L2(minHeightMeters + 0.6),
+        L3(minHeightMeters + 0.8),
+        L4(minHeightMeters + 1.0);
 
         public final double heightMeters;
         ElevatorHeight(double _heightMeters){
