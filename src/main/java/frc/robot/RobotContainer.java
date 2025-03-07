@@ -19,14 +19,20 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.IntakeCoralCommand;
+import frc.robot.commands.ManualClimbCommand;
 import frc.robot.commands.OuttakeCoralCommand;
+import frc.robot.commands.ServoGoToAngleCommand;
 import frc.robot.commands.AutoCommands.LedAnimationCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorGoToPositionPositionCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorHoldCurrentPositionCommand;
@@ -46,6 +52,7 @@ import frc.robot.subsystems.drive.Gyro.GyroIONavX;
 import frc.robot.subsystems.drive.Module.ModuleIOSim;
 import frc.robot.subsystems.drive.Module.ModuleIOSpark;
 
+import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -67,7 +74,7 @@ public class RobotContainer {
     private final ledSubsystem leds;
     private final Climb climb;
 
-
+    private final boolean compititionBindings = true;
     private final boolean driveEnabled =            true;
     private final boolean wristEnabled =            true;
     private final boolean manipulatorEnabled =      true;
@@ -97,6 +104,7 @@ public class RobotContainer {
         servo = servoEnabled                ? new ServoSubsystem(0, 1) : null;
         leds = ledEnabled                   ? new ledSubsystem() : null;
         climb = climbEnabled                ? new Climb() : null;
+
 
 
         constructorThings();
@@ -139,46 +147,129 @@ public class RobotContainer {
         }
     }
 
+    private Command getOutakeCommand(ElevatorHeight height, Trigger trigger){
 
+        Command command;
 
+        if (height == ElevatorHeight.L4){
+            command = new SequentialCommandGroup(
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3),
+            new ElevatorGoToPositionPositionCommand(elevator, height),
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4)
+            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+        }
+        else
+        {
+            command =  new SequentialCommandGroup(
+                new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3),
+                new ElevatorGoToPositionPositionCommand(elevator, height)
+            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+        }
 
+        command = command.until(() -> trigger.getAsBoolean() == false)
+                .finallyDo(() -> {
+                    new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3)
+                    .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
+                    .schedule();
+                });
+
+        return command;
+    }
+
+    public Command getFunnelIntakeCommand(Trigger trigger)
+    {
+        // Note need to make sure to set the intake at half stow position here
+
+        return new SequentialCommandGroup(
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3),
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.FUNNEL),
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3),
+            new IntakeCoralCommand(manipulator, passthrough))
+            .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
+            .until(
+                () -> manipulator.isDetectingCoral() || trigger.getAsBoolean() == false)
+            .finallyDo(() -> {
+                new SequentialCommandGroup(new InstantCommand( () -> manipulator.stopOuttake()),
+                new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3))
+                .withInterruptBehavior(InterruptionBehavior.kCancelSelf)
+                .schedule();
+            })
+            .unless(() -> manipulator.isDetectingCoral());
+    }
+
+    @SuppressWarnings("unused")
     private void configureButtonBindings() {
+
+        // Same for comp vs testing
         if(driveEnabled){
             configureDriveBindings();
         }
 
+        if (compititionBindings) {
 
+            // Funnel Intake
+            Trigger bPressedTrigger = operatorController.b();
+            bPressedTrigger.onTrue(this.getFunnelIntakeCommand(bPressedTrigger));
 
-        if(intakeEnabled){
-            configureIntakeBindings();
+            // L1 and L2 Binding
+            Trigger aPressedTrigger = operatorController.a();
+            aPressedTrigger.onTrue(
+                this.getOutakeCommand(ElevatorHeight.L2, aPressedTrigger));
+
+            // L3 Binding
+            Trigger xPressedTrigger = operatorController.x();
+            xPressedTrigger.onTrue(
+                this.getOutakeCommand(ElevatorHeight.L3, xPressedTrigger));
+
+            // L4 Binding
+            Trigger yPressedTrigger = operatorController.y();
+            yPressedTrigger.onTrue(
+                this.getOutakeCommand(ElevatorHeight.L4, yPressedTrigger));
+
+            // Climb
+            DoubleSupplier horizontalAxis = () -> operatorController.getRightX();
+            climb.setDefaultCommand(new ManualClimbCommand(climb, horizontalAxis));
+
+            // Start button is meant to prepare for the climb.  Drops the funnel and moves the 
+            //  floor intake back
+            Trigger startButton = operatorController.start();
+
+            if (servoEnabled && intakeEnabled)
+                startButton.onTrue(new SequentialCommandGroup(
+                    new ServoGoToAngleCommand(servo, 100),
+                    new IntakeCommand(intake, INTAKE_POSITION.HALF_STOW)
+                ));
         }
+        else
+        {
+            if(intakeEnabled){
+                configureIntakeBindings();
+            }
 
-        if(wristEnabled){
-            configureWristBindings();
+            if(wristEnabled){
+                configureWristBindings();
+            }
+
+            if(manipulatorEnabled){
+                configureManipulatorBindings();
+            }
+
+            if(elevatorEnabled){
+                configureElevatorBindings();
+            }
+
+            if(servoEnabled){
+                configureServoBindings();
+            }
+
+            if(ledEnabled){
+                configureLedBindings();
+            }
+
+            if(climbEnabled){
+                configureClimbBindings();
+            }
         }
-
-        if(manipulatorEnabled){
-            configureManipulatorBindings();
-        }
-
-        if(elevatorEnabled){
-            configureElevatorBindings();
-        }
-
-        if(servoEnabled){
-            configureServoBindings();
-        }
-
-        if(ledEnabled){
-            configureLedBindings();
-        }
-
-        if(climbEnabled){
-            configureClimbBindings();
-        }
-
-
-
 
         // Trigger bPressedTrigger = operatorController.b();
         // bPressedTrigger.onTrue(
@@ -467,6 +558,8 @@ public class RobotContainer {
     }
 
     private void configureClimbBindings(){
+
+
         // Trigger yPressedTrigger = operatorController.y();
         // yPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.OUT));
 

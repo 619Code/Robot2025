@@ -1,14 +1,12 @@
 package frc.robot.subsystems.Climb;
 
-import org.littletonrobotics.junction.Logger;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.Mode;
 import frc.robot.Robot;
-import frc.robot.util.Help;
 import frc.robot.util.NTProfiledPIDF;
 
 public class Climb extends SubsystemBase{
@@ -18,6 +16,8 @@ public class Climb extends SubsystemBase{
     private final NTProfiledPIDF climbPID;
 
     private final ClimbIOInputsAutoLogged inputs = new ClimbIOInputsAutoLogged();
+
+    private SlewRateLimiter voltateRateLimiter = new SlewRateLimiter(3);
 
     public Climb(){
         if(Robot.isReal()){
@@ -49,20 +49,28 @@ public class Climb extends SubsystemBase{
 
     }
 
+    double currentTargetVoltage = 0;
+    double currentVoltage = 0;
+
     @Override
     public void periodic(){
-        if(Constants.currentMode == Mode.REPLAY){
-            Logger.processInputs("RealOutputs/Climb", inputs);
-            climbIO.updateInputs(inputs);
-        }else{
-            climbIO.updateInputs(inputs);
-            Logger.processInputs("RealOutputs/Climb", inputs);
-        }
 
-        double voltage = climbPID.calculate(inputs.climbPosition);
-        voltage = Help.clamp(voltage, -Constants.ClimbConstants.maxVoltage, Constants.ClimbConstants.maxVoltage);
+        currentVoltage = voltateRateLimiter.calculate(currentTargetVoltage);
 
-        climbIO.setVoltage(voltage);
+        // Allowing operators more judgement control so we don't crush the robot
+
+        // if(Constants.currentMode == Mode.REPLAY){
+        //     Logger.processInputs("RealOutputs/Climb", inputs);
+        //     climbIO.updateInputs(inputs);
+        // }else{
+        //     climbIO.updateInputs(inputs);
+        //     Logger.processInputs("RealOutputs/Climb", inputs);
+        // }
+
+        // double voltage = climbPID.calculate(inputs.climbPosition);
+        // voltage = Help.clamp(voltage, -Constants.ClimbConstants.maxVoltage, Constants.ClimbConstants.maxVoltage);
+
+        // climbIO.setVoltage(voltage);
 
     }
 
@@ -78,4 +86,7 @@ public class Climb extends SubsystemBase{
         goToPosition(Constants.ClimbConstants.climbInPosition);
     }
 
+    public void setTargetVoltage(double voltage){
+        currentTargetVoltage = voltage;
+    }
 }
