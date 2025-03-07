@@ -54,7 +54,6 @@ import frc.robot.util.LocalADStarAK;
 import frc.robot.util.RelativeCoordinatePose2d;
 import frc.robot.util.AprilTagStuff.AprilTagDataLoader;
 
-import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -255,7 +254,11 @@ public class Drive extends SubsystemBase {
 
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
-      poseEstimator.addVisionMeasurement(getRobotVisionPose(), sampleTimestamps[i]);
+
+      Pose2d visionPose = getRobotVisionPose();
+      if(visionPose != null){
+    //    poseEstimator.addVisionMeasurement(visionPose, sampleTimestamps[i]);
+      }
     }
 
     // Update gyro alert
@@ -270,13 +273,16 @@ public class Drive extends SubsystemBase {
     int tagId = (int)LimelightHelpers.getFiducialID("limelight");
 
     Optional<Pose3d> tagPose3d = AprilTagDataLoader.field.getTagPose(tagId);
+
+    if(tagPose3d.isEmpty()) return null;
+
     Pose2d actualTagCoordTemp = new Pose2d(tagPose3d.get().getX(), tagPose3d.get().getY(), tagPose3d.get().getRotation().toRotation2d());
     FieldCoordinatePose2d actualTagCoord = new FieldCoordinatePose2d(actualTagCoordTemp);
 
     RelativeCoordinatePose2d aprilTagRelativePose = new RelativeCoordinatePose2d(Help.limelightCoordsToWPICoordsPose2d(limelightData));
     RelativeCoordinatePose2d robotPoseRelativeToTag = new RelativeCoordinatePose2d(new Pose2d(
-      -aprilTagRelativePose.pose.getX(), 
-      -aprilTagRelativePose.pose.getY(), 
+      -aprilTagRelativePose.pose.getX(),
+      -aprilTagRelativePose.pose.getY(),
       aprilTagRelativePose.pose.getRotation().rotateBy(new Rotation2d(Math.PI))
     ));
 

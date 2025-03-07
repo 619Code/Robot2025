@@ -25,7 +25,7 @@ public class IntakeCoralCommand extends Command {
   @Override
   public void initialize() {
     manipulator.runOuttakeIn();
-    passthrough.RunPassthrough();
+//    passthrough.RunPassthrough();
   }
 
   @Override
@@ -35,7 +35,7 @@ public class IntakeCoralCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     manipulator.stopOuttake();
-    passthrough.HaltPassthrough();
+ //   passthrough.HaltPassthrough();
   }
 
   @Override

@@ -259,11 +259,14 @@ public final class Constants {
 
 
     public enum ElevatorHeight{
+      //  THESE ARE ALL STILL ARBITRARY
         PASSTHROUGH(minHeightMeters),
-        L1(minHeightMeters + 0.4),
-        L2(minHeightMeters + 0.6),
-        L3(minHeightMeters + 0.8),
-        L4(minHeightMeters + 1.0);
+        FUNNEL(minHeightMeters + Units.inchesToMeters(1)),
+
+        L1(minHeightMeters + Units.inchesToMeters(2)),
+        L2(minHeightMeters + Units.inchesToMeters(3)),
+        L3(minHeightMeters + Units.inchesToMeters(3 + 16)),
+        L4(minHeightMeters + Units.inchesToMeters(3 + 16 + 28 + 4));
 
         public final double heightMeters;
         ElevatorHeight(double _heightMeters){
@@ -347,7 +350,7 @@ public final class Constants {
 
     // public static final double turnEncoderPositionFactor = 1;
     // public static final double turnEncoderVelocityFactor = 1;
-    public static final int kIntakeSensorPort = 0;
+    public static final int kIntakeSensorPort = 9;
 
     public static final double outtakeVoltage = 4;
     public static final double intakeVoltage = -2;
@@ -384,7 +387,8 @@ public final class Constants {
 
       public static enum WristAngleRad {
         PASSTHROUGH(Units.degreesToRadians(freeHangAngle)),
-        L1(Units.degreesToRadians(120)),
+        FUNNEL_ANGLE(Units.degreesToRadians(80)),
+        L1(3.728 + Units.degreesToRadians(5)),
         L2L3(Units.degreesToRadians(180)),
         L4(Units.degreesToRadians(252));
 

@@ -27,7 +27,6 @@ import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.IntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
-import frc.robot.commands.ServoGoToAngleCommand;
 import frc.robot.commands.AutoCommands.LedAnimationCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorGoToPositionPositionCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorHoldCurrentPositionCommand;
@@ -70,11 +69,11 @@ public class RobotContainer {
 
 
     private final boolean driveEnabled =            true;
-    private final boolean wristEnabled =            false;
-    private final boolean manipulatorEnabled =      false;
+    private final boolean wristEnabled =            true;
+    private final boolean manipulatorEnabled =      true;
     private final boolean intakeEnabled =           false;
     private final boolean passthroughEnabled =      false;
-    private final boolean elevatorEnabled =         false;
+    private final boolean elevatorEnabled =         true;
     private final boolean servoEnabled =            false;
     private final boolean ledEnabled =              false;
     private final boolean climbEnabled =            false;
@@ -148,6 +147,8 @@ public class RobotContainer {
             configureDriveBindings();
         }
 
+
+
         if(intakeEnabled){
             configureIntakeBindings();
         }
@@ -175,6 +176,18 @@ public class RobotContainer {
         if(climbEnabled){
             configureClimbBindings();
         }
+
+
+
+
+        // Trigger bPressedTrigger = operatorController.b();
+        // bPressedTrigger.onTrue(
+        //     Commands.sequence(
+        //         new WristGoToPositionCommand(wrist, WristAngleRad.PASSTHROUGH),
+        //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.FUNNEL),
+        //         new WristGoToPositionCommand(wrist, WristAngleRad.FUNNEL_ANGLE)
+        //     )
+        // );
     }
 
     public Command getAutonomousCommand() {
@@ -381,25 +394,23 @@ public class RobotContainer {
     //   Then hit
     private void configureWristBindings() {
 
-        // Trigger aPressedTrigger = operatorController.a();
-        // aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.PASSTHROUGH));
+        Trigger aPressedTrigger = operatorController.a();
+        aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.PASSTHROUGH));
 
-        // Trigger bPressedTrigger = operatorController.b();
-        // bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
+        Trigger bPressedTrigger = operatorController.b();
+        bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
 
         // Trigger xPressedTrigger = operatorController.x();
         // xPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3));
 
-        // Trigger yPressedTrigger = operatorController.y();
-        // yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4));
+        Trigger yPressedTrigger = operatorController.y();
+        yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4));
     }
 
     private void configureManipulatorBindings(){
         Trigger intakeCoralTrigger = operatorController.leftBumper();
-        if (elevator.getPositionMeters() == Constants.ElevatorConstants.ElevatorHeight.PASSTHROUGH.heightMeters
-        && wrist.getPosition() == Constants.WristConstants.WristAngleRad.PASSTHROUGH.positionRad) {
         intakeCoralTrigger.whileTrue(new IntakeCoralCommand(manipulator, passthrough));
-        }
+
 
         Trigger outtakeCoralTrigger = operatorController.rightBumper();
         outtakeCoralTrigger.whileTrue(new OuttakeCoralCommand(manipulator));
@@ -413,31 +424,41 @@ public class RobotContainer {
 
     private void configureElevatorBindings(){
 
-        Trigger elevatorToPassthroughHeight = operatorController.povDown();
-        elevatorToPassthroughHeight.whileTrue(
+        Trigger elevatorDown = operatorController.x();
+        elevatorDown.whileTrue(
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.PASSTHROUGH)
         );
 
-        Trigger elevatorToL1Height = operatorController.povRight();
-        elevatorToL1Height.whileTrue(
+        Trigger dPadDown = operatorController.povDown();
+        dPadDown.whileTrue(
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L1)
         );
 
-        Trigger elevatorToL2Height = operatorController.povLeft();
-        elevatorToL2Height.whileTrue(
+        Trigger dPadRight = operatorController.povRight();
+        dPadRight.whileTrue(
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2)
+        );
+
+        Trigger dPadLeft = operatorController.povLeft();
+        dPadLeft.whileTrue(
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L3)
+        );
+
+        Trigger dPadUp = operatorController.povUp();
+        dPadUp.whileTrue(
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4)
         );
     }
 
     private void configureServoBindings(){
 
-        Trigger servoTrigger = operatorController.rightTrigger();
-        servoTrigger.whileTrue(
-            new ServoGoToAngleCommand(servo, 120));
+        // Trigger servoTrigger = operatorController.rightTrigger();
+        // servoTrigger.whileTrue(
+        //     new ServoGoToAngleCommand(servo, 120));
 
-        Trigger servoTrigger2 = operatorController.leftTrigger();
-        servoTrigger2.whileTrue(
-            new ServoGoToAngleCommand(servo, 0));
+        // Trigger servoTrigger2 = operatorController.leftTrigger();
+        // servoTrigger2.whileTrue(
+        //     new ServoGoToAngleCommand(servo, 0));
     }
 
     private void configureLedBindings(){
