@@ -12,6 +12,7 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.util.FieldCoordinatePose2d;
+import frc.robot.util.Help;
 import frc.robot.util.LimelightHelpers;
 import frc.robot.util.RelativeCoordinatePose2d;
 
@@ -22,7 +23,7 @@ public class AutoFactoryGen2 {
 
         double[] limelightData = LimelightHelpers.getTargetPose_RobotSpace("limelight");
 
-        RelativeCoordinatePose2d aprilTagRelativePose = new RelativeCoordinatePose2d(limelightCoordsToWPICoordsPose2d(limelightData));
+        RelativeCoordinatePose2d aprilTagRelativePose = new RelativeCoordinatePose2d(Help.limelightCoordsToWPICoordsPose2d(limelightData));
         FieldCoordinatePose2d drivetrainPos = new FieldCoordinatePose2d(driveSubsystem.getPose());
         drivetrainPos.pose = drivetrainPos.pose.plus(new Transform2d(0, 0, new Rotation2d(Math.PI)));
 
@@ -54,10 +55,5 @@ public class AutoFactoryGen2 {
 
         return littleCommand;
 
-    }
-
-
-    private static Pose2d limelightCoordsToWPICoordsPose2d(double[] limelightData) {
-        return new Pose2d(limelightData[2], -limelightData[0], new Rotation2d(Math.toRadians(-limelightData[4] + 180)));
     }
 }
