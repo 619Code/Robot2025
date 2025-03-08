@@ -23,7 +23,7 @@ public class FunnelIntakeCommands {
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
             Commands.sequence(
                 whichFunnelIntakeCommand(elevator, wrist, manipulator, false)
-            ),
+            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf),
             () -> {return elevator.getCurrentGoal() == ElevatorHeight.HOME;}
         );
 

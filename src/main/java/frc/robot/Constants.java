@@ -118,7 +118,8 @@ public final class Constants {
         SensorDirectionValue.CounterClockwise_Positive;
 
     public static final int backRightDriveAbsoluteEncoderPort = 30;
-    public static final double backRightDriveAbsoluteEncoderOffsetRots = -0.13134;
+    public static final double backRightDriveAbsoluteEncoderOffsetRots = 0.8620972027917303; //  Make sure the unit on this is correct
+
     public static final SensorDirectionValue backRightEncoderPositiveDirection =
         SensorDirectionValue.CounterClockwise_Positive;
 
@@ -205,8 +206,8 @@ public final class Constants {
     public static final double wristMotorReduction = 1.0;
 
 
-    public static final double maxVelocityMetersPerSec = 0.5; // Arbitrary
-    public static final double maxAccelerationMetersPerSecSqrd = 1;
+    public static final double maxVelocityMetersPerSec = 1.0; // Arbitrary
+    public static final double maxAccelerationMetersPerSecSqrd = 1.5;
 
 
 
@@ -249,12 +250,12 @@ public final class Constants {
 
     public static final double encoderZeroOffsetRotations = 0;
 
-    public static final double kpElevator = 0.2;
+    public static final double kpElevator = 0.4;
     public static final double kiElevator = 0.0;
     public static final double kdElevator = 0.0;
 
     public static final double ksFeedforward = 0.3;
-    public static final double kvFeedforward = 4.8;
+    public static final double kvFeedforward = 5.0;
 
     public static final double feedforwardGravity = 0.45;
 
@@ -264,12 +265,12 @@ public final class Constants {
     public enum ElevatorHeight{
       //  THESE ARE ALL STILL ARBITRARY
         HOME(minHeightMeters),
-        FUNNEL(minHeightMeters + Units.inchesToMeters(1)),
+        FUNNEL(minHeightMeters + Units.inchesToMeters(7.2)), //  Used to be 8 inches
 
         L1(minHeightMeters + Units.inchesToMeters(2)),
         L2(minHeightMeters + Units.inchesToMeters(3)),
         L3(minHeightMeters + Units.inchesToMeters(3 + 16)),
-        L4(minHeightMeters + Units.inchesToMeters(3 + 16 + 28 + 4));
+        L4(minHeightMeters + Units.inchesToMeters(3 + 16 + 28 + 7));
 
         public final double heightMeters;
         ElevatorHeight(double _heightMeters){
@@ -397,10 +398,10 @@ public final class Constants {
 
       public static enum WristAngleRad {
         FREEHANG(Units.degreesToRadians(freeHangAngle)),
-        FUNNEL_ANGLE(Units.degreesToRadians(80)),
+        FUNNEL_ANGLE(Units.degreesToRadians(69)),
         L1(Units.degreesToRadians(252)),  //  Needs to be changed
         L2L3(Units.degreesToRadians(252)),
-        L4(Units.degreesToRadians(180));
+        L4(Units.degreesToRadians(200));
 
         public final double positionRad;
         WristAngleRad(double _positionRad){

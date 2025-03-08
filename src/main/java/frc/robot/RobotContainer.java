@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -243,24 +244,24 @@ public class RobotContainer {
 
         Command command;
 
-        boolean elevatorIsAlreadyAtTheBottomAndWeAreTryingToMoveThere =
-            height == ElevatorHeight.HOME &&
-            elevator.getCurrentGoal() == ElevatorHeight.HOME;
+        boolean elevatorIsAlreadyAtTheBottomAndWeAreTryingToMoveThere = false;
+            // height == ElevatorHeight.HOME &&
+            // elevator.getCurrentGoal() == ElevatorHeight.HOME;
 
 
         if(elevatorIsAlreadyAtTheBottomAndWeAreTryingToMoveThere){
             //  Should end immediately
-            return Commands.sequence(
+            command = Commands.sequence(
                 new ElevatorGoToPositionPositionCommand(elevator, height),
                 new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height))
-            );
+            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
 
         }else{
             command = Commands.sequence(
                 new WristGoToPositionCommand(wrist, WristAngleRad.L2L3),
                 new ElevatorGoToPositionPositionCommand(elevator, height),
                 new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height))
-            );
+            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
         }
 
 
