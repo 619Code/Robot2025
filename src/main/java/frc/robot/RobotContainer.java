@@ -67,12 +67,12 @@ public class RobotContainer {
     private IProfiledReset[] subsystems;
 
 
-    private final boolean driveEnabled =            true;
-    private final boolean wristEnabled =            true;
-    private final boolean manipulatorEnabled =      true;
+    //private final boolean driveEnabled =            true;
+    //private final boolean wristEnabled =            true;
+    //private final boolean manipulatorEnabled =      true;
     // private final boolean intakeEnabled =           false;
     // private final boolean passthroughEnabled =      false;
-    private final boolean elevatorEnabled =         true;
+   // private final boolean elevatorEnabled =         true;
     // private final boolean servoEnabled =            false;
     // private final boolean ledEnabled =              false;
    // private final boolean climbEnabled =            false;
@@ -89,12 +89,12 @@ public class RobotContainer {
 
     public RobotContainer() {
 
-        drive = driveEnabled                ? instantiateRealDrive()   : null;
+        drive = instantiateRealDrive();
         // intake = intakeEnabled              ? new Intake()  : null;
-        wrist = wristEnabled                ? new Wrist()   : null;
-        manipulator = manipulatorEnabled    ? new Manipulator() : null;
+        wrist = new Wrist();
+        manipulator = new Manipulator();
         // passthrough = passthroughEnabled    ? new Passthrough() : null;
-        elevator = elevatorEnabled          ? new Elevator() : null;
+        elevator = new Elevator();
         // servo = servoEnabled                ? new ServoSubsystem(0, 1) : null;
         // leds = ledEnabled                   ? new ledSubsystem() : null;
         // climb = climbEnabled                ? new Climb() : null;
@@ -107,12 +107,10 @@ public class RobotContainer {
         constructorThings();
 
         //  Should the constructor and auto chooser/builder stuff be called in this order?
-        if(driveEnabled){
-            driveConstructorStuff();
-            autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
-        }else{
-            autoChooser = null;
-        }
+
+        driveConstructorStuff();
+        autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
+
 
 
         if(competitionBindings){
@@ -128,17 +126,12 @@ public class RobotContainer {
         //     intakeConstructorStuff();
         // }
 
-        if(wristEnabled){
-            wristConstructorStuff();
-        }
+        wristConstructorStuff();
 
-        if(manipulatorEnabled){
-            manipulatorConstructorStuff();
-        }
+        manipulatorConstructorStuff();
 
-        if(elevatorEnabled){
-            elevatorConstructorStuff();
-        }
+        elevatorConstructorStuff();
+
 
         // if(ledEnabled){
         //     ledConstructorStuff();
@@ -284,27 +277,19 @@ public class RobotContainer {
 
 
     private void testingButtonBindings() {
-        if(driveEnabled){
-            configureDriveBindings();
-        }
 
+        configureDriveBindings();
 
 
         // if(intakeEnabled){
         //     configureIntakeBindings();
         // }
 
-        if(wristEnabled){
-            configureWristBindings();
-        }
+        configureWristBindings();
 
-        if(manipulatorEnabled){
-            configureManipulatorBindings();
-        }
+        configureManipulatorBindings();
 
-        if(elevatorEnabled){
-            configureElevatorBindings();
-        }
+        configureElevatorBindings();
 
         // if(servoEnabled){
         //     configureServoBindings();
@@ -332,11 +317,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        if(driveEnabled){
-            return autoChooser.get();
-        }else{
-            return null;
-        }
+        return autoChooser.get();
     }
 
 
@@ -462,39 +443,14 @@ public class RobotContainer {
 
     private void wristConstructorStuff() {
         wrist.setDefaultCommand(new WristHoldCurrentPositionCommand(wrist));
-        NamedCommands.registerCommand("SetWristAnglePassthrough",
-            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.FREEHANG));
-        NamedCommands.registerCommand("SetWristAngleL1",
-            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
-        NamedCommands.registerCommand("SetWristAngleL2L3",
-            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3));
-        NamedCommands.registerCommand("SetWristAngleL4",
-            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4));
     }
 
     private void manipulatorConstructorStuff(){
-        NamedCommands.registerCommand("IntakeCoral",
-            new ManipulatorIntakeCoralCommand(manipulator));
-        NamedCommands.registerCommand("OuttakeCoral",
-            new OuttakeCoralCommand(manipulator));
-        NamedCommands.registerCommand("DislodgeAlageDownward",
-            new DislodgeAlgaeCommand(manipulator, false));
-        NamedCommands.registerCommand("DislodgeAlageUpward",
-            new DislodgeAlgaeCommand(manipulator, true));
+        // ...
     }
 
     private void elevatorConstructorStuff(){
         elevator.setDefaultCommand(new ElevatorHoldCurrentPositionCommand(elevator));
-        NamedCommands.registerCommand("ElevatorToPassthrough",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.HOME));
-        NamedCommands.registerCommand("ElevatorToL1",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L1));
-        NamedCommands.registerCommand("ElevatorToL2",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2));
-        NamedCommands.registerCommand("ElevatorToL3",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L3));
-        NamedCommands.registerCommand("ElevatorToL4",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4));
     }
 
     // private void ledConstructorStuff(){
