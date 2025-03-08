@@ -140,6 +140,11 @@ public class Robot extends LoggedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+
+    for(int i = 0; i < 100; i++){
+      System.out.println("TELEOP INIT (NOTICE: STILL NEED TO TEST THIS TO MAKE SURE IT ACTUALLY SOLVES OUR PROBLEM");
+    }
+    robotContainer.ResetProfiledSubsystemsOnEnable();
   }
 
   /** This function is called periodically during operator control. */

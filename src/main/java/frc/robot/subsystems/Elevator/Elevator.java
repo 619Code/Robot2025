@@ -8,11 +8,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.Robot;
+import frc.robot.subsystems.IProfiledReset;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.util.Help;
 import frc.robot.util.NTProfiledPIDF;
 
-public class Elevator extends SubsystemBase {
+public class Elevator extends SubsystemBase implements IProfiledReset {
 
     private final ElevatorIO elevatorIO;
 
@@ -43,7 +44,8 @@ public class Elevator extends SubsystemBase {
             Constants.ElevatorConstants.kdElevator,
             Constants.ElevatorConstants.ksFeedforward,
             Constants.ElevatorConstants.kvFeedforward,
-            constraints);
+            constraints
+        );
 
 
         //  This needs to be called before the line below it
@@ -63,7 +65,7 @@ public class Elevator extends SubsystemBase {
             Logger.processInputs("RealOutputs/Elevator", inputs);
         }
 
-        double voltage = elevatorController.calculate(inputs.elevatorHeightMeters);
+        double voltage = elevatorController.calculate(getPositionMeters());
 
         inputs.elevatorSetpointPositionMeters = elevatorController.getSetpoint().position;
 
@@ -86,10 +88,21 @@ public class Elevator extends SubsystemBase {
 
     public void setTargetPosition(ElevatorHeight _height){
         inputs.elevatorGoalMeters = _height.heightMeters;
+        inputs.elevatorGoalEnum = _height;
         elevatorController.setGoal(new State(_height.heightMeters, 0));
+    }
+
+    public ElevatorHeight getCurrentGoal(){
+        return inputs.elevatorGoalEnum;
     }
 
     public boolean hasReachedGoal(){
         return elevatorController.atGoal();
+    }
+
+
+    @Override
+    public void ProfileReset() {
+        elevatorController.setGoal(new State(getPositionMeters(), 0));
     }
 }

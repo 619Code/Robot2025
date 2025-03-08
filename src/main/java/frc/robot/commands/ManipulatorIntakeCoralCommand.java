@@ -7,17 +7,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Manipulator.Manipulator;
-import frc.robot.subsystems.Passthrough.Passthrough;
 
-public class IntakeCoralCommand extends Command {
+public class ManipulatorIntakeCoralCommand extends Command {
 
   public Manipulator manipulator;
-  public Passthrough passthrough;
-
-  public IntakeCoralCommand(Manipulator _manipulator, Passthrough _passthrough) {
+  public ManipulatorIntakeCoralCommand(Manipulator _manipulator) {
 
     manipulator = _manipulator;
-    passthrough = _passthrough;
 
     addRequirements(manipulator);
   }
@@ -25,7 +21,6 @@ public class IntakeCoralCommand extends Command {
   @Override
   public void initialize() {
     manipulator.runOuttakeIn();
-//    passthrough.RunPassthrough();
   }
 
   @Override
@@ -35,7 +30,6 @@ public class IntakeCoralCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     manipulator.stopOuttake();
- //   passthrough.HaltPassthrough();
   }
 
   @Override

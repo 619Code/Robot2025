@@ -260,7 +260,7 @@ public final class Constants {
 
     public enum ElevatorHeight{
       //  THESE ARE ALL STILL ARBITRARY
-        PASSTHROUGH(minHeightMeters),
+        HOME(minHeightMeters),
         FUNNEL(minHeightMeters + Units.inchesToMeters(1)),
 
         L1(minHeightMeters + Units.inchesToMeters(2)),
@@ -356,6 +356,13 @@ public final class Constants {
     public static final double intakeVoltage = -2;
     public static final double dislodgerVoltage = 3;
 
+
+    public static final DCMotor outtakeMotorGearbox = DCMotor.getNeoVortex(1);
+    public static final double outtakeMotorReduction = 1; //  This number is arbitrary as freak
+
+    public static final DCMotor dislodgeMotorGearbox = DCMotor.getNeoVortex(1);
+    public static final double dislodgeMotorReduction = 1; //  This number is arbitrary as freak
+
   } //  End manipulator
 
   public static final class LEDConstants {
@@ -386,11 +393,11 @@ public final class Constants {
       public static double freeHangAngle = 90;
 
       public static enum WristAngleRad {
-        PASSTHROUGH(Units.degreesToRadians(freeHangAngle)),
+        FREEHANG(Units.degreesToRadians(freeHangAngle)),
         FUNNEL_ANGLE(Units.degreesToRadians(80)),
-        L1(3.728 + Units.degreesToRadians(5)),
-        L2L3(Units.degreesToRadians(180)),
-        L4(Units.degreesToRadians(252));
+        L1(Units.degreesToRadians(252)),  //  Needs to be changed
+        L2L3(Units.degreesToRadians(252)),
+        L4(Units.degreesToRadians(180));
 
         public final double positionRad;
         WristAngleRad(double _positionRad){

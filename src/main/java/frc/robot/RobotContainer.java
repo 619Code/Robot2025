@@ -19,33 +19,30 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
+import frc.robot.Constants.WristConstants.WristAngleRad;
 import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.IntakeCoralCommand;
+import frc.robot.commands.ManipulatorIntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
-import frc.robot.commands.AutoCommands.LedAnimationCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorGoToPositionPositionCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorHoldCurrentPositionCommand;
 import frc.robot.commands.WristCommands.WristGoToPositionCommand;
 import frc.robot.commands.WristCommands.WristHoldCurrentPositionCommand;
-import frc.robot.subsystems.Climb.Climb;
+import frc.robot.subsystems.IProfiledReset;
 import frc.robot.subsystems.Elevator.Elevator;
-import frc.robot.subsystems.FunnelCollapser.ServoSubsystem;
-import frc.robot.subsystems.Intake.Intake;
-import frc.robot.subsystems.Leds.ledSubsystem;
 import frc.robot.subsystems.Manipulator.Manipulator;
-import frc.robot.subsystems.Passthrough.Passthrough;
 import frc.robot.subsystems.WristStuff.Wrist;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.Gyro.GyroIO;
 import frc.robot.subsystems.drive.Gyro.GyroIONavX;
 import frc.robot.subsystems.drive.Module.ModuleIOSim;
 import frc.robot.subsystems.drive.Module.ModuleIOSpark;
-
+import frc.robot.util.FunnelIntakeCommands;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -58,25 +55,29 @@ public class RobotContainer {
 
     // Subsystems
     private final Drive drive;
-    private final Intake intake;
+//    private final Intake intake;
     private final Wrist wrist;
     private final Manipulator manipulator;
-    private final Passthrough passthrough;
+//    private final Passthrough passthrough;
     private final Elevator elevator;
-    private final ServoSubsystem servo;
-    private final ledSubsystem leds;
-    private final Climb climb;
+ //   private final ServoSubsystem servo;
+ //   private final ledSubsystem leds;
+ //   private final Climb climb;
+
+    private IProfiledReset[] subsystems;
 
 
     private final boolean driveEnabled =            true;
     private final boolean wristEnabled =            true;
     private final boolean manipulatorEnabled =      true;
-    private final boolean intakeEnabled =           false;
-    private final boolean passthroughEnabled =      false;
+    // private final boolean intakeEnabled =           false;
+    // private final boolean passthroughEnabled =      false;
     private final boolean elevatorEnabled =         true;
-    private final boolean servoEnabled =            false;
-    private final boolean ledEnabled =              false;
-    private final boolean climbEnabled =            false;
+    // private final boolean servoEnabled =            false;
+    // private final boolean ledEnabled =              false;
+   // private final boolean climbEnabled =            false;
+
+    private final boolean competitionBindings = true;
 
     // Controller
     private final Joystick flightStick = new Joystick(0);
@@ -89,14 +90,18 @@ public class RobotContainer {
     public RobotContainer() {
 
         drive = driveEnabled                ? instantiateRealDrive()   : null;
-        intake = intakeEnabled              ? new Intake()  : null;
+        // intake = intakeEnabled              ? new Intake()  : null;
         wrist = wristEnabled                ? new Wrist()   : null;
         manipulator = manipulatorEnabled    ? new Manipulator() : null;
-        passthrough = passthroughEnabled    ? new Passthrough() : null;
+        // passthrough = passthroughEnabled    ? new Passthrough() : null;
         elevator = elevatorEnabled          ? new Elevator() : null;
-        servo = servoEnabled                ? new ServoSubsystem(0, 1) : null;
-        leds = ledEnabled                   ? new ledSubsystem() : null;
-        climb = climbEnabled                ? new Climb() : null;
+        // servo = servoEnabled                ? new ServoSubsystem(0, 1) : null;
+        // leds = ledEnabled                   ? new ledSubsystem() : null;
+        // climb = climbEnabled                ? new Climb() : null;
+
+
+        //  Should get called right after subsystems are instantiated
+        addAllProfiledSubsystemsToArray();
 
 
         constructorThings();
@@ -109,14 +114,19 @@ public class RobotContainer {
             autoChooser = null;
         }
 
-        configureButtonBindings();
+
+        if(competitionBindings){
+            competitionButtonBindings();
+        }else{
+            testingButtonBindings();
+        }
     }
 
 
     private void constructorThings(){
-        if(intakeEnabled){
-            intakeConstructorStuff();
-        }
+        // if(intakeEnabled){
+        //     intakeConstructorStuff();
+        // }
 
         if(wristEnabled){
             wristConstructorStuff();
@@ -130,28 +140,159 @@ public class RobotContainer {
             elevatorConstructorStuff();
         }
 
-        if(ledEnabled){
-            ledConstructorStuff();
+        // if(ledEnabled){
+        //     ledConstructorStuff();
+        // }
+
+        // if(climbEnabled){
+        //     climbConstructorStuff();
+        // }
+    }
+
+
+
+
+
+
+    private void competitionButtonBindings(){
+
+        configureDriveBindings();
+
+        //  ELEVATOR & WRIST
+
+        Trigger dPadDown = operatorController.povDown();
+        dPadDown.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.L1));
+
+        Trigger dPadRight = operatorController.povRight();
+        dPadRight.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.L2));
+
+        Trigger dPadLeft = operatorController.povLeft();
+        dPadLeft.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.L3));
+
+        Trigger dPadUp = operatorController.povUp();
+        dPadUp.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.L4));
+
+
+        //  OUTTAKING
+        // Trigger leftBumper = operatorController.leftBumper();
+        // leftBumper.whileTrue(new IntakeCoralCommand(manipulator, passthrough));
+
+        Trigger rightBumper = operatorController.rightBumper();
+        rightBumper.whileTrue(new OuttakeCoralCommand(manipulator));
+
+
+        //  FUNNEL INTAKING
+
+        Trigger bButton = operatorController.b();
+        bButton.onTrue(FunnelIntakeCommands.FunnelIntakeCommandCreator(elevator, wrist, manipulator));
+
+    }
+
+
+
+
+
+    private Command robotGoToHeightCommandCreator(ElevatorHeight height){
+
+        Command command;
+
+        boolean elevatorIsAlreadyAtTheBottomAndWeAreTryingToMoveThere =
+            height == ElevatorHeight.HOME &&
+            elevator.getCurrentGoal() == ElevatorHeight.HOME;
+
+
+        if(elevatorIsAlreadyAtTheBottomAndWeAreTryingToMoveThere){
+            //  Should end immediately
+            return new ElevatorGoToPositionPositionCommand(elevator, height)
+                .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+        }else{
+            command = Commands.sequence(
+                new WristGoToPositionCommand(wrist, WristAngleRad.L2L3),
+                new ElevatorGoToPositionPositionCommand(elevator, height)
+            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
         }
 
-        if(climbEnabled){
-            climbConstructorStuff();
+        command.andThen(new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height)))
+            .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+
+        return command;
+
+    }
+
+    private WristAngleRad getEndWristAngleForGivenElevatorHeight(ElevatorHeight height){
+        switch(height){
+            case HOME:
+                return WristAngleRad.FREEHANG;
+            case FUNNEL:
+                return WristAngleRad.FUNNEL_ANGLE;
+            case L1:
+                return WristAngleRad.L1;
+            case L2:
+                return WristAngleRad.L2L3;
+            case L3:
+                return WristAngleRad.L2L3;
+            case L4:
+                return WristAngleRad.L4;
+            default:
+                System.out.println("THIS SHOULD HAVE NEVER HAPPENED");
+                return WristAngleRad.L2L3;
         }
     }
 
 
 
 
-    private void configureButtonBindings() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void testingButtonBindings() {
         if(driveEnabled){
             configureDriveBindings();
         }
 
 
 
-        if(intakeEnabled){
-            configureIntakeBindings();
-        }
+        // if(intakeEnabled){
+        //     configureIntakeBindings();
+        // }
 
         if(wristEnabled){
             configureWristBindings();
@@ -165,17 +306,17 @@ public class RobotContainer {
             configureElevatorBindings();
         }
 
-        if(servoEnabled){
-            configureServoBindings();
-        }
+        // if(servoEnabled){
+        //     configureServoBindings();
+        // }
 
-        if(ledEnabled){
-            configureLedBindings();
-        }
+        // if(ledEnabled){
+        //     configureLedBindings();
+        // }
 
-        if(climbEnabled){
-            configureClimbBindings();
-        }
+        // if(climbEnabled){
+        //     configureClimbBindings();
+        // }
 
 
 
@@ -226,6 +367,21 @@ public class RobotContainer {
 
 
 
+
+    private void addAllProfiledSubsystemsToArray(){
+        subsystems = new IProfiledReset[]{
+            wrist,
+            manipulator,
+            elevator
+        };
+    }
+
+    //  Should get called in teleopInit, and maybe autonomousInit
+    public void ResetProfiledSubsystemsOnEnable(){
+        for (IProfiledReset sub : subsystems) {
+            sub.ProfileReset();
+        }
+    }
 
 
   // ============= Instantiation =============
@@ -296,18 +452,18 @@ public class RobotContainer {
 
     }
 
-    private void intakeConstructorStuff() {
-        // ...
-    }
+    // private void intakeConstructorStuff() {
+    //     // ...
+    // }
 
-    private void climbConstructorStuff(){
-        // ...
-    }
+    // private void climbConstructorStuff(){
+    //     // ...
+    // }
 
     private void wristConstructorStuff() {
         wrist.setDefaultCommand(new WristHoldCurrentPositionCommand(wrist));
         NamedCommands.registerCommand("SetWristAnglePassthrough",
-            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.PASSTHROUGH));
+            new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.FREEHANG));
         NamedCommands.registerCommand("SetWristAngleL1",
             new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
         NamedCommands.registerCommand("SetWristAngleL2L3",
@@ -318,7 +474,7 @@ public class RobotContainer {
 
     private void manipulatorConstructorStuff(){
         NamedCommands.registerCommand("IntakeCoral",
-            new IntakeCoralCommand(manipulator, passthrough));
+            new ManipulatorIntakeCoralCommand(manipulator));
         NamedCommands.registerCommand("OuttakeCoral",
             new OuttakeCoralCommand(manipulator));
         NamedCommands.registerCommand("DislodgeAlageDownward",
@@ -330,7 +486,7 @@ public class RobotContainer {
     private void elevatorConstructorStuff(){
         elevator.setDefaultCommand(new ElevatorHoldCurrentPositionCommand(elevator));
         NamedCommands.registerCommand("ElevatorToPassthrough",
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.PASSTHROUGH));
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.HOME));
         NamedCommands.registerCommand("ElevatorToL1",
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L1));
         NamedCommands.registerCommand("ElevatorToL2",
@@ -341,9 +497,9 @@ public class RobotContainer {
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4));
     }
 
-    private void ledConstructorStuff(){
-        leds.setColor(0, 0, 255);
-    }
+    // private void ledConstructorStuff(){
+    //     leds.setColor(0, 0, 255);
+    // }
 
 
 
@@ -371,11 +527,11 @@ public class RobotContainer {
                 .ignoringDisable(true));
     }
 
-    private void configureIntakeBindings() {
-        Trigger mainTrigger = new JoystickButton(flightStick, 1);
-        mainTrigger.whileTrue(Commands.runOnce(() -> {intake.goToExtendedPosition();}, intake));
-        mainTrigger.whileFalse(Commands.runOnce(() -> {intake.goToRetractedPosition();}, intake));
-    }
+    // private void configureIntakeBindings() {
+    //     Trigger mainTrigger = new JoystickButton(flightStick, 1);
+    //     mainTrigger.whileTrue(Commands.runOnce(() -> {intake.goToExtendedPosition();}, intake));
+    //     mainTrigger.whileFalse(Commands.runOnce(() -> {intake.goToRetractedPosition();}, intake));
+    // }
 
 
     public enum INTAKE_POSITION{
@@ -395,7 +551,7 @@ public class RobotContainer {
     private void configureWristBindings() {
 
         Trigger aPressedTrigger = operatorController.a();
-        aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.PASSTHROUGH));
+        aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.FREEHANG));
 
         Trigger bPressedTrigger = operatorController.b();
         bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
@@ -409,7 +565,7 @@ public class RobotContainer {
 
     private void configureManipulatorBindings(){
         Trigger intakeCoralTrigger = operatorController.leftBumper();
-        intakeCoralTrigger.whileTrue(new IntakeCoralCommand(manipulator, passthrough));
+        intakeCoralTrigger.whileTrue(new ManipulatorIntakeCoralCommand(manipulator));
 
 
         Trigger outtakeCoralTrigger = operatorController.rightBumper();
@@ -426,7 +582,7 @@ public class RobotContainer {
 
         Trigger elevatorDown = operatorController.x();
         elevatorDown.whileTrue(
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.PASSTHROUGH)
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.HOME)
         );
 
         Trigger dPadDown = operatorController.povDown();
@@ -450,27 +606,27 @@ public class RobotContainer {
         );
     }
 
-    private void configureServoBindings(){
+    // private void configureServoBindings(){
 
-        // Trigger servoTrigger = operatorController.rightTrigger();
-        // servoTrigger.whileTrue(
-        //     new ServoGoToAngleCommand(servo, 120));
+    //     // Trigger servoTrigger = operatorController.rightTrigger();
+    //     // servoTrigger.whileTrue(
+    //     //     new ServoGoToAngleCommand(servo, 120));
 
-        // Trigger servoTrigger2 = operatorController.leftTrigger();
-        // servoTrigger2.whileTrue(
-        //     new ServoGoToAngleCommand(servo, 0));
-    }
+    //     // Trigger servoTrigger2 = operatorController.leftTrigger();
+    //     // servoTrigger2.whileTrue(
+    //     //     new ServoGoToAngleCommand(servo, 0));
+    // }
 
-    private void configureLedBindings(){
-        LedAnimationCommand ledCommand = new LedAnimationCommand(leds);
-        ledCommand.schedule();
-    }
+    // private void configureLedBindings(){
+    //     LedAnimationCommand ledCommand = new LedAnimationCommand(leds);
+    //     ledCommand.schedule();
+    // }
 
-    private void configureClimbBindings(){
-        // Trigger yPressedTrigger = operatorController.y();
-        // yPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.OUT));
+    // private void configureClimbBindings(){
+    //     // Trigger yPressedTrigger = operatorController.y();
+    //     // yPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.OUT));
 
-        // Trigger xPressedTrigger = operatorController.x();
-        // xPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.IN));
-    }
+    //     // Trigger xPressedTrigger = operatorController.x();
+    //     // xPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.IN));
+    // }
 }

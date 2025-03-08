@@ -8,10 +8,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.Robot;
+import frc.robot.subsystems.IProfiledReset;
 import frc.robot.util.Help;
 import frc.robot.util.NTProfiledPIDF;
 
-public class Climb extends SubsystemBase{
+public class Climb extends SubsystemBase implements IProfiledReset{
 
     private ClimbIO climbIO;
 
@@ -45,7 +46,7 @@ public class Climb extends SubsystemBase{
         //  Calling this here so that we have a value for the initial setGoal
         climbIO.updateInputs(inputs);
             //  Possibly need to change this later. Don't know if the climb will always start where we want it.
-        climbPID.setGoal(new State(inputs.climbPosition, 0));
+        climbPID.setGoal(new State(getPosition(), 0));
 
     }
 
@@ -59,11 +60,15 @@ public class Climb extends SubsystemBase{
             Logger.processInputs("RealOutputs/Climb", inputs);
         }
 
-        double voltage = climbPID.calculate(inputs.climbPosition);
+        double voltage = climbPID.calculate(getPosition());
         voltage = Help.clamp(voltage, -Constants.ClimbConstants.maxVoltage, Constants.ClimbConstants.maxVoltage);
 
         climbIO.setVoltage(voltage);
 
+    }
+
+    private double getPosition(){
+        return inputs.climbPosition;
     }
 
     public void goToPosition(double position){
@@ -78,4 +83,8 @@ public class Climb extends SubsystemBase{
         goToPosition(Constants.ClimbConstants.climbInPosition);
     }
 
+    @Override
+    public void ProfileReset() {
+        climbPID.setGoal(new State(getPosition(), 0));
+    }
 }

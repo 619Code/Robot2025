@@ -9,10 +9,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.Robot;
+import frc.robot.subsystems.IProfiledReset;
 import frc.robot.util.Help;
 import frc.robot.util.NTProfiledPIDF;
 
-public class Wrist extends SubsystemBase {
+public class Wrist extends SubsystemBase implements IProfiledReset {
 
     private WristIO wristIO;
 
@@ -54,7 +55,7 @@ public class Wrist extends SubsystemBase {
 
         wristIO.updateInputs(inputs);
 
-        setTargetAngle(inputs.wristPosition);
+        setTargetAngle(getPosition());
 
     }
 
@@ -71,7 +72,7 @@ public class Wrist extends SubsystemBase {
 
         double voltage = controller.calculate(getPosition());
 
-        inputs.wristSetpointPosition = controller.getSetpoint().position;
+        inputs.wristSetpointPositionRad = controller.getSetpoint().position;
 
         double gravityFeedforward = 0.4 * Math.cos(controller.getSetpoint().position + Math.PI);
 
@@ -93,12 +94,17 @@ public class Wrist extends SubsystemBase {
     }
 
     public void setTargetAngle(double _angleRad){
-        inputs.wristGoalPosition = _angleRad;
+        inputs.wristGoalPositionRad = _angleRad;
         controller.setGoal(new State(_angleRad, 0));
     }
 
 
     public boolean hasReachedGoal(){
         return controller.atGoal();
+    }
+
+    @Override
+    public void ProfileReset() {
+        controller.setGoal(new State(getPosition(), 0));
     }
 }

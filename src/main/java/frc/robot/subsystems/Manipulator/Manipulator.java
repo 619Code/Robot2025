@@ -9,8 +9,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
 import frc.robot.Robot;
+import frc.robot.subsystems.IProfiledReset;
 
-public class Manipulator extends SubsystemBase {
+public class Manipulator extends SubsystemBase implements IProfiledReset {
 
   private final ManipulatorIO manipulatorIO;
 
@@ -31,10 +32,7 @@ public class Manipulator extends SubsystemBase {
       );
     }
     else{
-      for(int i = 0; i < 100; i++){
-        System.out.println("NEED TO CREATE THE MANIPULATOR SIMULATION");
-      }
-      manipulatorIO = null;
+      manipulatorIO = new ManipulatorIOSim();
     }
 
     TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(15, 30);
@@ -91,4 +89,10 @@ public class Manipulator extends SubsystemBase {
   public void stopDislodger(){
     currentDislodgerGoal = new State(0, 0);
   }
+
+
+  @Override
+    public void ProfileReset() {
+      // This one doesn't need to be reset. The only profiling is on the dislodger
+    }
 }

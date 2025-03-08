@@ -90,6 +90,7 @@ public class WristIOReal implements WristIO {
 
     @Override
     public void updateInputs(WristIOInputs inputs){
+        //  wristEncoder.getPosition() returns radians because we gave the flex a conversion factor
        ifOk(wristFlex, wristEncoder::getPosition, (value) -> inputs.wristPosition = value);
         ifOk(wristFlex, wristEncoder::getVelocity, (value) -> inputs.wristVelocity = value);
     }
