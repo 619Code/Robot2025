@@ -24,10 +24,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
+import frc.robot.Constants.Mode;
 import frc.robot.Constants.WristConstants.WristAngleRad;
-import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.ManipulatorIntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorGoToPositionPositionCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorHoldCurrentPositionCommand;
@@ -77,8 +76,6 @@ public class RobotContainer {
     // private final boolean ledEnabled =              false;
    // private final boolean climbEnabled =            false;
 
-    private final boolean competitionBindings = true;
-
     // Controller
     private final Joystick flightStick = new Joystick(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
@@ -89,7 +86,11 @@ public class RobotContainer {
 
     public RobotContainer() {
 
-        drive = instantiateRealDrive();
+        if(Constants.currentMode == Mode.REPLAY){
+            drive = instantiateRealDrive();
+        }else {
+            drive = instantiateSimOrReplayedDrive();
+        }
         // intake = intakeEnabled              ? new Intake()  : null;
         wrist = new Wrist();
         manipulator = new Manipulator();
@@ -113,11 +114,8 @@ public class RobotContainer {
 
 
 
-        if(competitionBindings){
-            competitionButtonBindings();
-        }else{
-            testingButtonBindings();
-        }
+        competitionButtonBindings();
+
     }
 
 
@@ -140,6 +138,9 @@ public class RobotContainer {
         // if(climbEnabled){
         //     climbConstructorStuff();
         // }
+
+        registerNamedCommands();
+
     }
 
 
@@ -179,7 +180,58 @@ public class RobotContainer {
         Trigger bButton = operatorController.b();
         bButton.onTrue(FunnelIntakeCommands.FunnelIntakeCommandCreator(elevator, wrist, manipulator));
 
+
+        //  RETURN TO HOME
+
+        Trigger xButton = operatorController.x();
+        xButton.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.HOME));
+
     }
+
+
+    private void registerNamedCommands(){
+
+        NamedCommands.registerCommand(
+            "RobotToL1",
+            robotGoToHeightCommandCreator(ElevatorHeight.L1)
+        );
+
+        NamedCommands.registerCommand(
+            "RobotToL2",
+            robotGoToHeightCommandCreator(ElevatorHeight.L2)
+        );
+
+        NamedCommands.registerCommand(
+            "RobotToL3",
+            robotGoToHeightCommandCreator(ElevatorHeight.L3)
+        );
+
+        NamedCommands.registerCommand(
+            "RobotToL4",
+            robotGoToHeightCommandCreator(ElevatorHeight.L4)
+        );
+
+        NamedCommands.registerCommand(
+            "RobotOuttakeIndefinitely",
+            new OuttakeCoralCommand(manipulator)
+        );
+
+        NamedCommands.registerCommand(
+            "RobotToFunnelIntakeSequence",
+            FunnelIntakeCommands.FunnelIntakeCommandCreator(elevator, wrist, manipulator)
+        );
+
+        NamedCommands.registerCommand(
+            "WristToL2L3",
+            new WristGoToPositionCommand(wrist, WristAngleRad.L2L3)
+        );
+
+        NamedCommands.registerCommand(
+            "RobotToHome",
+            robotGoToHeightCommandCreator(ElevatorHeight.HOME)
+        );
+    }
+
 
 
 
@@ -276,45 +328,45 @@ public class RobotContainer {
 
 
 
-    private void testingButtonBindings() {
+    // private void testingButtonBindings() {
 
-        configureDriveBindings();
-
-
-        // if(intakeEnabled){
-        //     configureIntakeBindings();
-        // }
-
-        configureWristBindings();
-
-        configureManipulatorBindings();
-
-        configureElevatorBindings();
-
-        // if(servoEnabled){
-        //     configureServoBindings();
-        // }
-
-        // if(ledEnabled){
-        //     configureLedBindings();
-        // }
-
-        // if(climbEnabled){
-        //     configureClimbBindings();
-        // }
+    //     configureDriveBindings();
 
 
+    //     // if(intakeEnabled){
+    //     //     configureIntakeBindings();
+    //     // }
+
+    //     configureWristBindings();
+
+    //     configureManipulatorBindings();
+
+    //     configureElevatorBindings();
+
+    //     // if(servoEnabled){
+    //     //     configureServoBindings();
+    //     // }
+
+    //     // if(ledEnabled){
+    //     //     configureLedBindings();
+    //     // }
+
+    //     // if(climbEnabled){
+    //     //     configureClimbBindings();
+    //     // }
 
 
-        // Trigger bPressedTrigger = operatorController.b();
-        // bPressedTrigger.onTrue(
-        //     Commands.sequence(
-        //         new WristGoToPositionCommand(wrist, WristAngleRad.PASSTHROUGH),
-        //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.FUNNEL),
-        //         new WristGoToPositionCommand(wrist, WristAngleRad.FUNNEL_ANGLE)
-        //     )
-        // );
-    }
+
+
+    //     // Trigger bPressedTrigger = operatorController.b();
+    //     // bPressedTrigger.onTrue(
+    //     //     Commands.sequence(
+    //     //         new WristGoToPositionCommand(wrist, WristAngleRad.PASSTHROUGH),
+    //     //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.FUNNEL),
+    //     //         new WristGoToPositionCommand(wrist, WristAngleRad.FUNNEL_ANGLE)
+    //     //     )
+    //     // );
+    // }
 
     public Command getAutonomousCommand() {
         return autoChooser.get();
@@ -408,16 +460,7 @@ public class RobotContainer {
                 Constants.DriveConstants.backRightDriveAbsoluteEncoderOffsetRots,
                 Constants.DriveConstants.backRightEncoderPositiveDirection)); // BACK RIGHT
     }
-    private Drive instantiateSimDrive() {
-        return new Drive(
-            new GyroIO() {},
-            new ModuleIOSim(),
-            new ModuleIOSim(),
-            new ModuleIOSim(),
-            new ModuleIOSim()
-        );
-    }
-    private Drive instantiateDriveReplayed() {
+    private Drive instantiateSimOrReplayedDrive() {
         return new Drive(
             new GyroIO() {},
             new ModuleIOSim(),
@@ -456,7 +499,6 @@ public class RobotContainer {
     // private void ledConstructorStuff(){
     //     leds.setColor(0, 0, 255);
     // }
-
 
 
 
@@ -504,63 +546,63 @@ public class RobotContainer {
     //  Idea with wrist/elevator is that the operator will:
     //   Hold [left bumper] to enable input for carriage
     //   Then hit
-    private void configureWristBindings() {
+    // private void configureWristBindings() {
 
-        Trigger aPressedTrigger = operatorController.a();
-        aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.FREEHANG));
+    //     Trigger aPressedTrigger = operatorController.a();
+    //     aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.FREEHANG));
 
-        Trigger bPressedTrigger = operatorController.b();
-        bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
+    //     Trigger bPressedTrigger = operatorController.b();
+    //     bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
 
-        // Trigger xPressedTrigger = operatorController.x();
-        // xPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3));
+    //     // Trigger xPressedTrigger = operatorController.x();
+    //     // xPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3));
 
-        Trigger yPressedTrigger = operatorController.y();
-        yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4));
-    }
+    //     Trigger yPressedTrigger = operatorController.y();
+    //     yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4));
+    // }
 
-    private void configureManipulatorBindings(){
-        Trigger intakeCoralTrigger = operatorController.leftBumper();
-        intakeCoralTrigger.whileTrue(new ManipulatorIntakeCoralCommand(manipulator));
+    // private void configureManipulatorBindings(){
+    //     Trigger intakeCoralTrigger = operatorController.leftBumper();
+    //     intakeCoralTrigger.whileTrue(new ManipulatorIntakeCoralCommand(manipulator));
 
 
-        Trigger outtakeCoralTrigger = operatorController.rightBumper();
-        outtakeCoralTrigger.whileTrue(new OuttakeCoralCommand(manipulator));
+    //     Trigger outtakeCoralTrigger = operatorController.rightBumper();
+    //     outtakeCoralTrigger.whileTrue(new OuttakeCoralCommand(manipulator));
 
-        Trigger dislodgeDownwardTrigger = operatorController.rightStick();
-       dislodgeDownwardTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, false));
+    //     Trigger dislodgeDownwardTrigger = operatorController.rightStick();
+    //    dislodgeDownwardTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, false));
 
-       Trigger dislodgeUpwardTrigger = operatorController.leftStick();
-       dislodgeUpwardTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, true));
-    }
+    //    Trigger dislodgeUpwardTrigger = operatorController.leftStick();
+    //    dislodgeUpwardTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, true));
+    // }
 
-    private void configureElevatorBindings(){
+    // private void configureElevatorBindings(){
 
-        Trigger elevatorDown = operatorController.x();
-        elevatorDown.whileTrue(
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.HOME)
-        );
+    //     Trigger elevatorDown = operatorController.x();
+    //     elevatorDown.whileTrue(
+    //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.HOME)
+    //     );
 
-        Trigger dPadDown = operatorController.povDown();
-        dPadDown.whileTrue(
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L1)
-        );
+    //     Trigger dPadDown = operatorController.povDown();
+    //     dPadDown.whileTrue(
+    //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L1)
+    //     );
 
-        Trigger dPadRight = operatorController.povRight();
-        dPadRight.whileTrue(
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2)
-        );
+    //     Trigger dPadRight = operatorController.povRight();
+    //     dPadRight.whileTrue(
+    //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2)
+    //     );
 
-        Trigger dPadLeft = operatorController.povLeft();
-        dPadLeft.whileTrue(
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L3)
-        );
+    //     Trigger dPadLeft = operatorController.povLeft();
+    //     dPadLeft.whileTrue(
+    //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L3)
+    //     );
 
-        Trigger dPadUp = operatorController.povUp();
-        dPadUp.whileTrue(
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4)
-        );
-    }
+    //     Trigger dPadUp = operatorController.povUp();
+    //     dPadUp.whileTrue(
+    //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4)
+    //     );
+    // }
 
     // private void configureServoBindings(){
 
