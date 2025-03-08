@@ -29,6 +29,7 @@ import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.Constants.WristConstants.WristAngleRad;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.OuttakeCoralCommand;
+import frc.robot.commands.ElevatorCommands.ElevatorFineTuningCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorGoToPositionPositionCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorHoldCurrentPositionCommand;
 import frc.robot.commands.WristCommands.WristGoToPositionCommand;
@@ -188,6 +189,11 @@ public class RobotContainer {
 
         Trigger xButton = operatorController.x();
         xButton.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.HOME));
+
+        //  ELEVATOR OVERRIDE
+
+        Trigger leftStickDown = operatorController.leftStick();
+        leftStickDown.whileTrue(new ElevatorFineTuningCommand(elevator, () -> -operatorController.getRawAxis(1)));
 
     }
 
