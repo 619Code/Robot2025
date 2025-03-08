@@ -16,15 +16,15 @@ package frc.robot;
 //import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
-import frc.robot.Constants.Mode;
 import frc.robot.Constants.WristConstants.WristAngleRad;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.OuttakeCoralCommand;
@@ -86,11 +86,13 @@ public class RobotContainer {
 
     public RobotContainer() {
 
-        if(Constants.currentMode == Mode.REPLAY){
+        if(Robot.isReal()){
             drive = instantiateRealDrive();
-        }else {
+        }
+        else{
             drive = instantiateSimOrReplayedDrive();
         }
+
         // intake = intakeEnabled              ? new Intake()  : null;
         wrist = new Wrist();
         manipulator = new Manipulator();
@@ -248,17 +250,19 @@ public class RobotContainer {
 
         if(elevatorIsAlreadyAtTheBottomAndWeAreTryingToMoveThere){
             //  Should end immediately
-            return new ElevatorGoToPositionPositionCommand(elevator, height)
-                .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+            return Commands.sequence(
+                new ElevatorGoToPositionPositionCommand(elevator, height),
+                new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height))
+            );
+
         }else{
             command = Commands.sequence(
                 new WristGoToPositionCommand(wrist, WristAngleRad.L2L3),
-                new ElevatorGoToPositionPositionCommand(elevator, height)
-            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
+                new ElevatorGoToPositionPositionCommand(elevator, height),
+                new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height))
+            );
         }
 
-        command.andThen(new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height)))
-            .withInterruptBehavior(InterruptionBehavior.kCancelSelf);
 
         return command;
 
@@ -520,7 +524,16 @@ public class RobotContainer {
         Trigger gyroResetButton = new JoystickButton(flightStick, 2);
         gyroResetButton.onTrue(
             Commands.runOnce(
-                    () -> drive.setPose(new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    () -> {
+                        boolean isFlipped =
+                        DriverStation.getAlliance().isPresent()
+                            && DriverStation.getAlliance().get() == Alliance.Red;
+                        if(isFlipped){
+                            drive.setPose(new Pose2d(drive.getPose().getTranslation(), new Rotation2d(Math.PI)));
+                        }else{
+                            drive.setPose(new Pose2d(drive.getPose().getTranslation(), new Rotation2d()));
+                        }
+                    },
                     drive)
                 .ignoringDisable(true));
     }

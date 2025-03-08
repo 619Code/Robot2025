@@ -97,7 +97,9 @@ public class Elevator extends SubsystemBase implements IProfiledReset {
     }
 
     public boolean hasReachedGoal(){
-        return elevatorController.atGoal();
+     //   return elevatorController.atGoal();
+
+     return Math.abs(elevatorController.getGoal().position - getPositionMeters()) < 0.05;
     }
 
 

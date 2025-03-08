@@ -38,7 +38,7 @@ public class WristIOReal implements WristIO {
 
   //      config.externalEncoder.measurementPeriod(1);
 
-        config.idleMode(IdleMode.kCoast);
+        config.idleMode(IdleMode.kBrake);
 
 
         SoftLimitConfig softLimits = new SoftLimitConfig();

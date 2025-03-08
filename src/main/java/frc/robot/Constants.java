@@ -249,12 +249,12 @@ public final class Constants {
 
     public static final double encoderZeroOffsetRotations = 0;
 
-    public static final double kpElevator = 0.0;
+    public static final double kpElevator = 0.2;
     public static final double kiElevator = 0.0;
     public static final double kdElevator = 0.0;
 
     public static final double ksFeedforward = 0.3;
-    public static final double kvFeedforward = 4;
+    public static final double kvFeedforward = 4.8;
 
     public static final double feedforwardGravity = 0.45;
 
