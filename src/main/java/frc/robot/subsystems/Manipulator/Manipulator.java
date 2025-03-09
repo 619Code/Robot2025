@@ -4,7 +4,6 @@ package frc.robot.subsystems.Manipulator;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
@@ -19,10 +18,10 @@ public class Manipulator extends SubsystemBase implements IProfiledReset {
 
 
 
-  private final TrapezoidProfile dislodgerVoltageTrapezoidProfile;
+  // private final TrapezoidProfile dislodgerVoltageTrapezoidProfile;
 
-  private State currentDislodgerSetpoint;
-  private State currentDislodgerGoal;
+  // private State currentDislodgerSetpoint;
+  // private State currentDislodgerGoal;
 
   public Manipulator(){
     if(Robot.isReal()){
@@ -36,10 +35,10 @@ public class Manipulator extends SubsystemBase implements IProfiledReset {
     }
 
     TrapezoidProfile.Constraints constraints = new TrapezoidProfile.Constraints(15, 30);
-    dislodgerVoltageTrapezoidProfile = new TrapezoidProfile(constraints);
+    // dislodgerVoltageTrapezoidProfile = new TrapezoidProfile(constraints);
 
-    currentDislodgerSetpoint = new State(0, 0);
-    currentDislodgerGoal = new State(0, 0);
+    // currentDislodgerSetpoint = new State(0, 0);
+    // currentDislodgerGoal = new State(0, 0);
   }
 
 
@@ -55,11 +54,11 @@ public class Manipulator extends SubsystemBase implements IProfiledReset {
 
 
 
-      currentDislodgerSetpoint = dislodgerVoltageTrapezoidProfile.calculate(Constants.kDt, currentDislodgerSetpoint, currentDislodgerGoal);
+      // currentDislodgerSetpoint = dislodgerVoltageTrapezoidProfile.calculate(Constants.kDt, currentDislodgerSetpoint, currentDislodgerGoal);
 
-      double voltage = currentDislodgerSetpoint.position;
+      // double voltage = currentDislodgerSetpoint.position;
 
-      manipulatorIO.setDislodgerVoltage(voltage);
+      // manipulatorIO.setDislodgerVoltage(voltage);
 
   }
 
@@ -80,15 +79,15 @@ public class Manipulator extends SubsystemBase implements IProfiledReset {
   }
 
   //  Dislodger
-  public void startDislodger(boolean invert){
-    currentDislodgerGoal = new State(
-      Constants.ManipulatorConstants.dislodgerVoltage * (invert ? -1 : 1),
-       0
-    );
-  }
-  public void stopDislodger(){
-    currentDislodgerGoal = new State(0, 0);
-  }
+  // public void startDislodger(boolean invert){
+  //   currentDislodgerGoal = new State(
+  //     Constants.ManipulatorConstants.dislodgerVoltage * (invert ? -1 : 1),
+  //      0
+  //   );
+  // }
+  // public void stopDislodger(){
+  //   currentDislodgerGoal = new State(0, 0);
+  // }
 
 
   @Override

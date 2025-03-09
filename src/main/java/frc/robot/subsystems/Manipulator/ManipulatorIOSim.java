@@ -14,7 +14,7 @@ public class ManipulatorIOSim implements ManipulatorIO {
 
 
   public final DCMotorSim outMotor;
-  public final DCMotorSim dislodgeMotor;
+//  public final DCMotorSim dislodgeMotor;
 
   public ManipulatorIOSim() {
 
@@ -29,12 +29,12 @@ public class ManipulatorIOSim implements ManipulatorIO {
             Constants.ManipulatorConstants.outtakeMotorGearbox);
 
 
-    dislodgeMotor = new DCMotorSim(
-      LinearSystemId.createDCMotorSystem(
-          Constants.ManipulatorConstants.dislodgeMotorGearbox,
-          0.025,
-          Constants.ManipulatorConstants.dislodgeMotorReduction),
-      Constants.ManipulatorConstants.dislodgeMotorGearbox);
+    // dislodgeMotor = new DCMotorSim(
+    //   LinearSystemId.createDCMotorSystem(
+    //       Constants.ManipulatorConstants.dislodgeMotorGearbox,
+    //       0.025,
+    //       Constants.ManipulatorConstants.dislodgeMotorReduction),
+    //   Constants.ManipulatorConstants.dislodgeMotorGearbox);
 
   }
 
@@ -62,10 +62,10 @@ public class ManipulatorIOSim implements ManipulatorIO {
   }
 
 
-  @Override
-  public void setDislodgerVoltage(double _voltage) {
+  // @Override
+  // public void setDislodgerVoltage(double _voltage) {
 
-    dislodgeMotor.setInputVoltage(_voltage);
+  //   dislodgeMotor.setInputVoltage(_voltage);
 
-  }
+  // }
 }

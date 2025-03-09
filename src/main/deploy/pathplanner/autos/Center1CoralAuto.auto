@@ -43,9 +43,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "RobotToL4"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "RobotToL4"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 4.0
+                }
+              }
+            ]
           }
         },
         {

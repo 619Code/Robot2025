@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "StartToReefI"
+                  "pathName": "InvertedStartToReefI"
                 }
               },
               {
@@ -43,9 +43,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "RobotToL4"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "RobotToL4"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 4.0
+                }
+              }
+            ]
           }
         },
         {
@@ -80,7 +93,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ReefIToSlightlyBack"
+                  "pathName": "InvertedReefIToSlightlyBack"
                 }
               },
               {
@@ -99,7 +112,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "SlightlyBackToLeftCoralStation"
+                  "pathName": "InvertedSlightlyBackToCoralStation"
                 }
               },
               {

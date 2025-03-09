@@ -250,14 +250,14 @@ public final class Constants {
 
     public static final double encoderZeroOffsetRotations = 0;
 
-    public static final double kpElevator = 0.4;
+    public static final double kpElevator = 9;
     public static final double kiElevator = 0.0;
     public static final double kdElevator = 0.0;
 
     public static final double ksFeedforward = 0.3;
-    public static final double kvFeedforward = 5.0;
+    public static final double kvFeedforward = 4.4;
 
-    public static final double feedforwardGravity = 0.45;
+    public static final double feedforwardGravity = 0.40;
 
     public static final DCMotor elevatorGearbox = DCMotor.getNeoVortex(2);
 
@@ -265,7 +265,7 @@ public final class Constants {
     public enum ElevatorHeight{
       //  THESE ARE ALL STILL ARBITRARY
         HOME(minHeightMeters),
-        FUNNEL(minHeightMeters + Units.inchesToMeters(7.2)), //  Used to be 8 inches
+        FUNNEL(minHeightMeters + Units.inchesToMeters(5.0)), //  Used to be 8 inches
 
         L1(minHeightMeters + Units.inchesToMeters(2)),
         L2(minHeightMeters + Units.inchesToMeters(3)),
@@ -398,7 +398,7 @@ public final class Constants {
 
       public static enum WristAngleRad {
         FREEHANG(Units.degreesToRadians(freeHangAngle)),
-        FUNNEL_ANGLE(Units.degreesToRadians(69)),
+        FUNNEL_ANGLE(Units.degreesToRadians(66)),
         L1(Units.degreesToRadians(252)),  //  Needs to be changed
         L2L3(Units.degreesToRadians(252)),
         L4(Units.degreesToRadians(200));

@@ -97,11 +97,17 @@ public class ElevatorIOReal implements ElevatorIO {
          + Constants.ElevatorConstants.minHeightMeters;
     }
 
+    private double encoderVelToVelocityMetersPerSec(double encoderVel){
+        return (encoderVel / Constants.ElevatorConstants.maxHeightEncoderVal) *
+        (Constants.ElevatorConstants.maxHeightMeters - Constants.ElevatorConstants.minHeightMeters);
+    }
+
 
 
     @Override
     public void updateInputs(ElevatorIOInputsAutoLogged inputs) {
         inputs.elevatorPositionRotations = elevatorEncoder.getPosition();
+        inputs.elevatorVelocityMPS = encoderVelToVelocityMetersPerSec(elevatorEncoder.getVelocity());
 
         inputs.elevatorHeightMeters = encoderValToHeightMeters(inputs.elevatorPositionRotations);
     }
