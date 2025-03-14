@@ -106,7 +106,6 @@ public class RobotContainer {
 
 
         //  Should get called right after subsystems are instantiated
-        addAllProfiledSubsystemsToArray();
 
 
         constructorThings();
@@ -248,28 +247,17 @@ public class RobotContainer {
 
     private Command robotGoToHeightCommandCreator(ElevatorHeight height){
 
+
         Command command;
 
-        boolean elevatorIsAlreadyAtTheBottomAndWeAreTryingToMoveThere = false;
-            // height == ElevatorHeight.HOME &&
-            // elevator.getCurrentGoal() == ElevatorHeight.HOME;
-
-
-        if(elevatorIsAlreadyAtTheBottomAndWeAreTryingToMoveThere){
-            //  Should end immediately
-            command = Commands.sequence(
-                new ElevatorGoToPositionPositionCommand(elevator, height),
-                new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height))
-            ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
-        }else{
+        //INEFFICIENT FOR GETTING FROM CORAL STATION
             command = Commands.sequence(
                 new WristGoToPositionCommand(wrist, WristAngleRad.L2L3),
                 new ElevatorGoToPositionPositionCommand(elevator, height),
                 new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height))
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
-        }
 
-
+       
         return command;
 
     }
@@ -293,49 +281,6 @@ public class RobotContainer {
                 return WristAngleRad.L2L3;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     // private void testingButtonBindings() {
@@ -383,47 +328,11 @@ public class RobotContainer {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    private void addAllProfiledSubsystemsToArray(){
-        subsystems = new IProfiledReset[]{
-            wrist,
-            manipulator,
-            elevator
-        };
-    }
-
     //  Should get called in teleopInit, and maybe autonomousInit
     public void ResetProfiledSubsystemsOnEnable(){
-        for (IProfiledReset sub : subsystems) {
-            sub.ProfileReset();
-        }
+        wrist.ProfileReset();
+        elevator.ProfileReset();
+        manipulator.ProfileReset();
     }
 
 

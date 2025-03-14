@@ -394,10 +394,8 @@ public final class Constants {
 
       public static double zeroOffset = 1.0 - ((5.05128918995 - (Math.PI / 2.0)) / (2.0 * Math.PI));
 
-      public static double freeHangAngle = 90;
-
       public static enum WristAngleRad {
-        FREEHANG(Units.degreesToRadians(freeHangAngle)),
+        FREEHANG(Units.degreesToRadians(90)),
         FUNNEL_ANGLE(Units.degreesToRadians(66)),
         L1(Units.degreesToRadians(252)),  //  Needs to be changed
         L2L3(Units.degreesToRadians(252)),
