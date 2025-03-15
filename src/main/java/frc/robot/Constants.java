@@ -265,7 +265,7 @@ public final class Constants {
     public enum ElevatorHeight{
       //  THESE ARE ALL STILL ARBITRARY
         HOME(minHeightMeters),
-        FUNNEL(minHeightMeters + Units.inchesToMeters(5.0)), //  Used to be 8 inches
+        FUNNEL(minHeightMeters + Units.inchesToMeters(3.0)), //  Used to be 8 inches
 
         L1(minHeightMeters + Units.inchesToMeters(2)),
         L2(minHeightMeters + Units.inchesToMeters(3)),
