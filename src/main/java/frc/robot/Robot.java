@@ -76,6 +76,11 @@ public class Robot extends LoggedRobot {
         break;
     }
 
+    //Uncomment if NT errors are occuring weirdly
+
+    // StringLogEntry entry = new StringLogEntry(DataLogManager.getLog(), "/ntlog");
+    // NetworkTableInstance.getDefault().addLogger(0, 100,
+    // event -> entry.append(event.logMessage.filename + ":" + event.logMessage.line + ":" + event.logMessage.message));
     // Initialize URCL
     Logger.registerURCL(URCL.startExternal());
 

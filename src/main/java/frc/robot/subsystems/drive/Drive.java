@@ -271,7 +271,7 @@ public class Drive extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
 
-       Pose2d visionPose = getRobotVisionPose();
+      Pose2d visionPose = getRobotVisionPose();
     //   if(visionPose != null){
     // //    poseEstimator.addVisionMeasurement(visionPose, sampleTimestamps[i]);
     //   }
@@ -308,53 +308,9 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("Limelight/RobotCalculatedPose", robotPoseField.pose);
     Logger.recordOutput("Limelight/RobotRelativeToAprilTag", robotPoseTagSpace.pose);
 
-    Logger.recordOutput("Limelight/TagPoseInRobotSpace", aprilTagRelativePose.pose);
-
-
-    Logger.recordOutput("Limelight/TagLookupPose", actualTagCoord.pose);
-
-
   return robotPoseField.pose;
 
   }
-
-  // private Pose2d getRobotVisionPose(){
-
-  //   double[] limelightData = LimelightHelpers.getTargetPose_RobotSpace("limelight");
-  //   int tagId = (int)LimelightHelpers.getFiducialID("limelight");
-
-  //   Optional<Pose3d> tagPose3d = AprilTagDataLoader.field.getTagPose(tagId);
-
-  //   if(tagPose3d.isEmpty()) return null;
-
-  //   Pose2d actualTagCoordTemp = new Pose2d(tagPose3d.get().getX(), tagPose3d.get().getY(), tagPose3d.get().getRotation().toRotation2d());
-  //   FieldCoordinatePose2d actualTagCoord = new FieldCoordinatePose2d(actualTagCoordTemp);
-
-  //   RelativeCoordinatePose2d aprilTagRelativePose = new RelativeCoordinatePose2d(Help.limelightCoordsToWPICoordsPose2d(limelightData));
-  //   RelativeCoordinatePose2d robotPoseRelativeToTag = new RelativeCoordinatePose2d(new Pose2d(
-  //     -aprilTagRelativePose.pose.getX(),
-  //     -aprilTagRelativePose.pose.getY(),
-  //     aprilTagRelativePose.pose.getRotation().rotateBy(new Rotation2d(Math.PI))
-  //   ));
-
-  //   Logger.recordOutput("Limelight/RobotRelativeToTag", robotPoseRelativeToTag.pose);
-
-
-  //   FieldCoordinatePose2d robotCalculatedPoseFieldSpace = robotPoseRelativeToTag.toFieldSpace(actualTagCoord);
-
-
-  //   Logger.recordOutput("Limelight/TagLookupPose", actualTagCoord.pose);
-  //   Logger.recordOutput("Limelight/CalculatedRobotPose", robotCalculatedPoseFieldSpace.pose);
-
-
-  //   return robotCalculatedPoseFieldSpace.pose;
-
-  // }
-
-
-
-
-
 
 
   /**
