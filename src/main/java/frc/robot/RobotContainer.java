@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -240,8 +241,8 @@ public class RobotContainer {
         }else{
             command = Commands.sequence(
                 new WristGoToPositionCommand(wrist, WristAngleRad.L2L3),
-                new ElevatorGoToPositionPositionCommand(elevator, height)
-                //new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height))
+                new ElevatorGoToPositionPositionCommand(elevator, height),
+                new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height))
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
         }
 
@@ -253,7 +254,7 @@ public class RobotContainer {
     private WristAngleRad getEndWristAngleForGivenElevatorHeight(ElevatorHeight height){
         switch(height){
             case HOME:
-                return WristAngleRad.FREEHANG;
+                return WristAngleRad.L2L3;
             case FUNNEL:
                 return WristAngleRad.FUNNEL_ANGLE;
             case L1:
@@ -378,6 +379,14 @@ public class RobotContainer {
 
         Trigger outtakeCoralTrigger = operatorController.rightBumper();
         outtakeCoralTrigger.whileTrue(new OuttakeCoralCommand(manipulator));
+
+        Trigger takeCoralBackTrigger = operatorController.leftTrigger();
+        takeCoralBackTrigger.whileTrue(
+            Commands.sequence(
+            new ManipulatorIntakeCoralCommand(manipulator),
+            new WaitCommand(0.04),
+            Commands.runOnce(() -> manipulator.stopOuttake(), manipulator)));
+
     }
 
     private void configureElevatorBindings(){

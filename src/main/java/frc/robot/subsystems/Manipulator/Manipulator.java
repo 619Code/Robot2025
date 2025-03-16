@@ -74,6 +74,9 @@ public class Manipulator extends SubsystemBase implements IProfiledReset {
   public void runOuttakeIn(){
     manipulatorIO.runOuttakeVoltage(Constants.ManipulatorConstants.intakeVoltage);
   }
+  public void runOuttakeInReverse(){
+    manipulatorIO.runOuttakeVoltage(-Constants.ManipulatorConstants.intakeVoltage);
+  }
   public void stopOuttake(){
     manipulatorIO.stopOuttake();
   }

@@ -29,7 +29,9 @@ public class ManipulatorIntakeCoralCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    manipulator.stopOuttake();
+    if (interrupted) {
+      manipulator.stopOuttake();
+    }
   }
 
   @Override
