@@ -240,8 +240,8 @@ public class RobotContainer {
         }else{
             command = Commands.sequence(
                 new WristGoToPositionCommand(wrist, WristAngleRad.L2L3),
-                new ElevatorGoToPositionPositionCommand(elevator, height),
-                new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height))
+                new ElevatorGoToPositionPositionCommand(elevator, height)
+                //new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height))
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
         }
 

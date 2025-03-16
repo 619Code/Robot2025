@@ -77,6 +77,7 @@ public class Elevator extends SubsystemBase implements IProfiledReset {
         double voltage = elevatorController.calculate(getPositionMeters());
 
         inputs.elevatorSetpointPositionMeters = elevatorController.getSetpoint().position;
+        inputs.elevatorSetpointVelocityMPS = elevatorController.getSetpoint().velocity;
 
 
         if(inputs.elevatorSetpointPositionMeters > Constants.ElevatorConstants.minHeightMeters + 0.02){

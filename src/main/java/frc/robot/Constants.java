@@ -206,8 +206,8 @@ public final class Constants {
     public static final double wristMotorReduction = 1.0;
 
 
-    public static final double maxVelocityMetersPerSec = 1.0; // Arbitrary
-    public static final double maxAccelerationMetersPerSecSqrd = 1.5;
+    public static final double maxVelocityMetersPerSec = 2.0; // Arbitrary
+    public static final double maxAccelerationMetersPerSecSqrd = 4.0;
 
 
 
@@ -235,29 +235,16 @@ public final class Constants {
     public static final double maxHeightEncoderVal = 68.75753021240234;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     public static final double encoderZeroOffsetRotations = 0;
 
-    public static final double kpElevator = 9;
+    public static final double kpElevator = 11.5;
     public static final double kiElevator = 0.0;
     public static final double kdElevator = 0.0;
 
     public static final double ksFeedforward = 0.3;
-    public static final double kvFeedforward = 4.4;
+    public static final double kvFeedforward = 4.81;
 
-    public static final double feedforwardGravity = 0.40;
+    public static final double feedforwardGravity = 0.29;
 
     public static final DCMotor elevatorGearbox = DCMotor.getNeoVortex(2);
 

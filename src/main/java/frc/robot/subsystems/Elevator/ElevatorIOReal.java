@@ -99,7 +99,7 @@ public class ElevatorIOReal implements ElevatorIO {
 
     private double encoderVelToVelocityMetersPerSec(double encoderVel){
         return (encoderVel / Constants.ElevatorConstants.maxHeightEncoderVal) *
-        (Constants.ElevatorConstants.maxHeightMeters - Constants.ElevatorConstants.minHeightMeters);
+        (Constants.ElevatorConstants.maxHeightMeters - Constants.ElevatorConstants.minHeightMeters) / 60.0;
     }
 
 

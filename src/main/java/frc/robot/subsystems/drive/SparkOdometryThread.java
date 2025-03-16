@@ -34,9 +34,9 @@ public class SparkOdometryThread {
   private final List<SparkBase> sparks = new ArrayList<>();
   private final List<DoubleSupplier> sparkSignals = new ArrayList<>();
   private final List<DoubleSupplier> genericSignals = new ArrayList<>();
-  private final List<Queue<Double>> sparkQueues = new ArrayList<>();
-  private final List<Queue<Double>> genericQueues = new ArrayList<>();
-  private final List<Queue<Double>> timestampQueues = new ArrayList<>();
+  private final List<ArrayBlockingQueue<Double>> sparkQueues = new ArrayList<>();
+  private final List<ArrayBlockingQueue<Double>> genericQueues = new ArrayList<>();
+  private final List<ArrayBlockingQueue<Double>> timestampQueues = new ArrayList<>();
 
   private static SparkOdometryThread instance = null;
   private Notifier notifier = new Notifier(this::run);
@@ -60,7 +60,7 @@ public class SparkOdometryThread {
 
   /** Registers a Spark signal to be read from the thread. */
   public Queue<Double> registerSignal(SparkBase spark, DoubleSupplier signal) {
-    Queue<Double> queue = new ArrayBlockingQueue<>(20);
+    ArrayBlockingQueue<Double> queue = new ArrayBlockingQueue<>(20);
     Drive.odometryLock.lock();
     try {
       sparks.add(spark);
@@ -74,7 +74,7 @@ public class SparkOdometryThread {
 
   /** Registers a generic signal to be read from the thread. */
   public Queue<Double> registerSignal(DoubleSupplier signal) {
-    Queue<Double> queue = new ArrayBlockingQueue<>(20);
+    ArrayBlockingQueue<Double> queue = new ArrayBlockingQueue<>(20);
     Drive.odometryLock.lock();
     try {
       genericSignals.add(signal);
@@ -87,7 +87,7 @@ public class SparkOdometryThread {
 
   /** Returns a new queue that returns timestamp values for each sample. */
   public Queue<Double> makeTimestampQueue() {
-    Queue<Double> queue = new ArrayBlockingQueue<>(20);
+    ArrayBlockingQueue<Double> queue = new ArrayBlockingQueue<>(20);
     Drive.odometryLock.lock();
     try {
       timestampQueues.add(queue);

@@ -13,6 +13,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.util.datalog.StringLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -78,9 +81,9 @@ public class Robot extends LoggedRobot {
 
     //Uncomment if NT errors are occuring weirdly
 
-    // StringLogEntry entry = new StringLogEntry(DataLogManager.getLog(), "/ntlog");
-    // NetworkTableInstance.getDefault().addLogger(0, 100,
-    // event -> entry.append(event.logMessage.filename + ":" + event.logMessage.line + ":" + event.logMessage.message));
+    StringLogEntry entry = new StringLogEntry(DataLogManager.getLog(), "/ntlog");
+    NetworkTableInstance.getDefault().addLogger(0, 100,
+    event -> entry.append(event.logMessage.filename + ":" + event.logMessage.line + ":" + event.logMessage.message));
     // Initialize URCL
     Logger.registerURCL(URCL.startExternal());
 
