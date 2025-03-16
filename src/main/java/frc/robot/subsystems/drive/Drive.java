@@ -283,8 +283,8 @@ public class Drive extends SubsystemBase {
 
 
   private Pose2d getRobotVisionPose(){
-
-    double[] limelightData = LimelightHelpers.getTargetPose_RobotSpace("limelight");
+    double [] limelightData = LimelightHelpers.getBotPose_TargetSpace("limelight");
+    //double[] limelightDataOld = LimelightHelpers.getTargetPose_RobotSpace("limelight");
     int tagId = (int)LimelightHelpers.getFiducialID("limelight");
 
     Optional<Pose3d> tagPose3d = AprilTagDataLoader.field.getTagPose(tagId);
@@ -296,8 +296,8 @@ public class Drive extends SubsystemBase {
 
     RelativeCoordinatePose2d aprilTagRelativePose = new RelativeCoordinatePose2d(Help.limelightCoordsToWPICoordsPose2d(limelightData));
     RelativeCoordinatePose2d robotPoseTagSpace = new RelativeCoordinatePose2d(new Pose2d(
-      aprilTagRelativePose.pose.getX(),
-      aprilTagRelativePose.pose.getY(),
+      -aprilTagRelativePose.pose.getX(),
+      -aprilTagRelativePose.pose.getY(),
       aprilTagRelativePose.pose.getRotation()
     ));
 
@@ -308,11 +308,13 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("Limelight/RobotCalculatedPose", robotPoseField.pose);
     Logger.recordOutput("Limelight/RobotRelativeToAprilTag", robotPoseTagSpace.pose);
 
+    Logger.recordOutput("Limelight/TagPoseInRobotSpace", aprilTagRelativePose.pose);
+
 
     Logger.recordOutput("Limelight/TagLookupPose", actualTagCoord.pose);
 
 
-  return null;
+  return robotPoseField.pose;
 
   }
 
