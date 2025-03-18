@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.Constants.WristConstants.WristAngleRad;
 import frc.robot.commands.ManipulatorIntakeCoralCommand;
@@ -46,6 +47,8 @@ public class FunnelIntakeCommands {
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.FUNNEL),
             new WristGoToPositionCommand(wrist, WristAngleRad.FUNNEL_ANGLE),
             new ManipulatorIntakeCoralCommand(manipulator),
+            new WaitCommand(0.08),
+            Commands.runOnce(() -> manipulator.stopOuttake(), manipulator),
             new WristGoToPositionCommand(wrist, WristAngleRad.L2L3),
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.HOME)
         );

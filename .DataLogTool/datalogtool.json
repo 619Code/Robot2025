@@ -1,0 +1,10 @@
+{
+  "download": {
+    "deleteAfter": false,
+    "localDir": "C:\\Users\\ewood\\Desktop",
+    "serverTeam": "619"
+  },
+  "output": {
+    "outputFolder": "C:\\Users\\ewood\\Desktop"
+  }
+}

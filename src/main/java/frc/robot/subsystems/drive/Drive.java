@@ -43,10 +43,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.Mode;
+import frc.robot.Robot;
 import frc.robot.subsystems.drive.Gyro.GyroIO;
 import frc.robot.subsystems.drive.Gyro.GyroIOInputsAutoLogged;
+import frc.robot.subsystems.drive.Gyro.GyroIONavX;
 import frc.robot.subsystems.drive.Module.Module;
-import frc.robot.subsystems.drive.Module.ModuleIO;
+import frc.robot.subsystems.drive.Module.ModuleIOSim;
+import frc.robot.subsystems.drive.Module.ModuleIOSpark;
 import frc.robot.util.FieldCoordinatePose2d;
 import frc.robot.util.Help;
 import frc.robot.util.LimelightHelpers;
@@ -88,19 +91,56 @@ public class Drive extends SubsystemBase {
       new SwerveDrivePoseEstimator(kinematics, rawGyroRotation, lastModulePositions, new Pose2d());
 
 
-  public Drive(
-      GyroIO gyroIO,
-      ModuleIO flModuleIO,
-      ModuleIO frModuleIO,
-      ModuleIO blModuleIO,
-      ModuleIO brModuleIO) {
+  public Drive() {
+      if(Robot.isReal()){
+        this.gyroIO = new GyroIONavX();
+        modules[0] = new Module(
+          new ModuleIOSpark(
+                0,
+                Constants.DriveConstants.frontLeftDriveMotorInverted,
+                Constants.DriveConstants.frontLeftTurnMotorInverted,
+                Constants.DriveConstants.frontLeftTurnEncoderInverted,
+                Constants.DriveConstants.frontLeftDriveAbsoluteEncoderPort,
+                Constants.DriveConstants.frontLeftDriveAbsoluteEncoderOffsetRots,
+                Constants.DriveConstants.frontLeftEncoderPositiveDirection
+                ), 0);
+        modules[1] = new Module(
+          new ModuleIOSpark(
+            1,
+            Constants.DriveConstants.frontRightDriveMotorInverted,
+            Constants.DriveConstants.frontRightTurnMotorInverted,
+            Constants.DriveConstants.frontRightTurnEncoderInverted,
+            Constants.DriveConstants.frontRightDriveAbsoluteEncoderPort,
+            Constants.DriveConstants.frontRightDriveAbsoluteEncoderOffsetRots,
+            Constants.DriveConstants.frontRightEncoderPositiveDirection
+          ), 1);
+        modules[2] = new Module(new ModuleIOSpark(
+            2,
+            Constants.DriveConstants.backLeftDriveMotorInverted,
+            Constants.DriveConstants.backLeftTurnMotorInverted,
+            Constants.DriveConstants.backLeftTurnEncoderInverted,
+            Constants.DriveConstants.backLeftDriveAbsoluteEncoderPort,
+            Constants.DriveConstants.backLeftDriveAbsoluteEncoderOffsetRots,
+            Constants.DriveConstants.backLeftEncoderPositiveDirection
+          ), 2);
+        modules[3] = new Module(new ModuleIOSpark(
+            3,
+            Constants.DriveConstants.backRightDriveMotorInverted,
+            Constants.DriveConstants.backRightTurnMotorInverted,
+            Constants.DriveConstants.backRightTurnEncoderInverted,
+            Constants.DriveConstants.backRightDriveAbsoluteEncoderPort,
+            Constants.DriveConstants.backRightDriveAbsoluteEncoderOffsetRots,
+            Constants.DriveConstants.backRightEncoderPositiveDirection
+          ), 3);
+      }else{
+        this.gyroIO = new GyroIO() {};
+        modules[0] = new Module(new ModuleIOSim(), 0);
+        modules[1] = new Module(new ModuleIOSim(), 1);
+        modules[2] = new Module(new ModuleIOSim(), 2);
+        modules[3] = new Module(new ModuleIOSim(), 3);
+      }
 
 
-    this.gyroIO = gyroIO;
-    modules[0] = new Module(flModuleIO, 0);
-    modules[1] = new Module(frModuleIO, 1);
-    modules[2] = new Module(blModuleIO, 2);
-    modules[3] = new Module(brModuleIO, 3);
 
     // Usage reporting for swerve template
     HAL.report(tResourceType.kResourceType_RobotDrive, tInstances.kRobotDriveSwerve_AdvantageKit);
@@ -111,30 +151,6 @@ public class Drive extends SubsystemBase {
 
     kinematics = new SwerveDriveKinematics(Constants.DriveConstants.moduleTranslations); //new SwerveDriveKinematics(Constants.DriveConstants.robotConfig.moduleLocations);
 
-
-    // AutoBuilder.configure(
-    //         this::getPose, // Robot pose supplier
-    //         this::setPose, // Method to reset odometry (will be called if your auto has a starting pose)
-    //         this::getChassisSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-    //         (speeds, feedforwards) -> runVelocity(speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds. Also optionally outputs individual module feedforwards
-    //         new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller for holonomic drive trains
-    //                 new PIDConstants(2, 0, 0), // Translation PID constants
-    //                 new PIDConstants(0, 0.0, 0.0) // Rotation PID constants
-    //         ),
-    //         Constants.DriveConstants.ppConfig,
-    //         () -> {
-    //           // Boolean supplier that controls when the path will be mirrored for the red alliance
-    //           // This will flip the path being followed to the red side of the field.
-    //           // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
-
-    //           var alliance = DriverStation.getAlliance();
-    //           if (alliance.isPresent()) {
-    //             return alliance.get() == DriverStation.Alliance.Red;
-    //           }
-    //           return false;
-    //         },
-    //         this // Reference to this subsystem to set requirements
-    // );
 
     AutoBuilder.configure(
             this::getPose, // Robot pose supplier
@@ -255,7 +271,7 @@ public class Drive extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
 
-    //   Pose2d visionPose = getRobotVisionPose();
+      Pose2d visionPose = getRobotVisionPose();
     //   if(visionPose != null){
     // //    poseEstimator.addVisionMeasurement(visionPose, sampleTimestamps[i]);
     //   }
@@ -266,10 +282,9 @@ public class Drive extends SubsystemBase {
   }
 
 
-
   private Pose2d getRobotVisionPose(){
-
-    double[] limelightData = LimelightHelpers.getTargetPose_RobotSpace("limelight");
+    double [] limelightData = LimelightHelpers.getBotPose_TargetSpace("limelight");
+    //double[] limelightDataOld = LimelightHelpers.getTargetPose_RobotSpace("limelight");
     int tagId = (int)LimelightHelpers.getFiducialID("limelight");
 
     Optional<Pose3d> tagPose3d = AprilTagDataLoader.field.getTagPose(tagId);
@@ -280,27 +295,22 @@ public class Drive extends SubsystemBase {
     FieldCoordinatePose2d actualTagCoord = new FieldCoordinatePose2d(actualTagCoordTemp);
 
     RelativeCoordinatePose2d aprilTagRelativePose = new RelativeCoordinatePose2d(Help.limelightCoordsToWPICoordsPose2d(limelightData));
-    RelativeCoordinatePose2d robotPoseRelativeToTag = new RelativeCoordinatePose2d(new Pose2d(
+    RelativeCoordinatePose2d robotPoseTagSpace = new RelativeCoordinatePose2d(new Pose2d(
       -aprilTagRelativePose.pose.getX(),
       -aprilTagRelativePose.pose.getY(),
-      aprilTagRelativePose.pose.getRotation().rotateBy(new Rotation2d(Math.PI))
+      aprilTagRelativePose.pose.getRotation()
     ));
 
-    FieldCoordinatePose2d robotCalculatedPoseFieldSpace = robotPoseRelativeToTag.toFieldSpace(actualTagCoord);
+
+    FieldCoordinatePose2d robotPoseField = robotPoseTagSpace.toFieldSpace(actualTagCoord);
 
 
-    Logger.recordOutput("Limelight/TagLookupPose", actualTagCoord.pose);
-    Logger.recordOutput("Limelight/CalculatedRobotPose", robotCalculatedPoseFieldSpace.pose);
+    Logger.recordOutput("Limelight/RobotCalculatedPose", robotPoseField.pose);
+    Logger.recordOutput("Limelight/RobotRelativeToAprilTag", robotPoseTagSpace.pose);
 
-
-    return robotCalculatedPoseFieldSpace.pose;
+  return robotPoseField.pose;
 
   }
-
-
-
-
-
 
 
   /**

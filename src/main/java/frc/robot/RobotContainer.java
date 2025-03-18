@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -28,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.Constants.WristConstants.WristAngleRad;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.ManipulatorIntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorFineTuningCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorGoToPositionPositionCommand;
@@ -39,10 +41,6 @@ import frc.robot.subsystems.Elevator.Elevator;
 import frc.robot.subsystems.Manipulator.Manipulator;
 import frc.robot.subsystems.WristStuff.Wrist;
 import frc.robot.subsystems.drive.Drive;
-import frc.robot.subsystems.drive.Gyro.GyroIO;
-import frc.robot.subsystems.drive.Gyro.GyroIONavX;
-import frc.robot.subsystems.drive.Module.ModuleIOSim;
-import frc.robot.subsystems.drive.Module.ModuleIOSpark;
 import frc.robot.util.FunnelIntakeCommands;
 
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -56,27 +54,19 @@ public class RobotContainer {
 
     // Subsystems
     private final Drive drive;
-//    private final Intake intake;
     private final Wrist wrist;
     private final Manipulator manipulator;
-//    private final Passthrough passthrough;
     private final Elevator elevator;
- //   private final ServoSubsystem servo;
  //   private final ledSubsystem leds;
- //   private final Climb climb;
 
     private IProfiledReset[] subsystems;
 
 
-    //private final boolean driveEnabled =            true;
-    //private final boolean wristEnabled =            true;
-    //private final boolean manipulatorEnabled =      true;
-    // private final boolean intakeEnabled =           false;
-    // private final boolean passthroughEnabled =      false;
-   // private final boolean elevatorEnabled =         true;
-    // private final boolean servoEnabled =            false;
-    // private final boolean ledEnabled =              false;
-   // private final boolean climbEnabled =            false;
+    private final boolean driveEnabled =            true;
+    private final boolean wristEnabled =            true;
+    private final boolean manipulatorEnabled =      true;
+   private final boolean elevatorEnabled =         true;
+    private final boolean ledEnabled =              false;
 
     // Controller
     private final Joystick flightStick = new Joystick(0);
@@ -88,24 +78,19 @@ public class RobotContainer {
 
     public RobotContainer() {
 
-        if(Robot.isReal()){
-            drive = instantiateRealDrive();
-        }
-        else{
-            drive = instantiateSimOrReplayedDrive();
-        }
 
-        // intake = intakeEnabled              ? new Intake()  : null;
-        wrist = new Wrist();
-        manipulator = new Manipulator();
-        // passthrough = passthroughEnabled    ? new Passthrough() : null;
-        elevator = new Elevator();
-        // servo = servoEnabled                ? new ServoSubsystem(0, 1) : null;
+        drive = driveEnabled ? new Drive() : null;
+
+        wrist = wristEnabled  ? new Wrist() : null;
+        manipulator = manipulatorEnabled ? new Manipulator() : null;
+        elevator = elevatorEnabled ? new Elevator() : null;
         // leds = ledEnabled                   ? new ledSubsystem() : null;
-        // climb = climbEnabled                ? new Climb() : null;
 
 
         //  Should get called right after subsystems are instantiated
+
+        addAllProfiledSubsystemsToArray();
+
 
 
         constructorThings();
@@ -118,14 +103,13 @@ public class RobotContainer {
 
 
         competitionButtonBindings();
+        //testingButtonBindings();
 
     }
 
 
     private void constructorThings(){
-        // if(intakeEnabled){
-        //     intakeConstructorStuff();
-        // }
+
 
         wristConstructorStuff();
 
@@ -136,10 +120,6 @@ public class RobotContainer {
 
         // if(ledEnabled){
         //     ledConstructorStuff();
-        // }
-
-        // if(climbEnabled){
-        //     climbConstructorStuff();
         // }
 
         registerNamedCommands();
@@ -257,7 +237,7 @@ public class RobotContainer {
                 new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height))
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
 
-       
+
         return command;
 
     }
@@ -265,7 +245,7 @@ public class RobotContainer {
     private WristAngleRad getEndWristAngleForGivenElevatorHeight(ElevatorHeight height){
         switch(height){
             case HOME:
-                return WristAngleRad.FREEHANG;
+                return WristAngleRad.L2L3;
             case FUNNEL:
                 return WristAngleRad.FUNNEL_ANGLE;
             case L1:
@@ -282,112 +262,37 @@ public class RobotContainer {
         }
     }
 
+    private void testingButtonBindings() {
 
-    // private void testingButtonBindings() {
+        configureDriveBindings();
 
-    //     configureDriveBindings();
+        configureWristBindings();
 
+        configureManipulatorBindings();
 
-    //     // if(intakeEnabled){
-    //     //     configureIntakeBindings();
-    //     // }
+        configureElevatorBindings();
 
-    //     configureWristBindings();
-
-    //     configureManipulatorBindings();
-
-    //     configureElevatorBindings();
-
-    //     // if(servoEnabled){
-    //     //     configureServoBindings();
-    //     // }
-
-    //     // if(ledEnabled){
-    //     //     configureLedBindings();
-    //     // }
-
-    //     // if(climbEnabled){
-    //     //     configureClimbBindings();
-    //     // }
-
-
-
-
-    //     // Trigger bPressedTrigger = operatorController.b();
-    //     // bPressedTrigger.onTrue(
-    //     //     Commands.sequence(
-    //     //         new WristGoToPositionCommand(wrist, WristAngleRad.PASSTHROUGH),
-    //     //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.FUNNEL),
-    //     //         new WristGoToPositionCommand(wrist, WristAngleRad.FUNNEL_ANGLE)
-    //     //     )
-    //     // );
-    // }
+    }
 
     public Command getAutonomousCommand() {
         return autoChooser.get();
     }
 
+    private void addAllProfiledSubsystemsToArray(){
+        subsystems = new IProfiledReset[]{
+            wrist,
+            manipulator,
+            elevator
+        };
+    }
 
     //  Should get called in teleopInit, and maybe autonomousInit
     public void ResetProfiledSubsystemsOnEnable(){
-        wrist.ProfileReset();
-        elevator.ProfileReset();
-        manipulator.ProfileReset();
+        for (IProfiledReset sub : subsystems) {
+            sub.ProfileReset();
+        }
     }
 
-
-  // ============= Instantiation =============
-
-
-  //  DRIVE INSTANTIATION
-
-    private Drive instantiateRealDrive(){
-    // Real robot, instantiate hardware IO implementations
-    return
-        new Drive(
-            new GyroIONavX(),
-            new ModuleIOSpark(
-                0,
-                Constants.DriveConstants.frontLeftDriveMotorInverted,
-                Constants.DriveConstants.frontLeftTurnMotorInverted,
-                Constants.DriveConstants.frontLeftTurnEncoderInverted,
-                Constants.DriveConstants.frontLeftDriveAbsoluteEncoderPort,
-                Constants.DriveConstants.frontLeftDriveAbsoluteEncoderOffsetRots,
-                Constants.DriveConstants.frontLeftEncoderPositiveDirection), // FRONT LEFT
-            new ModuleIOSpark(
-                1,
-                Constants.DriveConstants.frontRightDriveMotorInverted,
-                Constants.DriveConstants.frontRightTurnMotorInverted,
-                Constants.DriveConstants.frontRightTurnEncoderInverted,
-                Constants.DriveConstants.frontRightDriveAbsoluteEncoderPort,
-                Constants.DriveConstants.frontRightDriveAbsoluteEncoderOffsetRots,
-                Constants.DriveConstants.frontRightEncoderPositiveDirection), // FRONT RIGHT
-            new ModuleIOSpark(
-                2,
-                Constants.DriveConstants.backLeftDriveMotorInverted,
-                Constants.DriveConstants.backLeftTurnMotorInverted,
-                Constants.DriveConstants.backLeftTurnEncoderInverted,
-                Constants.DriveConstants.backLeftDriveAbsoluteEncoderPort,
-                Constants.DriveConstants.backLeftDriveAbsoluteEncoderOffsetRots,
-                Constants.DriveConstants.backLeftEncoderPositiveDirection), // BACK LEFT
-            new ModuleIOSpark(
-                3,
-                Constants.DriveConstants.backRightDriveMotorInverted,
-                Constants.DriveConstants.backRightTurnMotorInverted,
-                Constants.DriveConstants.backRightTurnEncoderInverted,
-                Constants.DriveConstants.backRightDriveAbsoluteEncoderPort,
-                Constants.DriveConstants.backRightDriveAbsoluteEncoderOffsetRots,
-                Constants.DriveConstants.backRightEncoderPositiveDirection)); // BACK RIGHT
-    }
-    private Drive instantiateSimOrReplayedDrive() {
-        return new Drive(
-            new GyroIO() {},
-            new ModuleIOSim(),
-            new ModuleIOSim(),
-            new ModuleIOSim(),
-            new ModuleIOSim()
-        );
-    }
 
     // ============= Constructor Stuff =============
 
@@ -395,13 +300,6 @@ public class RobotContainer {
 
     }
 
-    // private void intakeConstructorStuff() {
-    //     // ...
-    // }
-
-    // private void climbConstructorStuff(){
-    //     // ...
-    // }
 
     private void wristConstructorStuff() {
         wrist.setDefaultCommand(new WristHoldCurrentPositionCommand(wrist));
@@ -414,13 +312,6 @@ public class RobotContainer {
     private void elevatorConstructorStuff(){
         elevator.setDefaultCommand(new ElevatorHoldCurrentPositionCommand(elevator));
     }
-
-    // private void ledConstructorStuff(){
-    //     leds.setColor(0, 0, 255);
-    // }
-
-
-
 
     // ============= Bindings =============
 
@@ -453,106 +344,63 @@ public class RobotContainer {
                 .ignoringDisable(true));
     }
 
-    // private void configureIntakeBindings() {
-    //     Trigger mainTrigger = new JoystickButton(flightStick, 1);
-    //     mainTrigger.whileTrue(Commands.runOnce(() -> {intake.goToExtendedPosition();}, intake));
-    //     mainTrigger.whileFalse(Commands.runOnce(() -> {intake.goToRetractedPosition();}, intake));
-    // }
+    private void configureWristBindings() {
 
+        Trigger aPressedTrigger = operatorController.a();
+        aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.FREEHANG));
 
-    public enum INTAKE_POSITION{
-        INTAKE,
-        HALF_STOW,
-        STOW
+        Trigger bPressedTrigger = operatorController.b();
+        bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
+
+        // Trigger xPressedTrigger = operatorController.x();
+        // xPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3));
+
+        Trigger yPressedTrigger = operatorController.y();
+        yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4));
     }
 
-    public enum CLIMB_POSITION{
-        OUT,
-        IN
+    private void configureManipulatorBindings(){
+        Trigger intakeCoralTrigger = operatorController.leftBumper();
+        intakeCoralTrigger.whileTrue(new ManipulatorIntakeCoralCommand(manipulator));
+
+
+        Trigger outtakeCoralTrigger = operatorController.rightBumper();
+        outtakeCoralTrigger.whileTrue(new OuttakeCoralCommand(manipulator));
+
+        Trigger takeCoralBackTrigger = operatorController.leftTrigger();
+        takeCoralBackTrigger.whileTrue(
+            Commands.sequence(
+            new ManipulatorIntakeCoralCommand(manipulator),
+            new WaitCommand(0.04),
+            Commands.runOnce(() -> manipulator.stopOuttake(), manipulator)));
+
     }
 
-    //  Idea with wrist/elevator is that the operator will:
-    //   Hold [left bumper] to enable input for carriage
-    //   Then hit
-    // private void configureWristBindings() {
+    private void configureElevatorBindings(){
 
-    //     Trigger aPressedTrigger = operatorController.a();
-    //     aPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.FREEHANG));
+        Trigger elevatorDown = operatorController.x();
+        elevatorDown.whileTrue(
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.HOME)
+        );
 
-    //     Trigger bPressedTrigger = operatorController.b();
-    //     bPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L1));
+        Trigger dPadDown = operatorController.povDown();
+        dPadDown.whileTrue(
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L1)
+        );
 
-    //     // Trigger xPressedTrigger = operatorController.x();
-    //     // xPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L2L3));
+        Trigger dPadRight = operatorController.povRight();
+        dPadRight.whileTrue(
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2)
+        );
 
-    //     Trigger yPressedTrigger = operatorController.y();
-    //     yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.L4));
-    // }
+        Trigger dPadLeft = operatorController.povLeft();
+        dPadLeft.whileTrue(
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L3)
+        );
 
-    // private void configureManipulatorBindings(){
-    //     Trigger intakeCoralTrigger = operatorController.leftBumper();
-    //     intakeCoralTrigger.whileTrue(new ManipulatorIntakeCoralCommand(manipulator));
-
-
-    //     Trigger outtakeCoralTrigger = operatorController.rightBumper();
-    //     outtakeCoralTrigger.whileTrue(new OuttakeCoralCommand(manipulator));
-
-    //     Trigger dislodgeDownwardTrigger = operatorController.rightStick();
-    //    dislodgeDownwardTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, false));
-
-    //    Trigger dislodgeUpwardTrigger = operatorController.leftStick();
-    //    dislodgeUpwardTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, true));
-    // }
-
-    // private void configureElevatorBindings(){
-
-    //     Trigger elevatorDown = operatorController.x();
-    //     elevatorDown.whileTrue(
-    //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.HOME)
-    //     );
-
-    //     Trigger dPadDown = operatorController.povDown();
-    //     dPadDown.whileTrue(
-    //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L1)
-    //     );
-
-    //     Trigger dPadRight = operatorController.povRight();
-    //     dPadRight.whileTrue(
-    //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L2)
-    //     );
-
-    //     Trigger dPadLeft = operatorController.povLeft();
-    //     dPadLeft.whileTrue(
-    //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L3)
-    //     );
-
-    //     Trigger dPadUp = operatorController.povUp();
-    //     dPadUp.whileTrue(
-    //         new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4)
-    //     );
-    // }
-
-    // private void configureServoBindings(){
-
-    //     // Trigger servoTrigger = operatorController.rightTrigger();
-    //     // servoTrigger.whileTrue(
-    //     //     new ServoGoToAngleCommand(servo, 120));
-
-    //     // Trigger servoTrigger2 = operatorController.leftTrigger();
-    //     // servoTrigger2.whileTrue(
-    //     //     new ServoGoToAngleCommand(servo, 0));
-    // }
-
-    // private void configureLedBindings(){
-    //     LedAnimationCommand ledCommand = new LedAnimationCommand(leds);
-    //     ledCommand.schedule();
-    // }
-
-    // private void configureClimbBindings(){
-    //     // Trigger yPressedTrigger = operatorController.y();
-    //     // yPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.OUT));
-
-    //     // Trigger xPressedTrigger = operatorController.x();
-    //     // xPressedTrigger.onTrue(new ClimbCommand(climb, CLIMB_POSITION.IN));
-    // }
+        Trigger dPadUp = operatorController.povUp();
+        dPadUp.whileTrue(
+            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4)
+        );
+    }
 }

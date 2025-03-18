@@ -13,6 +13,7 @@ public interface ElevatorIO {
         public double elevatorSetpointPositionMeters = 0.0;
         public double elevatorHeightMeters = ElevatorHeight.HOME.heightMeters;
         public double elevatorVelocityMPS = 0;
+        public double elevatorSetpointVelocityMPS = 0;
 
         public double elevatorGoalMeters = ElevatorHeight.HOME.heightMeters;
         public ElevatorHeight elevatorGoalEnum = ElevatorHeight.HOME;
