@@ -51,7 +51,7 @@ public final class Constants {
 
     //  Should get overwritten in robotcontainer
     public static double maxSpeedMetersPerSec = 5.450;//5.450; //4.0; // was default
-     public static final double angularVelocityMultiplier = 0.5;
+     public static final double angularVelocityMultiplier = 0.3;
     public static final double trackWidth = Units.inchesToMeters(22.8);
     public static final double wheelBase = Units.inchesToMeters(25.6);
     public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
@@ -90,9 +90,9 @@ public final class Constants {
     public static final int backRightTurnCanId = 2;
 
     // Drive motor configuration
-    public static final int driveMotorCurrentLimit = 40;
-    public static final double wheelRadiusMeters = Units.inchesToMeters(2);
-    public static final double driveMotorReduction = 7.3; //(45.0 * 22.0) / (14.0 * 15.0); // MAXSwerve with 14 pinion teeth and 22 spur teeth
+    public static final int driveMotorCurrentLimit = 60;
+    public static final double wheelRadiusMeters = Units.inchesToMeters(1.925);
+    public static final double driveMotorReduction = 5.9; //(45.0 * 22.0) / (14.0 * 15.0); // MAXSwerve with 14 pinion teeth and 22 spur teeth
     public static final DCMotor driveGearbox = DCMotor.getNeoVortex(1); // DCMotor.getNeoVortex(1);
 
     //  Individual drive motor inversions
@@ -130,10 +130,10 @@ public final class Constants {
         (2 * Math.PI) / 60.0 / driveMotorReduction; // Rotor RPM -> Wheel Rad/Sec
 
     // Drive PID configuration
-    public static final double driveKp = 0.01;
+    public static final double driveKp = 0.02;
     public static final double driveKd = 0.0;
-    public static final double driveKs = 0.184445;  //  Got this value from characterization auto routine
-    public static final double driveKv = 0.093025;  //  Got this value from characterization auto routine
+    public static final double driveKs = 0.14243; //0.184445;  //  Got this value from characterization auto routine
+    public static final double driveKv = 0.12603; //0.093025;  //  Got this value from characterization auto routine
     public static final double driveSimP = 0.01; //8.0;
     public static final double driveSimD = 0.0;
     public static final double driveSimKs = 0.184445; //0.0;
@@ -141,7 +141,7 @@ public final class Constants {
 
     // Turn motor configuration
     //  public static final boolean turnInverted = false;
-    public static final int turnMotorCurrentLimit = 20;
+    public static final int turnMotorCurrentLimit = 40;
     public static final double turnMotorReduction = 21.0;  //9424.0 / 203.0;
     public static final DCMotor turnGearbox = DCMotor.getNEO(1); //DCMotor.getNeo550(1);
 
@@ -194,7 +194,6 @@ public final class Constants {
   } //  End drive
 
 
-    //  NOTICE: None of these values have been tested. They are all arbitrary
   public static final class ElevatorConstants {
 
     public static final int leftMotorID = 54;
@@ -206,7 +205,7 @@ public final class Constants {
     public static final double wristMotorReduction = 1.0;
 
 
-    public static final double maxVelocityMetersPerSec = 2.0; // Arbitrary
+    public static final double maxVelocityMetersPerSec = 2.0;
     public static final double maxAccelerationMetersPerSecSqrd = 4.0;
 
 

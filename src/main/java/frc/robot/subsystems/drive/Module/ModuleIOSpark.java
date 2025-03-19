@@ -181,7 +181,7 @@ public class ModuleIOSpark implements ModuleIO {
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(Constants.DriveConstants.driveMotorCurrentLimit)
         .voltageCompensation(12.0)
-        .closedLoopRampRate(0.1);
+        .closedLoopRampRate(0.01);
     driveConfig
         .encoder
         .positionConversionFactor(Constants.DriveConstants.driveEncoderPositionFactor)
@@ -216,7 +216,7 @@ public class ModuleIOSpark implements ModuleIO {
         .idleMode(IdleMode.kBrake)
         .smartCurrentLimit(Constants.DriveConstants.turnMotorCurrentLimit)
         .voltageCompensation(12.0)
-        .closedLoopRampRate(0.1);
+        .closedLoopRampRate(0.01);
     turnConfig
         .absoluteEncoder
         .inverted(turnEncoderInverted)
