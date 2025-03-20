@@ -17,8 +17,12 @@ package frc.robot;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.RobotConfig;
+
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -138,6 +142,13 @@ public final class Constants {
     public static final double driveSimD = 0.0;
     public static final double driveSimKs = 0.184445; //0.0;
     public static final double driveSimKv = 0.093025; //0.0789;
+
+    public static final Matrix<N3, N1> driveStandardDevs = new Matrix<N3, N1>(
+      N3.instance,
+      N1.instance,
+      new double[] {0.2516809574, 0.4502539169, 1.370530188}
+    );
+
 
     // Turn motor configuration
     //  public static final boolean turnInverted = false;

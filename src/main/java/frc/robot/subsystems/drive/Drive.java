@@ -78,6 +78,7 @@ public class Drive extends SubsystemBase {
   private final Alert gyroDisconnectedAlert =
       new Alert("Disconnected gyro, using kinematics as fallback.", AlertType.kError);
 
+
   private SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.DriveConstants.moduleTranslations);
   private Rotation2d rawGyroRotation = new Rotation2d();  // NOTICE: Try putting PI in these parenthesis to fix the autonomous problem.
   private SwerveModulePosition[] lastModulePositions = // For delta tracking
@@ -272,9 +273,10 @@ public class Drive extends SubsystemBase {
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
 
       Pose2d visionPose = getRobotVisionPose();
-      // if(visionPose != null){
-      //  poseEstimator.addVisionMeasurement(visionPose, sampleTimestamps[i]);
-      // }
+      if(visionPose != null){
+       poseEstimator.addVisionMeasurement(visionPose, sampleTimestamps[i], Constants.DriveConstants.driveStandardDevs);
+    //   System.out.println(visionPose.getX() + "," + visionPose.getY() + "," + visionPose.getRotation().getRadians());
+      }
     }
 
     // Update gyro alert
@@ -282,9 +284,8 @@ public class Drive extends SubsystemBase {
   }
 
 
-  private Pose2d getRobotVisionPose(){
-    double [] limelightData = LimelightHelpers.getBotPose_TargetSpace("limelight");
-    //double[] limelightDataOld = LimelightHelpers.getTargetPose_RobotSpace("limelight");
+  public FieldCoordinatePose2d getViewedAprilTagPoseFieldSpace(){
+
     int tagId = (int)LimelightHelpers.getFiducialID("limelight");
 
     Optional<Pose3d> tagPose3d = AprilTagDataLoader.field.getTagPose(tagId);
@@ -292,7 +293,19 @@ public class Drive extends SubsystemBase {
     if(tagPose3d.isEmpty()) return null;
 
     Pose2d actualTagCoordTemp = new Pose2d(tagPose3d.get().getX(), tagPose3d.get().getY(), tagPose3d.get().getRotation().toRotation2d());
-    FieldCoordinatePose2d actualTagCoord = new FieldCoordinatePose2d(actualTagCoordTemp);
+
+    return new FieldCoordinatePose2d(actualTagCoordTemp);
+
+  }
+
+  private Pose2d getRobotVisionPose(){
+    double [] limelightData = LimelightHelpers.getBotPose_TargetSpace("limelight");
+
+    FieldCoordinatePose2d actualTagCoord = getViewedAprilTagPoseFieldSpace();
+
+    if(actualTagCoord == null){
+      return null;
+    }
 
     RelativeCoordinatePose2d aprilTagRelativePose = new RelativeCoordinatePose2d(Help.limelightCoordsToWPICoordsPose2d(limelightData));
     RelativeCoordinatePose2d robotPoseTagSpace = new RelativeCoordinatePose2d(new Pose2d(
