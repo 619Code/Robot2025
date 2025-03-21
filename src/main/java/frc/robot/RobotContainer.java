@@ -139,6 +139,7 @@ public class RobotContainer {
 
         //  ELEVATOR & WRIST
 
+
         Trigger dPadDown = operatorController.povDown();
         dPadDown.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.L1));
 
@@ -155,14 +156,14 @@ public class RobotContainer {
         Trigger rightBumper = operatorController.rightBumper();
         rightBumper.whileTrue(new OuttakeCoralCommand(manipulator));
 
-        Trigger dislodgeAlgaeTrigger = operatorController.rightTrigger();
+        Trigger dislodgeAlgaeTrigger = operatorController.leftBumper();
         dislodgeAlgaeTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, false));
 
         Trigger leftTrigger = operatorController.leftTrigger();
-        leftTrigger.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.DISLODGE));
+        leftTrigger.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.DISLODGE_HIGH));
 
-        Trigger yPressedTrigger = operatorController.y();
-        yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.DISLODGE_ANGLE));
+        Trigger yButton = operatorController.y();
+        yButton.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.DISLODGE_LOW));
 
 
         //  FUNNEL INTAKING
@@ -266,7 +267,9 @@ public class RobotContainer {
                 return WristAngleRad.L2L3;
             case FUNNEL:
                 return WristAngleRad.FUNNEL_ANGLE;
-            case DISLODGE:
+            case DISLODGE_LOW:
+                return WristAngleRad.DISLODGE_ANGLE;
+            case DISLODGE_HIGH:
                 return WristAngleRad.DISLODGE_ANGLE;
             case L1:
                 return WristAngleRad.L1;

@@ -263,7 +263,8 @@ public final class Constants {
       //  THESE ARE ALL STILL ARBITRARY
         HOME(minHeightMeters),
         FUNNEL(minHeightMeters + Units.inchesToMeters(3.0)), //  Used to be 8 inches
-        DISLODGE(minHeightMeters + Units.inchesToMeters(3 + 13)),
+        DISLODGE_LOW(minHeightMeters),
+        DISLODGE_HIGH(minHeightMeters + Units.inchesToMeters(3 + 13)),
         L1(minHeightMeters + Units.inchesToMeters(2)),
         L2(minHeightMeters + Units.inchesToMeters(3)),
         L3(minHeightMeters + Units.inchesToMeters(3 + 16)),
