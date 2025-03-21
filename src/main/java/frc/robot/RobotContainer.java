@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.Constants.WristConstants.WristAngleRad;
+import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ManipulatorIntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
@@ -244,6 +245,7 @@ public class RobotContainer {
 
         //INEFFICIENT FOR GETTING FROM CORAL STATION
             command = Commands.sequence(
+                Commands.runOnce(() -> manipulator.stopOuttake(), manipulator),
                 new WristGoToPositionCommand(wrist, WristAngleRad.L2L3),
                 new ElevatorGoToPositionPositionCommand(elevator, height),
                 new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height))
@@ -393,12 +395,15 @@ public class RobotContainer {
         Trigger outtakeCoralTrigger = operatorController.rightBumper();
         outtakeCoralTrigger.whileTrue(new OuttakeCoralCommand(manipulator));
 
-        Trigger takeCoralBackTrigger = operatorController.leftTrigger();
-        takeCoralBackTrigger.whileTrue(
-            Commands.sequence(
-            new ManipulatorIntakeCoralCommand(manipulator),
-            new WaitCommand(0.04),
-            Commands.runOnce(() -> manipulator.stopOuttake(), manipulator)));
+        // Trigger takeCoralBackTrigger = operatorController.leftTrigger();
+        // takeCoralBackTrigger.whileTrue(
+        //     Commands.sequence(
+        //     new ManipulatorIntakeCoralCommand(manipulator),
+        //     new WaitCommand(0.04),
+        //     Commands.runOnce(() -> manipulator.stopOuttake(), manipulator)));
+
+        // Trigger dislodgeAlgaeTrigger = operatorController.rightTrigger();
+        // dislodgeAlgaeTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, false));
 
     }
 

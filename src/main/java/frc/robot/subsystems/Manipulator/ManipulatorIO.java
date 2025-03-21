@@ -16,7 +16,7 @@ public interface ManipulatorIO  {
     public void stopOuttake();
 
     //  Dislodger
- //   public void setDislodgerVoltage(double voltage);
+    public void setDislodgerVoltage(double voltage);
     //  There is no stopDislodger() right here because it is profiled. It profiles to a stop.
 
 }

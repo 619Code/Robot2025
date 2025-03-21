@@ -62,10 +62,10 @@ public class ManipulatorIOSim implements ManipulatorIO {
   }
 
 
-  // @Override
-  // public void setDislodgerVoltage(double _voltage) {
+  @Override
+  public void setDislodgerVoltage(double _voltage) {
 
-  //   dislodgeMotor.setInputVoltage(_voltage);
+    //dislodgeMotor.setInputVoltage(_voltage);
 
-  // }
+  }
 }
