@@ -91,6 +91,7 @@ public class Manipulator extends SubsystemBase implements IProfiledReset {
   }
   public void stopDislodger(){
     currentDislodgerGoal = new State(0, 0);
+    manipulatorIO.setDislodgerVoltage(0);
   }
 
 

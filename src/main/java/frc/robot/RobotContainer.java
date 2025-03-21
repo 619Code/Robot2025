@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -153,12 +152,17 @@ public class RobotContainer {
         dPadUp.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.L4));
 
 
-        //  OUTTAKING
-        // Trigger leftBumper = operatorController.leftBumper();
-        // leftBumper.whileTrue(new IntakeCoralCommand(manipulator, passthrough));
-
         Trigger rightBumper = operatorController.rightBumper();
         rightBumper.whileTrue(new OuttakeCoralCommand(manipulator));
+
+        Trigger dislodgeAlgaeTrigger = operatorController.rightTrigger();
+        dislodgeAlgaeTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, false));
+
+        Trigger leftTrigger = operatorController.leftTrigger();
+        leftTrigger.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.DISLODGE));
+
+        Trigger yPressedTrigger = operatorController.y();
+        yPressedTrigger.onTrue(new WristGoToPositionCommand(wrist, Constants.WristConstants.WristAngleRad.DISLODGE_ANGLE));
 
 
         //  FUNNEL INTAKING
@@ -262,6 +266,8 @@ public class RobotContainer {
                 return WristAngleRad.L2L3;
             case FUNNEL:
                 return WristAngleRad.FUNNEL_ANGLE;
+            case DISLODGE:
+                return WristAngleRad.DISLODGE_ANGLE;
             case L1:
                 return WristAngleRad.L1;
             case L2:
@@ -402,8 +408,7 @@ public class RobotContainer {
         //     new WaitCommand(0.04),
         //     Commands.runOnce(() -> manipulator.stopOuttake(), manipulator)));
 
-        // Trigger dislodgeAlgaeTrigger = operatorController.rightTrigger();
-        // dislodgeAlgaeTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, false));
+
 
     }
 
@@ -429,9 +434,9 @@ public class RobotContainer {
             new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L3)
         );
 
-        Trigger dPadUp = operatorController.povUp();
-        dPadUp.whileTrue(
-            new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4)
-        );
+        // Trigger dPadUp = operatorController.povUp();
+        // dPadUp.whileTrue(
+        //     new ElevatorGoToPositionPositionCommand(elevator, ElevatorHeight.L4)
+        // );
     }
 }

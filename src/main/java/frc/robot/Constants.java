@@ -263,7 +263,7 @@ public final class Constants {
       //  THESE ARE ALL STILL ARBITRARY
         HOME(minHeightMeters),
         FUNNEL(minHeightMeters + Units.inchesToMeters(3.0)), //  Used to be 8 inches
-
+        DISLODGE(minHeightMeters + Units.inchesToMeters(3 + 13)),
         L1(minHeightMeters + Units.inchesToMeters(2)),
         L2(minHeightMeters + Units.inchesToMeters(3)),
         L3(minHeightMeters + Units.inchesToMeters(3 + 16)),
@@ -394,6 +394,7 @@ public final class Constants {
       public static enum WristAngleRad {
         FREEHANG(Units.degreesToRadians(90)),
         FUNNEL_ANGLE(Units.degreesToRadians(66)),
+        DISLODGE_ANGLE(Units.degreesToRadians(215)),
         L1(Units.degreesToRadians(252)),  //  Needs to be changed
         L2L3(Units.degreesToRadians(252)),
         L4(Units.degreesToRadians(200));
