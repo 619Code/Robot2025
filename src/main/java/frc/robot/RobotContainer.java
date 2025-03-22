@@ -162,8 +162,8 @@ public class RobotContainer {
         Trigger leftTrigger = operatorController.leftTrigger();
         leftTrigger.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.DISLODGE_HIGH));
 
-        Trigger yButton = operatorController.y();
-        yButton.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.DISLODGE_LOW));
+        Trigger rightTrigger = operatorController.rightTrigger();
+        rightTrigger.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.DISLODGE_LOW));
 
 
         //  FUNNEL INTAKING
