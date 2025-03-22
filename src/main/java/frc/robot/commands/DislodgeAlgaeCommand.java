@@ -30,7 +30,7 @@ public class DislodgeAlgaeCommand extends Command {
 
   @Override
   public void execute() {
-    System.out.println("Dislodger Command Ran");
+    
   }
 
   @Override
