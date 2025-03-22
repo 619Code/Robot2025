@@ -275,7 +275,7 @@ public final class Constants {
         L1(minHeightMeters + Units.inchesToMeters(2)),
         L2(minHeightMeters + Units.inchesToMeters(3)),
         L3(minHeightMeters + Units.inchesToMeters(3 + 16)),
-        L4(minHeightMeters + Units.inchesToMeters(3 + 16 + 28 + 7));
+        L4(minHeightMeters + Units.inchesToMeters(3 + 16 + 28 + 7) + 0.024);
 
         public final double heightMeters;
         ElevatorHeight(double _heightMeters){
