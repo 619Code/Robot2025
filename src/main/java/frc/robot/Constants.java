@@ -153,7 +153,7 @@ public final class Constants {
     public static final Matrix<N3, N1> driveStandardDevs = new Matrix<N3, N1>(
       N3.instance,
       N1.instance,
-      new double[] {0.2516809574, 0.4502539169, 1.370530188}
+      new double[] {0.2516809574 * 2.0, 0.4502539169 * 2.0, 1.370530188 * 2.0}
     );
 
 

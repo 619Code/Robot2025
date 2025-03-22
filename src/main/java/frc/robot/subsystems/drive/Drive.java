@@ -273,9 +273,10 @@ public class Drive extends SubsystemBase {
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
 
       Pose2d visionPose = getRobotVisionPose();
-      if(visionPose != null){
-       poseEstimator.addVisionMeasurement(visionPose, sampleTimestamps[i], Constants.DriveConstants.driveStandardDevs);
-    //   System.out.println(visionPose.getX() + "," + visionPose.getY() + "," + visionPose.getRotation().getRadians());
+      double confidence = getVisionConfidence();
+      Logger.recordOutput("Drive/VisionConfidence", confidence);
+      if(visionPose != null && confidence > 0.5){
+       poseEstimator.addVisionMeasurement(visionPose, sampleTimestamps[i], Constants.DriveConstants.driveStandardDevs.times(1.0 / confidence));
       }
     }
 
@@ -283,6 +284,22 @@ public class Drive extends SubsystemBase {
     gyroDisconnectedAlert.set(!gyroInputs.connected && Constants.currentMode != Mode.SIM);
   }
 
+
+  private double getVisionConfidence(){
+
+    double minDistance = 0.5;
+    double maxDistance = 5.0;
+
+    double output = ((distanceToTag - minDistance) / (maxDistance - minDistance));
+
+    output = Math.max(output, 0);
+    output = Math.min(output, 1);
+
+    output = 1.0 - output;
+
+    return output;
+
+  }
 
   public FieldCoordinatePose2d getViewedAprilTagPoseFieldSpace(){
 
@@ -297,6 +314,8 @@ public class Drive extends SubsystemBase {
     return new FieldCoordinatePose2d(actualTagCoordTemp);
 
   }
+
+  double distanceToTag = 1.0;
 
   private Pose2d getRobotVisionPose(){
     double [] limelightData = LimelightHelpers.getBotPose_TargetSpace("limelight");
@@ -313,6 +332,8 @@ public class Drive extends SubsystemBase {
       -aprilTagRelativePose.pose.getY(),
       aprilTagRelativePose.pose.getRotation()
     ));
+
+    distanceToTag = Math.sqrt((robotPoseTagSpace.pose.getX() * robotPoseTagSpace.pose.getX()) + (robotPoseTagSpace.pose.getY() * robotPoseTagSpace.pose.getY()));
 
 
     FieldCoordinatePose2d robotPoseField = robotPoseTagSpace.toFieldSpace(actualTagCoord);

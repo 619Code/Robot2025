@@ -30,7 +30,7 @@ public class DislodgeAlgaeCommand extends Command {
 
   @Override
   public void execute() {
-    
+
   }
 
   @Override

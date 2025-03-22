@@ -59,7 +59,9 @@ public class ElevatorIOReal implements ElevatorIO {
         //config.externalEncoder.zeroOffset(Constants.ElevatorConstants.encoderZeroOffsetRotations);
         config.externalEncoder.inverted(false);
 
+        // NOTICE: TEST THIS
         config.smartCurrentLimit(60);
+     //   config.smartCurrentLimit(30, 60);
         config.inverted(false);
         config.idleMode(IdleMode.kBrake);
 
