@@ -53,6 +53,8 @@ public class Wrist extends SubsystemBase implements IProfiledReset {
             Constants.WristConstants.Control.kvFeedforward,
             constraints);
 
+        controller.setTolerance(0.1);
+
         wristIO.updateInputs(inputs);
 
         setTargetAngle(getPosition());

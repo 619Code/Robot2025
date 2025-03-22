@@ -63,6 +63,10 @@ public class NTProfiledPIDF {
         controller.setGoal(value);
     }
 
+    public void setTolerance(double _val){
+        controller.setTolerance(_val);
+    }
+
     public State getGoal(){
         return controller.getGoal();
     }
