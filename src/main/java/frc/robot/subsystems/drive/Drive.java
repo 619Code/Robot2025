@@ -272,12 +272,12 @@ public class Drive extends SubsystemBase {
       // Apply update
       poseEstimator.updateWithTime(sampleTimestamps[i], rawGyroRotation, modulePositions);
 
-      Pose2d visionPose = getRobotVisionPose();
-      double confidence = getVisionConfidence();
-      Logger.recordOutput("Drive/VisionConfidence", confidence);
-      if(visionPose != null && confidence > 0.5){
-       poseEstimator.addVisionMeasurement(visionPose, sampleTimestamps[i], Constants.DriveConstants.driveStandardDevs.times(1.0 / confidence));
-      }
+      // Pose2d visionPose = getRobotVisionPose();
+      // double confidence = getVisionConfidence();
+      // Logger.recordOutput("Drive/VisionConfidence", confidence);
+      // if(visionPose != null && confidence > 0.5){
+      //  poseEstimator.addVisionMeasurement(visionPose, sampleTimestamps[i], Constants.DriveConstants.driveStandardDevs.times(1.0 / confidence));
+      // }
     }
 
     // Update gyro alert

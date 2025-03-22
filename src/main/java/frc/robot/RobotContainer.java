@@ -251,9 +251,9 @@ public class RobotContainer {
         //INEFFICIENT FOR GETTING FROM CORAL STATION
             command = Commands.sequence(
                 Commands.runOnce(() -> manipulator.stopOuttake(), manipulator),
-                new WristGoToPositionCommand(wrist, WristAngleRad.L2L3),
-                new ElevatorGoToPositionPositionCommand(elevator, height),
-                new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height))
+                new WristGoToPositionCommand(wrist, WristAngleRad.L2L3).withTimeout(4.0),
+                new ElevatorGoToPositionPositionCommand(elevator, height).withTimeout(3.5),
+                new WristGoToPositionCommand(wrist, getEndWristAngleForGivenElevatorHeight(height)).withTimeout(4.0)
             ).withInterruptBehavior(InterruptionBehavior.kCancelSelf);
 
 
