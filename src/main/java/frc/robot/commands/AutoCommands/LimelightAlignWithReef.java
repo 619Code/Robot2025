@@ -98,7 +98,7 @@ public class LimelightAlignWithReef extends Command {
         if(cantFindTag) {
             return true;
         }
-        
+
         return littleCommand.isFinished();
     }
 }
