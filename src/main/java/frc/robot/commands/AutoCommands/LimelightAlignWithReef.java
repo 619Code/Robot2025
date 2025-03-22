@@ -41,7 +41,7 @@ public class LimelightAlignWithReef extends Command {
         horizontalOffset *= right ? 1.0 : -1.0;
 
         Pose2d poseRelativeToAprilTag = new Pose2d(
-            Units.inchesToMeters(15),
+            Units.inchesToMeters(15) + 0.34,
             horizontalOffset,
             new Rotation2d(Math.PI)
         );
@@ -74,19 +74,31 @@ public class LimelightAlignWithReef extends Command {
 
     @Override
     public void execute() {
+        if(cantFindTag) {
+            return;
+        }
+
         littleCommand.execute();
+
     }
 
 
     @Override
     public void end(boolean isInterrupted) {
+        if(cantFindTag) {
+            return;
+        }
+
         littleCommand.end(isInterrupted);
+
     }
 
     @Override
     public boolean isFinished() {
-        return
-        littleCommand.isFinished() ||
-        cantFindTag;
+        if(cantFindTag) {
+            return true;
+        }
+        
+        return littleCommand.isFinished();
     }
 }
