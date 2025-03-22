@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.Constants.WristConstants.WristAngleRad;
 import frc.robot.commands.DislodgeAlgaeCommand;
@@ -320,21 +319,21 @@ public class RobotContainer {
     // ============= Constructor Stuff =============
 
     private void driveConstructorStuff() {
-        //Set up SysId routines
-        autoChooser.addOption(
-            "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
-        autoChooser.addOption(
-            "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
-        autoChooser.addOption(
-            "Drive SysId (Quasistatic Forward)",
-            drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption(
-            "Drive SysId (Quasistatic Reverse)",
-            drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        autoChooser.addOption(
-            "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        autoChooser.addOption(
-            "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // //Set up SysId routines
+        // autoChooser.addOption(
+        //     "Drive Wheel Radius Characterization", DriveCommands.wheelRadiusCharacterization(drive));
+        // autoChooser.addOption(
+        //     "Drive Simple FF Characterization", DriveCommands.feedforwardCharacterization(drive));
+        // autoChooser.addOption(
+        //     "Drive SysId (Quasistatic Forward)",
+        //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // autoChooser.addOption(
+        //     "Drive SysId (Quasistatic Reverse)",
+        //     drive.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // autoChooser.addOption(
+        //     "Drive SysId (Dynamic Forward)", drive.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // autoChooser.addOption(
+        //     "Drive SysId (Dynamic Reverse)", drive.sysIdDynamic(SysIdRoutine.Direction.kReverse));
     }
 
 

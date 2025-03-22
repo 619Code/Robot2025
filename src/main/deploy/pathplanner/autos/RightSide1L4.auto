@@ -141,6 +141,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "CompetitionAutos",
   "choreoAuto": false
 }

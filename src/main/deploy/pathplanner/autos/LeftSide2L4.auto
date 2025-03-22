@@ -11,7 +11,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CenterStartToReef"
+                  "pathName": "StartToReefI"
                 }
               },
               {
@@ -21,7 +21,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.2
+                        "waitTime": 0.3
                       }
                     },
                     {
@@ -39,7 +39,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.2
+            "waitTime": 0.05
           }
         },
         {
@@ -64,7 +64,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.2
+            "waitTime": 0.1
           }
         },
         {
@@ -74,7 +74,7 @@
               {
                 "type": "wait",
                 "data": {
-                  "waitTime": 0.45
+                  "waitTime": 0.4
                 }
               },
               {
@@ -87,9 +87,9 @@
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 0.2
+            "name": "RobotToHome"
           }
         },
         {
@@ -99,7 +99,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CenterReefToSlightlyBack"
+                  "pathName": "ReefIToLeftCoralStation"
                 }
               },
               {
@@ -109,19 +109,75 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 0.9
+                        "waitTime": 1.75
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "RobotToHome"
+                        "name": "RobotToFunnelIntakeSequence"
                       }
                     }
                   ]
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "LeftCoralStationToReefL"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "RobotToL4"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 4.0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.1
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.4
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "RobotOuttakeIndefinitely"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "RobotToHome"
           }
         }
       ]
