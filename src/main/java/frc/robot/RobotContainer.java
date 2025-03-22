@@ -191,6 +191,7 @@ public class RobotContainer {
             new LimelightAlignWithReef(drive, true)
         );
 
+
     }
 
 
@@ -359,7 +360,9 @@ public class RobotContainer {
                 drive,
                 () -> -flightStick.getRawAxis(1),
                 () -> -flightStick.getRawAxis(0),
-                () -> -flightStick.getRawAxis(2)));
+                () -> -flightStick.getRawAxis(2),
+                () ->  flightStick.getRawButton(1))
+        );
 
 
 

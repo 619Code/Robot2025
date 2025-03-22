@@ -60,6 +60,13 @@ public final class Constants {
     public static final double wheelBase = Units.inchesToMeters(25.6);
     public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
 
+
+
+    //  Slow mode stuff
+    public static final double slowModeSpeedMultiplier = 0.3;
+
+
+
     // public static final double possibleBumperWidth = 0.57912 + Units.inchesToMeters(3); // 0.6553199999999999
     // public static final double possibleBumperLength = 0.65024 + Units.inchesToMeters(3); //  0.72644
 
