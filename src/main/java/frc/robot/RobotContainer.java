@@ -31,7 +31,6 @@ import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ManipulatorIntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
-import frc.robot.commands.AutoCommands.LimelightAlignWithReef;
 import frc.robot.commands.ElevatorCommands.ElevatorFineTuningCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorGoToPositionPositionCommand;
 import frc.robot.commands.ElevatorCommands.ElevatorHoldCurrentPositionCommand;
@@ -181,15 +180,15 @@ public class RobotContainer {
         Trigger leftStickDown = operatorController.leftStick();
         leftStickDown.whileTrue(new ElevatorFineTuningCommand(elevator, () -> -operatorController.getRawAxis(1)));
 
-        Trigger leftReefAlignmentTrigger = new JoystickButton(flightStick, 3);
-        leftReefAlignmentTrigger.whileTrue(
-            new LimelightAlignWithReef(drive, false)
-        );
+        // Trigger leftReefAlignmentTrigger = new JoystickButton(flightStick, 3);
+        // leftReefAlignmentTrigger.whileTrue(
+        //     new LimelightAlignWithReef(drive, false)
+        // );
 
-        Trigger rightReefAlignmentTrigger = new JoystickButton(flightStick, 4);
-        rightReefAlignmentTrigger.whileTrue(
-            new LimelightAlignWithReef(drive, true)
-        );
+        // Trigger rightReefAlignmentTrigger = new JoystickButton(flightStick, 4);
+        // rightReefAlignmentTrigger.whileTrue(
+        //     new LimelightAlignWithReef(drive, true)
+        // );
 
 
     }
