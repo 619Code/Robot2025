@@ -23,7 +23,11 @@ public class ElevatorFineTuningCommand extends Command {
 
   @Override
   public void execute() {
-    elevatorSubsystem.shiftTargetPosition(joystick.getAsDouble() * 0.01);
+    double joystickVal = joystick.getAsDouble();
+    if(Math.abs(joystickVal) < 0.25){
+       joystickVal = 0;
+    }
+    elevatorSubsystem.shiftTargetPosition(joystickVal * 0.01);
   }
 
   @Override
