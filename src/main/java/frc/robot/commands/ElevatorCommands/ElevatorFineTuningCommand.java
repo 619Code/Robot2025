@@ -23,7 +23,7 @@ public class ElevatorFineTuningCommand extends Command {
 
   @Override
   public void execute() {
-    elevatorSubsystem.shiftTargetPosition(joystick.getAsDouble());
+    elevatorSubsystem.shiftTargetPosition(joystick.getAsDouble() * 0.01);
   }
 
   @Override

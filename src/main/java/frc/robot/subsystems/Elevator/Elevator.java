@@ -103,7 +103,7 @@ public class Elevator extends SubsystemBase implements IProfiledReset {
     }
 
     public void shiftTargetPosition(double amount){
-        elevatorController.setGoal(new State(getPositionMeters() + (amount * 0.001), 0));
+        elevatorController.setGoal(new State(getPositionMeters() + amount, 0));
     }
 
     public ElevatorHeight getCurrentGoal(){
