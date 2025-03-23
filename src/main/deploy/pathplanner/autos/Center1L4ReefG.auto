@@ -27,7 +27,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "CenterStartToReef"
+                        "pathName": "CenterStartToReefG"
                       }
                     }
                   ]
@@ -99,7 +99,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "CenterReefToSlightlyBack"
+                  "pathName": "ReefGToSlightlyBack"
                 }
               },
               {
