@@ -167,7 +167,7 @@ public class RobotContainer {
         //  FUNNEL INTAKING
 
         Trigger bButton = operatorController.b();
-        bButton.onTrue(FunnelIntakeCommands.FunnelIntakeCommandCreator(elevator, wrist, manipulator));
+        bButton.onTrue(FunnelIntakeCommands.FunnelIntakeCommandCreator(elevator, wrist, manipulator, () -> -operatorController.getRawAxis(1)));
 
 
         //  RETURN TO HOME
@@ -223,7 +223,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
             "RobotToFunnelIntakeSequence",
-            FunnelIntakeCommands.FunnelIntakeCommandCreator(elevator, wrist, manipulator)
+            FunnelIntakeCommands.FunnelIntakeCommandCreator(elevator, wrist, manipulator, () -> {return 0; })
         );
 
         NamedCommands.registerCommand(
