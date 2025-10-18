@@ -49,6 +49,11 @@ public class DriveCommands {
   private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
+  // The value here is totatlly arbitrary
+  private static final SlewRateLimiter mJoystickXLimiter = new SlewRateLimiter(25.0); // I think this %/20ms
+  private static final SlewRateLimiter mJoystickYLimiter = new SlewRateLimiter(25.0); // I think this is in m/s/s
+
+
   private DriveCommands() {}
 
   private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
@@ -79,8 +84,15 @@ public class DriveCommands {
         () -> {
 
           // Get linear velocity
+          // Limit the magnitude of the velocity vector via a slew rate limiter
+          // We can't really limit the magnitude directly, because we'd also need to
+          // limit the angle, and it we'd be creating another object here. 
+          // so we apply the limit to the joystick input (doubles) instead
           Translation2d linearVelocity =
-              getLinearVelocityFromJoysticks(xSupplier.getAsDouble(), ySupplier.getAsDouble());
+              getLinearVelocityFromJoysticks(
+                mJoystickXLimiter.calculate(xSupplier.getAsDouble()), 
+                mJoystickYLimiter.calculate(ySupplier.getAsDouble())
+              );
 
           // Apply rotation deadband
           double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);

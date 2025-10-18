@@ -55,12 +55,10 @@ public final class Constants {
 
     //  Should get overwritten in robotcontainer
     public static double maxSpeedMetersPerSec = 5.450;//5.450; //4.0; // was default
-     public static final double angularVelocityMultiplier = 0.3;
+    public static final double angularVelocityMultiplier = 0.3;
     public static final double trackWidth = Units.inchesToMeters(22.8);
     public static final double wheelBase = Units.inchesToMeters(25.6);
     public static final double driveBaseRadius = Math.hypot(trackWidth / 2.0, wheelBase / 2.0);
-
-
 
     //  Slow mode stuff
     public static final double slowModeSpeedMultiplier = 0.3;
@@ -227,15 +225,6 @@ public final class Constants {
     public static final double maxAccelerationMetersPerSecSqrd = 4.0;
 
 
-
-
-
-
-
-
-
-
-
     //  Lerp thing
 
     public static final double minHeightMeters = Units.inchesToMeters(25);
@@ -243,9 +232,6 @@ public final class Constants {
 
     public static final double heightAtHigherPointMeters = Units.inchesToMeters(47.5);
     public static final double higherPointEncoderValue = 39.97153854370117;
-
-
-
 
 
     public static final double maxHeightMeters = Units.inchesToMeters(77);
@@ -269,7 +255,7 @@ public final class Constants {
     public enum ElevatorHeight{
       //  THESE ARE ALL STILL ARBITRARY
         HOME(minHeightMeters),
-        FUNNEL(minHeightMeters + Units.inchesToMeters(3.0)), //  Used to be 8 inches
+        FUNNEL(minHeightMeters + Units.inchesToMeters(5.0)), //  Used to be 8 inches
         DISLODGE_LOW(minHeightMeters),
         DISLODGE_HIGH(minHeightMeters + Units.inchesToMeters(3 + 13)),
         L1(minHeightMeters + Units.inchesToMeters(2)),
@@ -401,7 +387,7 @@ public final class Constants {
 
       public static enum WristAngleRad {
         FREEHANG(Units.degreesToRadians(90)),
-        FUNNEL_ANGLE(Units.degreesToRadians(66)),
+        FUNNEL_ANGLE(Units.degreesToRadians(80)),
         DISLODGE_ANGLE(Units.degreesToRadians(215)),
         L1(Units.degreesToRadians(252)),  //  Needs to be changed
         L2L3(Units.degreesToRadians(252)),
