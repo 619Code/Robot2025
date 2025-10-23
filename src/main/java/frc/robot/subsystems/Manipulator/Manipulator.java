@@ -17,8 +17,6 @@ public class Manipulator extends SubsystemBase implements IProfiledReset {
 
   private final OuttakeIOInputsAutoLogged inputs = new OuttakeIOInputsAutoLogged();
 
-
-
   private final TrapezoidProfile dislodgerVoltageTrapezoidProfile;
 
   private State currentDislodgerSetpoint;
@@ -27,8 +25,7 @@ public class Manipulator extends SubsystemBase implements IProfiledReset {
   public Manipulator(){
     if(Robot.isReal()){
       manipulatorIO = new ManipulatorIOReal(
-        Constants.ManipulatorConstants.outtakeMotorId,
-        Constants.ManipulatorConstants.dislodgerMotorId
+        Constants.ManipulatorConstants.outtakeMotorId
       );
     }
     else{

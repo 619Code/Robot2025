@@ -15,20 +15,15 @@ public class ManipulatorIOReal implements ManipulatorIO {
 
 
   public final SparkMax outMax;
-  public final SparkMax dislodgeMax;
 
   private final DigitalInput intakeProximitySensor;
 
-  public ManipulatorIOReal(int _outtakeMotorID, int _dislodgerMotorId) {
+  public ManipulatorIOReal(int _outtakeMotorID) {
 
     SparkFlexConfig config = new SparkFlexConfig();
     config.smartCurrentLimit(10);
 
     outMax = new SparkMax(_outtakeMotorID, MotorType.kBrushless);
-
-
-    dislodgeMax = new SparkMax(_dislodgerMotorId, MotorType.kBrushless);
-
 
     intakeProximitySensor = new DigitalInput(Constants.ManipulatorConstants.kIntakeSensorPort);
   }
@@ -59,8 +54,6 @@ public class ManipulatorIOReal implements ManipulatorIO {
 
   @Override
   public void setDislodgerVoltage(double _voltage) {
-
-  dislodgeMax.setVoltage(_voltage);
-
+    // no op
   }
 }
