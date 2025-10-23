@@ -50,8 +50,8 @@ public class DriveCommands {
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
   // The value here is totatlly arbitrary
-  private static final SlewRateLimiter mJoystickXLimiter = new SlewRateLimiter(25.0); // I think this %/20ms
-  private static final SlewRateLimiter mJoystickYLimiter = new SlewRateLimiter(25.0); // I think this is in m/s/s
+  // This is probably doing very little, but it works and I don't have more testing time
+  private static final SlewRateLimiter mJoystickAccelLimiter = new SlewRateLimiter(Constants.DriveConstants.joystickAccelLimit); // I think this joystick percentage
 
 
   private DriveCommands() {}
@@ -63,6 +63,17 @@ public class DriveCommands {
 
     // Square magnitude for more precise control
     linearMagnitude = linearMagnitude * linearMagnitude;
+
+    linearMagnitude = MathUtil.clamp(
+      linearMagnitude,
+      -Constants.DriveConstants.joystickVelLimit,
+      Constants.DriveConstants.joystickVelLimit
+    );
+
+    if (linearMagnitude < 0.3) {
+      // Limit the rate of change for velocity (accel)
+      linearMagnitude = mJoystickAccelLimiter.calculate(linearMagnitude);
+    }
 
     // Return new linear velocity
     return new Pose2d(new Translation2d(), linearDirection)
@@ -86,12 +97,12 @@ public class DriveCommands {
           // Get linear velocity
           // Limit the magnitude of the velocity vector via a slew rate limiter
           // We can't really limit the magnitude directly, because we'd also need to
-          // limit the angle, and it we'd be creating another object here. 
+          // limit the angle, and it we'd be creating another object here.
           // so we apply the limit to the joystick input (doubles) instead
           Translation2d linearVelocity =
               getLinearVelocityFromJoysticks(
-                mJoystickXLimiter.calculate(xSupplier.getAsDouble()), 
-                mJoystickYLimiter.calculate(ySupplier.getAsDouble())
+                xSupplier.getAsDouble(),
+                ySupplier.getAsDouble()
               );
 
           // Apply rotation deadband

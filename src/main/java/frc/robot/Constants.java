@@ -63,7 +63,8 @@ public final class Constants {
     //  Slow mode stuff
     public static final double slowModeSpeedMultiplier = 0.3;
 
-
+    public static final double joystickAccelLimit = 0.4;
+    public static final double joystickVelLimit = 0.5;
 
     // public static final double possibleBumperWidth = 0.57912 + Units.inchesToMeters(3); // 0.6553199999999999
     // public static final double possibleBumperLength = 0.65024 + Units.inchesToMeters(3); //  0.72644
