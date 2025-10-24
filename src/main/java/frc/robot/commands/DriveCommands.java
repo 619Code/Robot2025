@@ -111,6 +111,12 @@ public class DriveCommands {
           // Square rotation value for more precise control
           omega = Math.copySign(omega * omega, omega);
 
+          omega = MathUtil.clamp(
+            omega,
+            -Constants.DriveConstants.joystickVelLimit,
+            Constants.DriveConstants.joystickVelLimit
+          );
+
           // Convert to field relative speeds & send command
           ChassisSpeeds speeds =
               new ChassisSpeeds(

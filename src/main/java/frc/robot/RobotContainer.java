@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ElevatorConstants.ElevatorHeight;
 import frc.robot.Constants.WristConstants.WristAngleRad;
-import frc.robot.commands.DislodgeAlgaeCommand;
 import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ManipulatorIntakeCoralCommand;
 import frc.robot.commands.OuttakeCoralCommand;
@@ -154,8 +153,8 @@ public class RobotContainer {
         Trigger rightBumper = operatorController.rightBumper();
         rightBumper.whileTrue(new OuttakeCoralCommand(manipulator));
 
-        Trigger dislodgeAlgaeTrigger = operatorController.leftBumper();
-        dislodgeAlgaeTrigger.whileTrue(new DislodgeAlgaeCommand(manipulator, false));
+        Trigger leftBumper = operatorController.leftBumper();
+        leftBumper.whileTrue(new ManipulatorIntakeCoralCommand(manipulator)); // the lower one apparently doesn't do it
 
         Trigger leftTrigger = operatorController.leftTrigger();
         leftTrigger.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.DISLODGE_HIGH));

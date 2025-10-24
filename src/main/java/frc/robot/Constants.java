@@ -262,7 +262,7 @@ public final class Constants {
         L1(minHeightMeters + Units.inchesToMeters(2)),
         L2(minHeightMeters + Units.inchesToMeters(3)),
         L3(minHeightMeters + Units.inchesToMeters(3 + 16)),
-        L4(minHeightMeters + Units.inchesToMeters(3 + 16 + 28 + 7) + 0.024);
+        L4(minHeightMeters + Units.inchesToMeters(3 + 16 + 28 + 7 - 1) + 0.024); //lowered 1 in for funsies
 
         public final double heightMeters;
         ElevatorHeight(double _heightMeters){
@@ -392,7 +392,7 @@ public final class Constants {
         DISLODGE_ANGLE(Units.degreesToRadians(215)),
         L1(Units.degreesToRadians(252)),  //  Needs to be changed
         L2L3(Units.degreesToRadians(252)),
-        L4(Units.degreesToRadians(200));
+        L4(Units.degreesToRadians(210));
 
         public final double positionRad;
         WristAngleRad(double _positionRad){

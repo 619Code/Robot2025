@@ -52,7 +52,7 @@ public class FunnelIntakeCommands {
             Commands.race(
                 Commands.sequence(
                     new ManipulatorIntakeCoralCommand(manipulator),
-                    new WaitCommand(0.08),
+                    new WaitCommand(0.06), // was 0.08
                     Commands.runOnce(() -> manipulator.stopOuttake(), manipulator)
                 ),
                 new ElevatorFineTuningCommand(elevator, _joystick)
