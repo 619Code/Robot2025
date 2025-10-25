@@ -13,6 +13,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.util.datalog.StringLogEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -90,6 +91,9 @@ public class Robot extends LoggedRobot {
     LoggedCommand.configureCommandLogging(true, false);
     // Start AdvantageKit logger
     Logger.start();
+
+    // Start cameraserver for USB camera
+    CameraServer.startAutomaticCapture();
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.

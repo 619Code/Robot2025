@@ -389,7 +389,7 @@ public final class Constants {
       public static enum WristAngleRad {
         FREEHANG(Units.degreesToRadians(90)),
         FUNNEL_ANGLE(Units.degreesToRadians(80)),
-        DISLODGE_ANGLE(Units.degreesToRadians(215)),
+        DISLODGE_ANGLE(Units.degreesToRadians(245)),
         L1(Units.degreesToRadians(252)),  //  Needs to be changed
         L2L3(Units.degreesToRadians(252)),
         L4(Units.degreesToRadians(210));

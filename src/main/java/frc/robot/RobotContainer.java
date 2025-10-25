@@ -156,6 +156,10 @@ public class RobotContainer {
         Trigger leftBumper = operatorController.leftBumper();
         leftBumper.whileTrue(new ManipulatorIntakeCoralCommand(manipulator)); // the lower one apparently doesn't do it
 
+        Trigger yButton = operatorController.y();
+        yButton.onTrue(new WristGoToPositionCommand(wrist, WristAngleRad.DISLODGE_ANGLE)); //dislodge algae position
+        yButton.onFalse(new WristGoToPositionCommand(wrist, WristAngleRad.L1));
+
         Trigger leftTrigger = operatorController.leftTrigger();
         leftTrigger.onTrue(robotGoToHeightCommandCreator(ElevatorHeight.DISLODGE_HIGH));
 
